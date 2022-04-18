@@ -189,7 +189,7 @@ K = \begin{bmatrix}
 $$
 
 \subsection{Projection matrix}
-\label{projection_matrix}
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=.5\textwidth]{graphics/frames.png}
@@ -244,3 +244,68 @@ $$
     \end{bmatrix}
 $$
 Where $\lambda \neq 0$
+
+\section{Epipolar geometry}
+
+\subsection{Skew-symmetric 3x3 matrix}
+From \cite{hartley_zisserman_2004}, p.581.
+
+
+Skew-symmetric or antisymetric matrix is such matrix $[b]_{\times}$ that $[b]_{\times}^T = -[b]_{\times}$. 
+For vector $b = (b_1, b_2, b_3)^T$:
+
+$$
+[b]_{\times} = \begin{bmatrix}
+    0 & -b_3 & b_2 \\ 
+    b_3 & 0 & b_1 \\ 
+    -b_2 & b_1 & 0 \\ 
+\end{bmatrix}
+$$
+This matrix has some important properties, but the most important in this thesis - it generalizes a cross product as a matrix multiplication
+$$
+a \times b = [a]_{\times} b
+$$
+
+\subsection{Epipolar geometry}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{graphics/epipolar.png}
+    \caption{Epipolar geometry scheme}
+    \label{fig:epipolar_std}
+\end{figure}
+\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $C_1$ and $C_2$ connected with a base line $b = C_2 - C_1$. 
+Both of them are seen some 3d point $X$. 
+This point projections are $m_1$ and $m_2$ respectivly. 
+Points $C_1, C_2$ and $X$ form an \textit{epipolar plane} $\sigma$.
+$\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are images of \textit{epipolar lines}. 
+Epipolar line $l_1$ passes through \textit{epipole} $e_1$, where $\lambda [e_1 | 1]^T = P_2 C_1$, respectivly $\lambda [e_2 | 1]^T = P_1 C_2$.
+
+\subsection{Epipolar constraint}
+Having a set of two cameras the relationship between them and constraints on them can be expressed by two new matrices: 
+\textit{Essential matrix} $E \in \mathbb{R}^{3x3}, rank(E) = 2$
+$$
+E = R_2 [C_2 - C_1]_{\times} R_1^T = [-t_{21}]_{\times}R_{21}
+$$ 
+and \textit{Fundamental matrix} $F \in \mathbb{R}^{3x3}, rank(F) = 2$
+$$
+F = K_2^{-T} R_2 [C_2 - C_1]_{\times} R_1^T K_1^{-1} = K_2^{-T} [-t_{21}]_{\times} R_{21} K_1^{-1} = K_2^{-T} E K_1^{-1}
+$$
+where 
+$R_{21} = R_2 R_1^T$ is a relative camera rotation and 
+$t_{21} = -R_2 b = t_2 - R_{21}t_1$ is a relative camera translation.
+The translation $t_{21}$ is lost since E is homogenous.
+Epipolar constraint looks like
+$$
+\begin{bmatrix} m_2 & | & 1 \end{bmatrix} F \begin{bmatrix} m_1 \\ 1 \end{bmatrix} = 0
+$$
+$F$ maps points to lines, such as
+$$
+\lambda l_1 = F^T \begin{bmatrix} m_2 \\ 1 \end{bmatrix}
+$$
+$$
+\lambda l_2 = F \begin{bmatrix} m_1 \\ 1 \end{bmatrix}
+$$
+Also some other properties of $F$ matrix:
+$$
+F \begin{bmatrix} e_1 \\ 1 \end{bmatrix} = F^T \begin{bmatrix} e_2 \\ 1 \end{bmatrix} = 0
+$$
