@@ -106,7 +106,28 @@ $$
 So in homogenous coordinate system all 2d tansformations can be combined and expressed as matrix multiplications.
 
 \subsection{Infinity}
-In Euclidian geometry parallel lines are the lines that have no intersection point. In projective geometry, parallel lines are intersecting in a point $x$ at infinity, $x = (u, v, 0)$. How is it possible?
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{graphics/parallel_intersection.jpg}
+    \caption{Parallel lines intersection}
+    \label{fig:intersection_parallel}
+\end{figure}
+
+In Euclidian geometry parallel lines are the lines that have no intersection point. 
+In projective geometry, parallel lines are intersecting in a point $x$ at infinity. 
+How is it possible? 
+In the image \autoref{fig:intersection_parallel} let $l_r = Pr_1 \cap Pr_2 $ and $l_l = Pl_1 \cap Pl_2$. 
+In 3D world we know that lines $l_l \parallel l_r$, but after projection on the image plane $\Pi$, we can calculate - in this case even see - the intersecting point $P_{\infty}$. 
+
+Both line and point in a homogenous coordinates can be expressed as vector of three numbers, but if in case of a point homogenous $x = (x, y, z)^T$ will be $m = (\frac{x}{z}, \frac{y}{z})^T$, line $l = (a, b, c)^T$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
+In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $x_{\infty} = (u, v, 0)^T, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $l = (0, 0, c), c \neq 0$. In algebraic representation, both ideal point and line are lying at the plane $\Pi_0$ (\autoref{fig:homogenous}, green lines).
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{graphics/homogenous.png}
+    \caption{Scheme of homogenous coordinates}
+    \label{fig:homogenous}
+\end{figure}
 
 \section{Pinhole camera model}
 Pinhole camera - or a canonical perspective camera model - is a model of a simple camera without optics.
