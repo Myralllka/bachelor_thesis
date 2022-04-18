@@ -3,7 +3,7 @@
 
 \section{Homogenous coordinate system}
 
-In a projective geometry, homogenous coordinate system is used in the same way as Cartesian coordinates are used in Euclidian geometry. 
+In projective geometry, the homogenous coordinate system is used the same way Cartesian coordinates are used in Euclidean geometry. 
 To transform a point $x=(u, v)$ from cartesian coordinates to homogenous, simply add the third coordinate 1: $x=(u, v, 1)$.
 Homogenous coordinates are used to simplify the 2D transformation operations:
 
@@ -52,7 +52,7 @@ $$
 \end{bmatrix}
 $$ 
 
-To aply any transformation we need to make a sequence of matrix multiplications, but this is not the case with translation - we need an addition operation for that. Here is how all this operations looks like in a projective geometry:
+To apply any transformation, we need to make a sequence of matrix multiplications, but this is not the case with translation - we need an addition operation for that. Here is what all these operations look like in projective geometry:
 
 \begin{center}
     \textbf{Scale}
@@ -103,7 +103,7 @@ $$
 \end{bmatrix}
 $$ 
 
-So in homogenous coordinate system all 2d tansformations can be combined and expressed as matrix multiplications.
+So in the homogenous coordinate system, all 2d transformations can be combined and expressed as matrix multiplications.
 
 \subsection{Infinity}
 \begin{figure}[h]
@@ -113,11 +113,11 @@ So in homogenous coordinate system all 2d tansformations can be combined and exp
     \label{fig:intersection_parallel}
 \end{figure}
 
-In Euclidian geometry parallel lines are the lines that have no intersection point. 
-In projective geometry, parallel lines are intersecting in a point $x$ at infinity. 
+In Euclidian geometry, parallel lines are the lines that have no intersection point. 
+In projective geometry, parallel lines intersect at a point $x$ at infinity. 
 How is it possible? 
 In the image \autoref{fig:intersection_parallel} let $l_r = Pr_1 \cap Pr_2 $ and $l_l = Pl_1 \cap Pl_2$. 
-In 3D world we know that lines $l_l \parallel l_r$, but after projection on the image plane $\Pi$, we can calculate - in this case even see - the intersecting point $P_{\infty}$. 
+In the 3D world, we know that lines $l_l \parallel l_r$, but after projection on the image plane $\Pi$, we can calculate - in this case even see - the intersecting point $P_{\infty}$. 
 
 Both line and point in a homogenous coordinates can be expressed as vector of three numbers, but if in case of a point homogenous $x = (x, y, z)^T$ will be $m = (\frac{x}{z}, \frac{y}{z})^T$, line $l = (a, b, c)^T$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
 In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $x_{\infty} = (u, v, 0)^T, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $l = (0, 0, c), c \neq 0$. In algebraic representation, both ideal point and line are lying at the plane $\Pi_0$ (\autoref{fig:homogenous}, green lines).
@@ -130,9 +130,9 @@ In general case point at infinity is called an \textit{ideal point} and it is no
 \end{figure}
 
 \section{Pinhole camera model}
-Pinhole camera - or a canonical perspective camera model - is a model of a simple camera without optics.
-The very first example is a camera obscura - a dark room with a small hole, through which the image from outside is projected on the oposite wall. 
-This model can be used to express camera geometry with field of view angles less than $180^{\circ}$.
+A pinhole camera - or a canonical perspective camera model - is a model of a simple camera without optics.
+The first example is a camera obscura - a dark room with a small hole through which the image from outside is projected on the opposite wall. 
+This model can be used to express camera geometry with a field of view angles less than $180^{\circ}$.
 
 \subsection{Camera coordinate system}
 \begin{figure}[h]
@@ -156,7 +156,7 @@ This model can be used to express camera geometry with field of view angles less
     \label{fig:td_scene_xy}
 \end{figure}
 
-In physical implementation of Obscure camera the projective plane is on the oposite side from the Projection center (or Camera center $C$ in pinhole camera model), the image is reversed and mirrored, but in most computer vision literature authors assume that it is on the same side as object (see \autoref{fig:td_scene_3d}).
+In the physical implementation of the Obscure camera, the projective plane is on the opposite side from the Projection centre (or Camera centre $C$ in the pinhole camera model), the image is reversed and mirrored, but in most computer vision literature, authors assume that it is on the same side as an object (see \autoref{fig:td_scene_3d}).
 In \autoref{fig:td_scene_3d} we are looking through a camera with camera center $C$ in a coordinate system with origin at $C$ and basis vectors $(e_x, e_y, e_z)$ on a human. 
 Each point $X = (x, y, z)^T$ in a world coordinate system has it's projection $x_p = (x', y', 1)^T$ on a plane $\Pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
 Optical axis $O$ is a ray perpendicular to plane $\Pi$, and on the image the point $ O \cap \Pi = x_p$ is a center of the image, see \autoref{fig:td_scene_xy}).
@@ -178,7 +178,7 @@ K = \begin{bmatrix}
 $$ 
 Where $f$ is a focal length used to convert world length ratios to pixels.
 
-In a modern world, every digital camera has a calibration matrix with a square pixel, so in most cases camera matrix looks like:
+In the modern world, every digital camera has a calibration matrix with a square pixel, so in most cases, the camera matrix looks like this:
 
 $$
 K = \begin{bmatrix}
@@ -196,8 +196,8 @@ $$
     \caption{Changing the world (outer) reference frame}
     \label{fig:frames}
 \end{figure}
-To translate a point from a world coordinate frame to image coordinate frame, Image projection matrix $P$ is used. 
-The canonical projection matrix $P_0$ assumes that the camera is in the world coordinate center and that the calibration matrix $K = \bf{I}$
+To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $P$ is used. 
+The canonical projection matrix $P_0$ assumes that the camera is in the world coordinate centre and that the calibration matrix $K = \bf{I}$
 $$
 P_0 = \begin{bmatrix} \bf{I} & | & 0 \end{bmatrix} = 
     \begin{bmatrix}
@@ -206,8 +206,8 @@ P_0 = \begin{bmatrix} \bf{I} & | & 0 \end{bmatrix} =
     0 & 0 & 1 & 0 \\
     \end{bmatrix}
 $$
-But this case is degenerate. 
-As far as each camera is different, canonical projection matrix is never used, instead image projection matrix $P$ is used, with applied calibration matrix $K$ to transform canonical $P_0$ to perspective $P$:
+However, this case is degenerate. 
+As far as each camera is different, the canonical projection matrix is never used. Instead, image projection matrix $P$ is used, with applied calibration matrix $K$ to transform canonical $P_0$ to perspective $P$:
 
 $$
 P = \bf{K} \begin{bmatrix} \bf{I} & | & 0 \end{bmatrix} = 
@@ -218,16 +218,16 @@ P = \bf{K} \begin{bmatrix} \bf{I} & | & 0 \end{bmatrix} =
     \end{bmatrix}
 $$
 
-But not always the world coordinate center is located at point $C$ \autoref{fig:frames}. 
+However, not always; the world coordinate centre is located at point $C$ \autoref{fig:frames}. 
 Usually it is rotated using a rotation matrix $R$ and translated on vector $t$ where $R$ is a $3x3$ matrix with $det(R) = 1$ and $R^{-1} = R^T$. 
-So in general case:
+So, in the general case:
 
 $$
 P =   K \begin{bmatrix} \bf{R} & | & \vec{\bf{t}} \end{bmatrix} = 
         K \begin{bmatrix} \bf{R} & | & - \bf{R} \bf{C} \end{bmatrix}
 $$
-where $C$ is quite often used as a camera position in a world reference frame. 
-So matrix $P$ has 6 intrinsic parameters: 3 Euler angles and 3 translation components. 
+where $C$ is often used as a camera position in a world reference frame. 
+So matrix $P$ have six intrinsic parameters: 3 Euler angles and three translation components. 
 
 \subsection{Projection equation}
 
@@ -261,7 +261,7 @@ $$
     -b_2 & b_1 & 0 \\ 
 \end{bmatrix}
 $$
-This matrix has some important properties, but the most important in this thesis - it generalizes a cross product as a matrix multiplication
+This matrix has some essential properties, but the most important in this thesis - it generalizes across a product as matrix multiplication.
 $$
 a \times b = [a]_{\times} b
 $$
@@ -274,7 +274,7 @@ $$
     \label{fig:epipolar_std}
 \end{figure}
 \autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $C_1$ and $C_2$ connected with a base line $b = C_2 - C_1$. 
-Both of them are seen some 3d point $X$. 
+Both of them are seen as some 3d point $X$. 
 This point projections are $m_1$ and $m_2$ respectivly. 
 Points $C_1, C_2$ and $X$ form an \textit{epipolar plane} $\sigma$.
 $\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are images of \textit{epipolar lines}. 
@@ -298,14 +298,14 @@ Epipolar constraint looks like
 $$
 \begin{bmatrix} m_2 & | & 1 \end{bmatrix} F \begin{bmatrix} m_1 \\ 1 \end{bmatrix} = 0
 $$
-$F$ maps points to lines, such as
+$F$ maps point to lines, such as
 $$
 \lambda l_1 = F^T \begin{bmatrix} m_2 \\ 1 \end{bmatrix}
 $$
 $$
 \lambda l_2 = F \begin{bmatrix} m_1 \\ 1 \end{bmatrix}
 $$
-Also some other properties of $F$ matrix:
+Also, some other properties of the $F$ matrix:
 $$
 F \begin{bmatrix} e_1 \\ 1 \end{bmatrix} = F^T \begin{bmatrix} e_2 \\ 1 \end{bmatrix} = 0
 $$
