@@ -3,8 +3,8 @@
 
 \section{Homogenous coordinate system}
 
-In projective geometry, the homogenous coordinate system is used the same way Cartesian coordinates are used in Euclidean geometry. 
-To transform a point $x=(u, v)$ from cartesian coordinates to homogenous, simply add the third coordinate 1: $x=(u, v, 1)$.
+In projective geometry, the homogenous coordinate system is used in the same way as Cartesian coordinates are in Euclidean geometry.
+To transform a point $x=(u, v)^T$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $x=(u, v, 1)^T$.
 Homogenous coordinates are used to simplify the 2D transformation operations:
 
 \begin{center}
@@ -52,7 +52,7 @@ $$
 \end{bmatrix}
 $$ 
 
-To apply any transformation, we need to make a sequence of matrix multiplications, but this is not the case with translation - we need an addition operation for that. Here is what all these operations look like in projective geometry:
+To apply any transformation, it is required to make a sequence of matrix multiplications, but this is not the case with translation - an addition operation is needed for that. Here are these operation in projective geometry:
 
 \begin{center}
     \textbf{Scale}
@@ -108,9 +108,16 @@ So in the homogenous coordinate system, all 2d transformations can be combined a
 \subsection{Infinity}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=1\textwidth]{graphics/parallel_intersection.jpg}
+    \includegraphics[width=0.7\textwidth]{graphics/parallel_intersection.jpg}
     \caption{Parallel lines intersection}
     \label{fig:intersection_parallel}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{graphics/homogenous.png}
+    \caption{Scheme of homogenous coordinates}
+    \label{fig:homogenous}
 \end{figure}
 
 In Euclidian geometry, parallel lines are the lines that have no intersection point. 
@@ -121,13 +128,6 @@ In the 3D world, we know that lines $l_l \parallel l_r$, but after projection on
 
 Both line and point in a homogenous coordinates can be expressed as vector of three numbers, but if in case of a point homogenous $x = (x, y, z)^T$ will be $m = (\frac{x}{z}, \frac{y}{z})^T$, line $l = (a, b, c)^T$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
 In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $x_{\infty} = (u, v, 0)^T, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $l = (0, 0, c), c \neq 0$. In algebraic representation, both ideal point and line are lying at the plane $\Pi_0$ (\autoref{fig:homogenous}, green lines).
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=.5\textwidth]{graphics/homogenous.png}
-    \caption{Scheme of homogenous coordinates}
-    \label{fig:homogenous}
-\end{figure}
 
 \section{Pinhole camera model}
 A pinhole camera - or a canonical perspective camera model - is a model of a simple camera without optics.
@@ -144,14 +144,14 @@ This model can be used to express camera geometry with a field of view angles le
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=1\textwidth]{graphics/td_scene_yz.png}
+    \includegraphics[width=0.9\textwidth]{graphics/td_scene_yz.png}
     \caption{The pinhole camera model, y-z plane}
     \label{fig:td_scene_yz}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=.5\textwidth]{graphics/td_scene_xy.png}
+    \includegraphics[width=.4\textwidth]{graphics/td_scene_xy.png}
     \caption{The pinhole camera model, x-y plane}
     \label{fig:td_scene_xy}
 \end{figure}
