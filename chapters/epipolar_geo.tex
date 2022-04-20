@@ -1,107 +1,46 @@
-\chapter{Basic concepts}
-\label{chapter:epipilar_geo}
+\chapter{Preliminaries}
 
+\label{chapter:epipilar_geo}
 \section{Homogenous coordinate system}
 
 In projective geometry, the homogenous coordinate system is used in the same way as Cartesian coordinates are in Euclidean geometry.
 To transform a point $x=(u, v)^T$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $x=(u, v, 1)^T$.
-Homogenous coordinates are used to simplify the 2D transformation operations:
+Homogenous coordinates are used to simplify the 2D transformation operations: 
 
-\begin{center}
-    \textbf{Scale}
-\end{center}
-$$
-\begin{bmatrix}
-    x_1 \\ y_1
-\end{bmatrix} = 
-\begin{bmatrix}
-    s_x & 0 \\
-    0 & s_y
-\end{bmatrix}
-\begin{bmatrix}
-    x_0 \\ y_0
-\end{bmatrix}
-$$ 
-\begin{center}
-    \textbf{Rotation}    
-\end{center}
-$$
-\begin{bmatrix}
-    x_1 \\ y_1
-\end{bmatrix} = 
-\begin{bmatrix}
-    cos(\theta) & -sin(\theta) \\
-    sin(\theta) & cos(\theta)
-\end{bmatrix}
-\begin{bmatrix}
-    x_0 \\ y_0
-\end{bmatrix}
-$$
-\begin{center}
-    \textbf{Translation}    
-\end{center}
-$$
-\begin{bmatrix}
-    x_1 \\ y_1
-\end{bmatrix} = 
-\begin{bmatrix}
-    x_0 \\ y_0
-\end{bmatrix} +
-\begin{bmatrix}
-    t_x \\ t_y
-\end{bmatrix}
-$$ 
 
-To apply any transformation, it is required to make a sequence of matrix multiplications, but this is not the case with translation - an addition operation is needed for that. Here are these operation in projective geometry:
+\begin{equation}
+    m_1 = 
+    S R
+    m_0
+    + \vec{t}
+\end{equation}
+where 
+$\begin{bmatrix} x_0 \\ y_0 \end{bmatrix}$
+is an original point,
+$\begin{bmatrix} x_1 \\ y_1 \end{bmatrix}$
+is a transformed point,
+$S = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}$ 
+is a scale matrix, 
+$R = \begin{bmatrix} cos(\theta) & -sin(\theta) \\ sin(\theta) & cos(\theta) \end{bmatrix}$ 
+is a rotationa matrix and 
+$\vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix}$ 
+is a translation vector.
 
-\begin{center}
-    \textbf{Scale}
-\end{center}
-$$
-\begin{bmatrix}
-    x_1 \\ y_1 \\ 1
-\end{bmatrix} = 
-\begin{bmatrix}
-    s_x & 0 & 0\\
-    0 & s_y & 0\\
-    0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-    x_0 \\ y_0 \\ 1
-\end{bmatrix}
-$$ 
-\begin{center}
-    \textbf{Rotation}    
-\end{center}
-$$
-\begin{bmatrix}
-    x_1 \\ y_1 \\ 1
-\end{bmatrix} = 
-\begin{bmatrix}
-    cos(\theta) & -sin(\theta) & 0 \\
-    sin(\theta) & cos(\theta)  & 0 \\
-    0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-    x_0 \\ y_0 \\ 1
-\end{bmatrix}
-$$
-\begin{center}
-    \textbf{Translation}    
-\end{center}
-$$
-\begin{bmatrix}
-    x_1 \\ y_1 \\ 1
-\end{bmatrix} = 
-\begin{bmatrix}
-    1 & 0 & t_x\\
-    0 & 1 & t_y\\
-    0 & 0 & 1
-\end{bmatrix}
-\begin{bmatrix}
-    x_0 \\ y_0 \\ 1
-\end{bmatrix}
-$$ 
+To apply a transformation, it is required to make a sequence of matrix multiplications, but this is not the case with translation - an addition operation is needed for that. 
+Here are these operation in projective geometry:
+
+\begin{equation}
+    \begin{bmatrix} m_1 \\ 1 \end{bmatrix} = 
+    S_H R_H T_H
+    \begin{bmatrix} m_0 \\ 1 \end{bmatrix}    
+\end{equation}
+where 
+$S_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}$
+, 
+$R_H = \begin{bmatrix} cos(\theta) & -sin(\theta) & 0 \\ sin(\theta) & cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}$
+and
+$T_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix}$
+is a translation matrix.
 
 So in the homogenous coordinate system, all 2d transformations can be combined and expressed as matrix multiplications.
 
@@ -127,7 +66,10 @@ In the image \autoref{fig:intersection_parallel} let $l_r = Pr_1 \cap Pr_2 $ and
 In the 3D world, we know that lines $l_l \parallel l_r$, but after projection on the image plane $\Pi$, we can calculate - in this case even see - the intersecting point $P_{\infty}$. 
 
 Both line and point in a homogenous coordinates can be expressed as vector of three numbers, but if in case of a point homogenous $x = (x, y, z)^T$ will be $m = (\frac{x}{z}, \frac{y}{z})^T$, line $l = (a, b, c)^T$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
-In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $x_{\infty} = (u, v, 0)^T, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $l = (0, 0, c), c \neq 0$. In algebraic representation, both ideal point and line are lying at the plane $\Pi_0$ (\autoref{fig:homogenous}, green lines).
+In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $x_{\infty} = (u, v, 0)^T, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $l = (0, 0, c)^T, c \neq 0$. In algebraic representation, both ideal point and line are lying at the plane $\Pi_0$ (\autoref{fig:homogenous}, green lines).
+
+\subsection{Vanishing points}
+% TODO!
 
 \section{Pinhole camera model}
 A pinhole camera - or a canonical perspective camera model - is a model of a simple camera without optics.
@@ -169,24 +111,28 @@ Optical axis $O$ is a ray perpendicular to plane $\Pi$, and on the image the poi
     \label{fig:Kframes}
 \end{figure}
 Camera calibration matrix - a matrix that includes camera \textit{intrinsic} parameters - pixel size ($e_u$ and $e_v$) and pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio $\bf{a}$ and principle point coordinates $x_p = (u_0, v_0)$.
-$$
-K = \begin{bmatrix}
-    af & -a f cot(\theta) & u_0 \\
-    0 & f / sin(\theta) & v_0 \\
-    0 & 0 & 1 \\
-\end{bmatrix} \hspace{1cm} units: [f]=px, [u_0]=px, [v_0]=px, [a]=1
-$$ 
+\begin{equation}
+    \textrm{K =}\begin{bmatrix}
+        af & -a f cot(\theta) & u_0 \\
+        0 & f / sin(\theta) & v_0 \\
+        0 & 0 & 1 \\
+    \end{bmatrix} 
+    \textrm{ units: } [f]=px, [u_0]=px, [v_0]=px, [a]=1
+\end{equation}
+
+
 Where $f$ is a focal length used to convert world length ratios to pixels.
 
 In the modern world, every digital camera has a calibration matrix with a square pixel, so in most cases, the camera matrix looks like this:
 
-$$
-K = \begin{bmatrix}
-    f & 0 & u_0 \\
-    0 & f & v_0 \\
-    0 & 0 & 1 \\
-\end{bmatrix}
-$$
+\begin{equation}
+    \label{eq:kmat}
+    \textrm{K = }\begin{bmatrix}
+        f_x & 0 & u_0 \\
+        0 & f_y & v_0 \\
+        0 & 0 & 1 \\
+    \end{bmatrix}    
+\end{equation}
 
 \subsection{Projection matrix}
 
@@ -196,75 +142,76 @@ $$
     \caption{Changing the world (outer) reference frame}
     \label{fig:frames}
 \end{figure}
+
 To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $P$ is used. 
-The canonical projection matrix $P_0$ assumes that the camera is in the world coordinate centre and that the calibration matrix $K = \bf{I}$
-$$
-P_0 = \begin{bmatrix} \bf{I} & | & 0 \end{bmatrix} = 
+The canonical projection matrix $P_0$ assumes that the camera is in the world coordinate centre and that the calibration matrix $K = I$
+\begin{equation}
+P_0 = \begin{bmatrix} I & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix}
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
     0 & 0 & 1 & 0 \\
-    \end{bmatrix}
-$$
+    \end{bmatrix}    
+\end{equation}
+
 However, this case is degenerate. 
 As far as each camera is different, the canonical projection matrix is never used. Instead, image projection matrix $P$ is used, with applied calibration matrix $K$ to transform canonical $P_0$ to perspective $P$:
 
-$$
-P = \bf{K} \begin{bmatrix} \bf{I} & | & 0 \end{bmatrix} = 
+\begin{equation}
+P = K \begin{bmatrix} I & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix} 
-    f & 0 & u_0 & 0 \\
-    0 & f & v_0 & 0 \\ 
+    f_x & 0 & u_0 & 0 \\
+    0 & f_y & v_0 & 0 \\ 
     0 & 0 & 1 & 0 \\
-    \end{bmatrix}
-$$
+    \end{bmatrix}    
+\end{equation}
 
-However, not always; the world coordinate centre is located at point $C$ \autoref{fig:frames}. 
-Usually it is rotated using a rotation matrix $R$ and translated on vector $t$ where $R$ is a $3x3$ matrix with $det(R) = 1$ and $R^{-1} = R^T$. 
+However, usually the world coordinate centre is not located at point $\vec{C}$ \autoref{fig:frames}. 
+Usually it is rotated using a rotation matrix $R$ and translated on vector $\vec{t}$ where $R$ is a $3x3$ matrix with $det(R) = 1$ and $R^{-1} = R^T$. 
 So, in the general case:
+\begin{equation}
+    P = K \begin{bmatrix} R & | & \vec{t} \end{bmatrix} = 
+    K \begin{bmatrix} R & | & - R \bf{C} \end{bmatrix}
+\end{equation}
 
-$$
-P =   K \begin{bmatrix} \bf{R} & | & \vec{\bf{t}} \end{bmatrix} = 
-        K \begin{bmatrix} \bf{R} & | & - \bf{R} \bf{C} \end{bmatrix}
-$$
-where $C$ is often used as a camera position in a world reference frame. 
-So matrix $P$ have six intrinsic parameters: 3 Euler angles and three translation components. 
+where $\vec{C}$ is often used as a camera position in a world reference frame. 
+So matrix $\bf{P}$ have six intrinsic parameters: three Euler angles and three translation components. 
 
 \subsection{Projection equation}
 
-Image point $m = (u, v)^T$ can be obtained from a point $X$ using $P$ 
+Image point $m = (u, v)^T$ can be obtained from a 3D point $X$ using matrix $\bf{P}$:
 
-$$
-\lambda \begin{bmatrix} 
-    u \\ v \\ 1 \end{bmatrix} = P \begin{bmatrix} x \\ y \\ z \\ 1
-\end{bmatrix}
-$$
-$$
-\lambda \begin{bmatrix} 
-    \vec{m} \\ 1 \end{bmatrix} = P \begin{bmatrix} \vec{X} \\ 1
+\begin{equation}
+    \label{eq:projection}
+    \lambda \begin{bmatrix} 
+        u \\ v \\ 1 \end{bmatrix} = P \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}
-$$
+\end{equation}
+
+\begin{equation}
+    \lambda \begin{bmatrix} 
+    \vec{m} \\ 1 \end{bmatrix} = P \begin{bmatrix} \vec{X} \\ 1
+        \end{bmatrix}
+\end{equation}
 Where $\lambda \neq 0$
 
 \section{Epipolar geometry}
 
 \subsection{Skew-symmetric 3x3 matrix}
-From \cite{hartley_zisserman_2004}, p.581.
-
-
-Skew-symmetric or antisymetric matrix is such matrix $[b]_{\times}$ that $[b]_{\times}^T = -[b]_{\times}$. 
+As it is written in a book \cite{hartley_zisserman_2004}, p. 581, a skew-symmetric or antisymetric matrix is such matrix $[b]_{\times}$ that $[b]_{\times}^T = -[b]_{\times}$. 
 For vector $b = (b_1, b_2, b_3)^T$:
+\begin{equation}
+    [b]_{\times} = \begin{bmatrix}
+        0 & -b_3 & b_2 \\ 
+        b_3 & 0 & b_1 \\ 
+        -b_2 & b_1 & 0 \\ 
+    \end{bmatrix}    
+\end{equation}
 
-$$
-[b]_{\times} = \begin{bmatrix}
-    0 & -b_3 & b_2 \\ 
-    b_3 & 0 & b_1 \\ 
-    -b_2 & b_1 & 0 \\ 
-\end{bmatrix}
-$$
 This matrix has some essential properties, but the most important in this thesis - it generalizes across a product as matrix multiplication.
-$$
-a \times b = [a]_{\times} b
-$$
+\begin{equation}
+    a \times b = [a]_{\times} b
+\end{equation}
 
 \subsection{Epipolar geometry}
 \begin{figure}[h]
@@ -273,39 +220,98 @@ $$
     \caption{Epipolar geometry scheme}
     \label{fig:epipolar_std}
 \end{figure}
-\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $C_1$ and $C_2$ connected with a base line $b = C_2 - C_1$. 
+
+\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $C_1$ and $C_2$ connected with a base line $\vec{b} = C_2 - C_1$. 
 Both of them are seen as some 3d point $X$. 
 This point projections are $m_1$ and $m_2$ respectivly. 
 Points $C_1, C_2$ and $X$ form an \textit{epipolar plane} $\sigma$.
 $\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are images of \textit{epipolar lines}. 
-Epipolar line $l_1$ passes through \textit{epipole} $e_1$, where $\lambda [e_1 | 1]^T = P_2 C_1$, respectivly $\lambda [e_2 | 1]^T = P_1 C_2$.
+Epipolar line $l_1$ passes through \textit{epipole} $e_1$, where $\lambda [e_1 | 1]^T = \bf{P_2} C_1$, same with $\lambda [e_2 | 1]^T = \bf{P_1} C_2$.
 
 \subsection{Epipolar constraint}
-Having a set of two cameras the relationship between them and constraints on them can be expressed by two new matrices: 
-\textit{Essential matrix} $E \in \mathbb{R}^{3x3}, rank(E) = 2$
-$$
-E = R_2 [C_2 - C_1]_{\times} R_1^T = [-t_{21}]_{\times}R_{21}
-$$ 
-and \textit{Fundamental matrix} $F \in \mathbb{R}^{3x3}, rank(F) = 2$
-$$
-F = K_2^{-T} R_2 [C_2 - C_1]_{\times} R_1^T K_1^{-1} = K_2^{-T} [-t_{21}]_{\times} R_{21} K_1^{-1} = K_2^{-T} E K_1^{-1}
-$$
+
+Having a set of two cameras the relationship between them and constraints on them can be expressed by two new matrices \textit{Essential matrix} $E \in \mathbb{R}^{3x3}, rank(E) = 2$, \autoref{eq:E} and \textit{Fundamental matrix} $F \in \mathbb{R}^{3x3}, rank(F) = 2$, \autoref{eq:F}
+\begin{equation}
+    \label{eq:E}
+    E = R_2 [C_2 - C_1]_{\times} R_1^T = [-\vec{t}_{21}]_{\times}R_{21}    
+\end{equation}
+\begin{equation}
+    \label{eq:F}
+    F = K_2^{-T} R_2 [C_2 - C_1]_{\times} R_1^T K_1^{-1} = K_2^{-T} [-\vec{t}_{21}]_{\times} R_{21} K_1^{-1} = K_2^{-T} E K_1^{-1}
+\end{equation}
 where 
 $R_{21} = R_2 R_1^T$ is a relative camera rotation and 
-$t_{21} = -R_2 b = t_2 - R_{21}t_1$ is a relative camera translation.
-The translation $t_{21}$ is lost since E is homogenous.
-Epipolar constraint looks like
-$$
-\begin{bmatrix} m_2 & | & 1 \end{bmatrix} F \begin{bmatrix} m_1 \\ 1 \end{bmatrix} = 0
-$$
-$F$ maps point to lines, such as
-$$
-\lambda l_1 = F^T \begin{bmatrix} m_2 \\ 1 \end{bmatrix}
-$$
-$$
-\lambda l_2 = F \begin{bmatrix} m_1 \\ 1 \end{bmatrix}
-$$
-Also, some other properties of the $F$ matrix:
-$$
-F \begin{bmatrix} e_1 \\ 1 \end{bmatrix} = F^T \begin{bmatrix} e_2 \\ 1 \end{bmatrix} = 0
-$$
+$\vec{t}_{21} = -R_2 \vec{b} = \vec{t}_2 - R_{21}\vec{t}_1$ is a relative camera translation.
+The translation scale $\vec{t}_{21}$ is lost since E is homogenous.
+
+An algebraic expression of important properties of matrix $F$:
+\begin{equation}
+    \label{eq:Fm2}
+    \lambda l_1 = F^T \begin{bmatrix} m_2 \\ 1 \end{bmatrix}    
+\end{equation}
+\begin{equation}
+    \label{eq:Fm1}
+    \lambda l_2 = F \begin{bmatrix} m_1 \\ 1 \end{bmatrix}    
+\end{equation}
+\begin{equation}
+    \label{eq:fefe}
+    F \begin{bmatrix} e_1 \\ 1 \end{bmatrix} = F^T \begin{bmatrix} e_2 \\ 1 \end{bmatrix} = 0    
+\end{equation}
+\begin{equation}
+    \label{eq:epiconstr}
+    \begin{bmatrix} m_2 & | & 1 \end{bmatrix} F \begin{bmatrix} m_1 \\ 1 \end{bmatrix} = 0    
+\end{equation}
+Matrix $F$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm1} and \autoref{eq:Fm2}); epipoles $e_1$ and $e_2$ are right and left nullspaces basis vectors of $F$ respectivly (\autoref{eq:fefe}).
+Epipolar constraint \autoref{eq:epiconstr} means that a point and it's corespondent line are on a same plane (\autoref{fig:epipolar_std}, plane $\sigma$).
+
+\section{Stereovision}
+
+
+\section{Calibration}
+\subsection{Single camera calibration}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\textwidth]{graphics/calibration.png}
+    \caption{Calibration process}
+    \label{fig:calib}
+\end{figure}
+
+\begin{figure}[!hp]
+    \begin{subfigure}[b]{0.45\textwidth}
+      \includegraphics[width=\textwidth]{graphics/chessboard_img.png}
+      \caption{Original image with radial distortion.}
+      \label{fig:chb1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+      \includegraphics[width=\textwidth]{graphics/chessboard_img_rect.png}
+      \caption{Rectified image with no distortion.}
+      \label{fig:chb2}
+    \end{subfigure}
+    \caption{Camera image before and after the calibration}
+    \label{fig:chb}
+\end{figure}
+
+Camera calibration - or \textit{Camera resection} process of computing the camera calibration matrix $K$ (\autoref{eq:kmat}).
+Usually, it is done with some pattern with predefine parameters, as a chessboard or more advanced boards (ArUco and ChArUco\footnote{\href{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}{Opencv ChArUco and ArUco boards}}).
+
+Camera calibration is necessary for geometry correction (\autoref{fig:chb}), so as a result parallel lines in 3D are parallel on the image after the rectification and image unwraped and projected on a plane.
+
+In a real world lenses has also some distortion (\autoref{fig:chb1}) so to fix that distortion coefficients should be calculated: radial distortion $k_1, k_2, k_3, k_4, k_5, k_6$ and tangential distortion $p_1, p_2$.
+
+Than instead \autoref{eq:projection} considering \autoref{eq:kmat} there is:
+\begin{equation}
+    x' = x/z
+    y' = y/z
+\end{equation}
+% \begin{equation}
+    
+% \end{equation}
+\begin{equation}
+    u = f_x x"
+\end{equation}
+\begin{equation}
+    v = f_y y"
+\end{equation}
+\subsection{Stereopair calibration}
