@@ -65,7 +65,7 @@ How is it possible?
 In the image \autoref{fig:intersection_parallel} let $l_r = Pr_1 \cap Pr_2 $ and $l_l = Pl_1 \cap Pl_2$. 
 In the 3D world, we know that lines $l_l \parallel l_r$, but after projection on the image plane $\Pi$, we can calculate - in this case even see - the intersecting point $P_{\infty}$. 
 
-Both line and point in a homogenous coordinates can be expressed as vector of three numbers, but if in case of a point homogenous $x = (x, y, z)^T$ will be $m = (\frac{x}{z}, \frac{y}{z})^T$, line $l = (a, b, c)^T$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
+Both line and point in a homogenous coordinates can be expressed as vector of three numbers: a homogenous point $x = (x, y, z)^T$ will be $m = (\frac{x}{z}, \frac{y}{z})^T$, line $l = (a, b, c)^T$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
 In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $x_{\infty} = (u, v, 0)^T, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $l = (0, 0, c)^T, c \neq 0$. In algebraic representation, both ideal point and line are lying at the plane $\Pi_0$ (\autoref{fig:homogenous}, green lines).
 
 \subsection{Vanishing points}
@@ -300,18 +300,32 @@ Camera calibration is necessary for geometry correction (\autoref{fig:chb}), so 
 
 In a real world lenses has also some distortion (\autoref{fig:chb1}) so to fix that distortion coefficients should be calculated: radial distortion $k_1, k_2, k_3, k_4, k_5, k_6$ and tangential distortion $p_1, p_2$.
 
-Than instead \autoref{eq:projection} considering \autoref{eq:kmat} there is:
+From the \autoref{eq:projection}:
 \begin{equation}
-    x' = x/z
-    y' = y/z
-\end{equation}
-% \begin{equation}
-    
-% \end{equation}
-\begin{equation}
-    u = f_x x"
+    \label{eq:dist_start}
+    \lambda \begin{bmatrix} 
+        u \\ v \\ 1 \end{bmatrix} = K [R | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
+    \end{bmatrix}
 \end{equation}
 \begin{equation}
-    v = f_y y"
+    \begin{bmatrix} x_c \\ y_c \\ z_c \end{bmatrix}
+     = [R | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
+    \end{bmatrix}
 \end{equation}
+\begin{equation}
+    u' = \frac{x_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + p_1(r + 2x') + 2p_2\frac{x_c y_c}{z^2_c}
+\end{equation}
+\begin{equation}
+    v' = \frac{y_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + 2p_1(\frac{x_c y_c}{z_c^2}) + p_2(r + 2y')
+\end{equation}
+where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. Then undistorted point will be
+\begin{equation}
+    \label{eq:dist_end}
+    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = K \begin{bmatrix} u' \\ v' \\ 1 \end{bmatrix}
+\end{equation}
+
+Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated camera with projection matrix $P$ will look like \autoref{eq:dist_start} - \autoref{eq:dist_end}.
+
+
+
 \subsection{Stereopair calibration}
