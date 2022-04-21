@@ -1,0 +1,5 @@
+% Camera calibration
+% This is done by knowing the 3D position of each interest point and it's projections (colored sircles on \autoref{fig:calib}), and after taking a sample of images on a static camera and the pattern moving along X and Y axis with different scale and skew.
+% Then some algorithm can be used to estimate unknown parameters of a calibration matrix, for example: estimate the camera projection matrix (can be done from 6 correspondences) and decompose it to $R$, $\vec{t}$ and $K$ 
+
+% In ROS, there is a package that can be used for a camera calibration\footnote{\href{http://wiki.ros.org/camera_calibration}{ROS camera calibration package}}. As input it takes a chessboard parameters (square size and number of squares) then in an interactive mode it collects images for calibration and as a result save a file with camera calibration matrix and distortion coeficiants (if needed).
