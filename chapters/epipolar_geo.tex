@@ -100,8 +100,8 @@ This model can be used to express camera geometry with a field of view angles le
 
 In the physical implementation of the Obscure camera, the projective plane is on the opposite side from the Projection centre (or Camera centre $C$ in the pinhole camera model), the image is reversed and mirrored, but in most computer vision literature, authors assume that it is on the same side as an object (see \autoref{fig:td_scene_3d}).
 In \autoref{fig:td_scene_3d} we are looking through a camera with camera center $C$ in a coordinate system with origin at $C$ and basis vectors $(e_x, e_y, e_z)$ on a human. 
-Each point $X = (x, y, z)^T$ in a world coordinate system has it's projection $x_p = (x', y', 1)^T$ on a plane $\Pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
-Optical axis $O$ is a ray perpendicular to plane $\Pi$, and on the image the point $ O \cap \Pi = x_p$ is a center of the image, see \autoref{fig:td_scene_xy}).
+Each point $X = (x, y, z)^T$ in a world coordinate system has it's projection $x_p = (u, v)^T$ on a plane $\Pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
+Optical axis $O$ is a ray perpendicular to plane $\Pi$, and on the image the point $ O \cap \Pi = o$ is a center of the image, see \autoref{fig:td_scene_xy}).
 
 \subsection{Camera calibration matrix}
 \begin{figure}[h]
@@ -110,7 +110,7 @@ Optical axis $O$ is a ray perpendicular to plane $\Pi$, and on the image the poi
     \caption{Scheme of pixel, changing the image (inner) reference frame}
     \label{fig:Kframes}
 \end{figure}
-Camera calibration matrix - a matrix that includes camera \textit{intrinsic} parameters - pixel size ($e_u$ and $e_v$) and pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio $\bf{a}$ and principle point coordinates $x_p = (u_0, v_0)$.
+Camera calibration matrix - a matrix that includes camera \textit{intrinsic} parameters - pixel size ($e_u$ and $e_v$) and pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio $\bf{a}$ and principle point coordinates $o = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
 \begin{equation}
     \textrm{K =}\begin{bmatrix}
         af & -a f cot(\theta) & u_0 \\
@@ -233,7 +233,7 @@ Epipolar line $l_1$ passes through \textit{epipole} $e_1$, where $\lambda [e_1 |
 Having a set of two cameras the relationship between them and constraints on them can be expressed by two new matrices \textit{Essential matrix} $E \in \mathbb{R}^{3x3}, rank(E) = 2$, \autoref{eq:E} and \textit{Fundamental matrix} $F \in \mathbb{R}^{3x3}, rank(F) = 2$, \autoref{eq:F}
 \begin{equation}
     \label{eq:E}
-    E = R_2 [C_2 - C_1]_{\times} R_1^T = [-\vec{t}_{21}]_{\times}R_{21}    
+    E = R_2 [C_2 - C_1]_{\times} R_1^T = [-\vec{t}_{21}]_{\times}R_{21} = [\vec{b}]_{\times} R_{21}
 \end{equation}
 \begin{equation}
     \label{eq:F}
@@ -242,7 +242,7 @@ Having a set of two cameras the relationship between them and constraints on the
 where 
 $R_{21} = R_2 R_1^T$ is a relative camera rotation and 
 $\vec{t}_{21} = -R_2 \vec{b} = \vec{t}_2 - R_{21}\vec{t}_1$ is a relative camera translation.
-The translation scale $\vec{t}_{21}$ is lost since E is homogenous.
+The matrix $E$ can be calculated from image correspondences, but the translation scale $b$ is lost since E is homogenous, so after a decomposition of $E$ to $R$ and $b$ the translation distance will be lost.
 
 An algebraic expression of important properties of matrix $F$:
 \begin{equation}
@@ -266,6 +266,61 @@ Epipolar constraint \autoref{eq:epiconstr} means that a point and it's corespond
 
 \section{Stereovision}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{graphics/stereopair.png}
+    \caption{Scheme of stereovision}
+    \label{fig:sch_stereo}
+\end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{graphics/stereo_example.jpg}
+    \caption{Insustrial stereocamera example, Intel realsense D455}
+    \label{fig:stereo_ex}
+\end{figure}
+
+\begin{figure}[h]
+    \begin{subfigure}[b]{0.31\textwidth}
+      \includegraphics[width=\textwidth]{graphics/input_set.png}
+      \caption{Input set of images.}
+      \label{fig:chb1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.65\textwidth}
+      \includegraphics[width=\textwidth]{graphics/reconstructed.png}
+      \caption{reconstructed pointcloud.}
+      \label{fig:chb2}
+    \end{subfigure}
+    \caption{Three dimensional reconstruction from multiple cameras.}
+    \label{fig:chb}
+\end{figure}
+
+Computer stereovision is a process of extracting a stereo (depth) image from planar image or set of images of the same scene. Usually stereocamera has two simple cameras located on some distance $\vec{b}$ pointing to the same direction, same as human eye (the scheme \autoref{fig:sch_stereo} and an example of a stereocamera \autoref{fig:stereo_ex}). 
+Sometimes fusion of multiple cameras and other sensors can be used:
+Intel Realsense \autoref{fig:stereo_ex} has two cameras, IR sensor in case if the images have almost no texture and a color sensor). 
+
+\begin{equation}
+    \label{eq:e1e2}
+    e_1 = e_2 = \lambda \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}
+\end{equation}
+\begin{equation}
+    \label{eq:e1m1}
+    \lambda l_1 = e_1 \times m1 = [e_1]_\times \begin{bmatrix} m_1 \\ 1\end{bmatrix}
+\end{equation}
+\begin{equation}
+    \label{eq:F_simple}
+    F = \lambda [e_1]_\times = \lambda \begin{bmatrix}
+        0 & 0 & 0 \\
+        0 & 0 & -1 \\
+        0 & 1 & 0 \\
+    \end{bmatrix}
+\end{equation}
+
+It is possible to calculate only non-zero multiple of $E$ from image correspondences, so the scene can be reconstructed only up to a scale, but knowing the thanslation vector $\vec{b}$ (\autoref{fig:sch_stereo}), means having a calibrated stereopair, all distances can be calculated in world coordinates frame.
+By removing a rotation between cameras ($R = I$), all computations are simplified.
+
+Corresponding epipolar lines lie on same image rows ($l_1 = l_2$), and intersects at "points at infinity" (\autoref{eq:e1e2}). Epipole is a point of intersecting all epipolar lines, so having the intersecting point ($e_1$) and image point epipolar line can be calculated (\autoref{eq:e1m1}), therefore considering \autoref{eq:Fm1}, \autoref{eq:e1e2} and \autoref{eq:e1m1} the \autoref{eq:F_simple} is true.
+
 
 \section{Calibration}
 \subsection{Single camera calibration}
@@ -277,7 +332,7 @@ Epipolar constraint \autoref{eq:epiconstr} means that a point and it's corespond
     \label{fig:calib}
 \end{figure}
 
-\begin{figure}[!hp]
+\begin{figure}[h]
     \begin{subfigure}[b]{0.45\textwidth}
       \includegraphics[width=\textwidth]{graphics/chessboard_img.png}
       \caption{Original image with radial distortion.}
@@ -324,8 +379,6 @@ where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. The
     \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = K \begin{bmatrix} u' \\ v' \\ 1 \end{bmatrix}
 \end{equation}
 
-Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated camera with projection matrix $P$ will look like \autoref{eq:dist_start} - \autoref{eq:dist_end}.
-
-
+Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated camera with projection matrix $P$ will look as in \autoref{eq:dist_start} - \autoref{eq:dist_end}.
 
 \subsection{Stereopair calibration}
