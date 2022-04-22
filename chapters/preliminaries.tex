@@ -4,14 +4,14 @@
 \section{Homogenous coordinate system}
 
 In projective geometry, the homogenous coordinate system is used in the same way as Cartesian coordinates are in Euclidean geometry.
-To transform a point $x=(u, v)^T$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $x=(u, v, 1)^T$.
+To transform a point $x=(u, v)^\top$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $x=(u, v, 1)^\top$.
 Homogenous coordinates are used to simplify the 2D transformation operations: 
 
 
 \begin{equation}
-    m_1 = 
-    S R
-    m_0
+    \vec{m_1} = 
+    \pmb{\mathsf{S}} \pmb{\mathsf{R}}
+    \vec{m_0}
     + \vec{t}
 \end{equation}
 where 
@@ -19,9 +19,9 @@ $\begin{bmatrix} x_0 \\ y_0 \end{bmatrix}$
 is an original point,
 $\begin{bmatrix} x_1 \\ y_1 \end{bmatrix}$
 is a transformed point,
-$S = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}$ 
+$\pmb{\mathsf{S}} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}$ 
 is a scale matrix, 
-$R = \begin{bmatrix} cos(\theta) & -sin(\theta) \\ sin(\theta) & cos(\theta) \end{bmatrix}$ 
+$\pmb{\mathsf{R}} = \begin{bmatrix} cos(\theta) & -sin(\theta) \\ sin(\theta) & cos(\theta) \end{bmatrix}$ 
 is a rotationa matrix and 
 $\vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix}$ 
 is a translation vector.
@@ -30,16 +30,16 @@ To apply a transformation, it is required to make a sequence of matrix multiplic
 Here are these operation in projective geometry:
 
 \begin{equation}
-    \begin{bmatrix} m_1 \\ 1 \end{bmatrix} = 
-    S_H R_H T_H
-    \begin{bmatrix} m_0 \\ 1 \end{bmatrix}    
+    \begin{bmatrix} \vec{m_1} \\ 1 \end{bmatrix} = 
+    \pmb{\mathsf{S}}_H \pmb{\mathsf{R}}_H \pmb{\mathsf{T}}_H
+    \begin{bmatrix} \vec{m_0} \\ 1 \end{bmatrix}    
 \end{equation}
 where 
-$S_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}$
+$\pmb{\mathsf{S}}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}$
 , 
-$R_H = \begin{bmatrix} cos(\theta) & -sin(\theta) & 0 \\ sin(\theta) & cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}$
+$\pmb{\mathsf{R}}_H = \begin{bmatrix} cos(\theta) & -sin(\theta) & 0 \\ sin(\theta) & cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}$
 and
-$T_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix}$
+$\pmb{\mathsf{T}}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix}$
 is a translation matrix.
 
 So in the homogenous coordinate system, all 2d transformations can be combined and expressed as matrix multiplications.
@@ -62,11 +62,11 @@ So in the homogenous coordinate system, all 2d transformations can be combined a
 In Euclidian geometry, parallel lines are the lines that have no intersection point. 
 In projective geometry, parallel lines intersect at a point $x$ at infinity. 
 How is it possible? 
-In the image \autoref{fig:intersection_parallel} let $l_r = Pr_1 \cap Pr_2 $ and $l_l = Pl_1 \cap Pl_2$. 
-In the 3D world, we know that lines $l_l \parallel l_r$, but after projection on the image plane $\Pi$, we can calculate - in this case even see - the intersecting point $P_{\infty}$. 
+In the image \autoref{fig:intersection_parallel} let $\vec{l_r} = Pr_1 \cap Pr_2 $ and $\vec{l_l} = Pl_1 \cap Pl_2$. 
+In the 3D world, we know that lines $\vec{l_l} \parallel \vec{l_r}$, but after projection on the image plane $\pi$, we can calculate - in this case even see - the intersecting point $P_{\infty}$. 
 
-Both line and point in a homogenous coordinates can be expressed as vector of three numbers: a homogenous point $x = (x, y, z)^T$ will be $m = (\frac{x}{z}, \frac{y}{z})^T$, line $l = (a, b, c)^T$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
-In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $x_{\infty} = (u, v, 0)^T, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $l = (0, 0, c)^T, c \neq 0$. In algebraic representation, both ideal point and line are lying at the plane $\Pi_0$ (\autoref{fig:homogenous}, green lines).
+Both line and point in a homogenous coordinates can be expressed as vector of three numbers: a homogenous point $\vec{x} = (x, y, z)^\top$ will be $\vec{m} = (\frac{x}{z}, \frac{y}{z})^\top$, line $vec{l} = (a, b, c)^\top$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
+In general case point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $\vec{x}_{\infty} = (u, v, 0)^\top, \{u, v\} \neq 0$. Same about line - such line is called \textit{ideal line} and it's coordinates are $\vec{l} = (0, 0, c)^\top, c \neq 0$. In algebraic representation, both ideal point and line are at the plane $\pi_0$ (\autoref{fig:homogenous}, green lines).
 
 \subsection{Vanishing points}
 % TODO!
@@ -98,10 +98,10 @@ This model can be used to express camera geometry with a field of view angles le
     \label{fig:td_scene_xy}
 \end{figure}
 
-In the physical implementation of the Obscure camera, the projective plane is on the opposite side from the Projection centre (or Camera centre $C$ in the pinhole camera model), the image is reversed and mirrored, but in most computer vision literature, authors assume that it is on the same side as an object (see \autoref{fig:td_scene_3d}).
-In \autoref{fig:td_scene_3d} we are looking through a camera with camera center $C$ in a coordinate system with origin at $C$ and basis vectors $(e_x, e_y, e_z)$ on a human. 
-Each point $X = (x, y, z)^T$ in a world coordinate system has it's projection $x_p = (u, v)^T$ on a plane $\Pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
-Optical axis $O$ is a ray perpendicular to plane $\Pi$, and on the image the point $ O \cap \Pi = o$ is a center of the image, see \autoref{fig:td_scene_xy}).
+In the physical implementation of the Obscure camera, the projective plane is on the opposite side from the Projection centre (or Camera centre $\vec{C}$ in the pinhole camera model), the image is reversed and mirrored, but in most computer vision literature, authors assume that it is on the same side as an object (see \autoref{fig:td_scene_3d}).
+In \autoref{fig:td_scene_3d} we are looking through a camera with camera center $C$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e_x}, \vec{e_y}, \vec{e_z})$ on a human. 
+Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has it's projection $\vec{x_p} = (u, v)^\top$ on a plane $\pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
+Optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image the point $ \vec{O} \cap \pi = \vec{o}$ is a center of the image, see \autoref{fig:td_scene_xy}).
 
 \subsection{Camera calibration matrix}
 \begin{figure}[h]
@@ -110,9 +110,9 @@ Optical axis $O$ is a ray perpendicular to plane $\Pi$, and on the image the poi
     \caption{Scheme of pixel, changing the image (inner) reference frame}
     \label{fig:Kframes}
 \end{figure}
-Camera calibration matrix - a matrix that includes camera \textit{intrinsic} parameters - pixel size ($e_u$ and $e_v$) and pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio $\bf{a}$ and principle point coordinates $o = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
+Camera calibration matrix - a matrix that includes camera \textit{intrinsic} parameters - pixel size ($e_u$ and $e_v$) and pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio $\bf{a}$ and principle point coordinates $\vec{o} = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
 \begin{equation}
-    \textrm{K =}\begin{bmatrix}
+    \pmb{\mathsf{K}} = \begin{bmatrix}
         af & -a f cot(\theta) & u_0 \\
         0 & f / sin(\theta) & v_0 \\
         0 & 0 & 1 \\
@@ -127,7 +127,7 @@ In the modern world, every digital camera has a calibration matrix with a square
 
 \begin{equation}
     \label{eq:kmat}
-    \textrm{K = }\begin{bmatrix}
+    \pmb{\mathsf{K}} = \begin{bmatrix}
         f_x & 0 & u_0 \\
         0 & f_y & v_0 \\
         0 & 0 & 1 \\
@@ -143,10 +143,10 @@ In the modern world, every digital camera has a calibration matrix with a square
     \label{fig:frames}
 \end{figure}
 
-To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $P$ is used. 
-The canonical projection matrix $P_0$ assumes that the camera is in the world coordinate centre and that the calibration matrix $K = I$
+To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $\pmb{\mathsf{P}}$ is used. 
+The canonical projection matrix $\pmb{\mathsf{P}}_0$ assumes that the camera is in the world coordinate centre and that the calibration matrix $\pmb{\mathsf{K}} = \pmb{\mathsf{I}}$
 \begin{equation}
-P_0 = \begin{bmatrix} I & | & \vec{0} \end{bmatrix} = 
+\pmb{\mathsf{P}}_0 = \begin{bmatrix} \pmb{\mathsf{I}} & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix}
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
@@ -155,10 +155,10 @@ P_0 = \begin{bmatrix} I & | & \vec{0} \end{bmatrix} =
 \end{equation}
 
 However, this case is degenerate. 
-As far as each camera is different, the canonical projection matrix is never used. Instead, image projection matrix $P$ is used, with applied calibration matrix $K$ to transform canonical $P_0$ to perspective $P$:
+As far as each camera is different, the canonical projection matrix is never used. Instead, image projection matrix $\pmb{\mathsf{P}}$ is used, with applied calibration matrix $\pmb{\mathsf{K}}$ to transform canonical $\pmb{\mathsf{P}}_0$ to perspective $\pmb{\mathsf{P}}$:
 
 \begin{equation}
-P = K \begin{bmatrix} I & | & \vec{0} \end{bmatrix} = 
+\pmb{\mathsf{P}} = \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{I}} & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix} 
     f_x & 0 & u_0 & 0 \\
     0 & f_y & v_0 & 0 \\ 
@@ -167,11 +167,11 @@ P = K \begin{bmatrix} I & | & \vec{0} \end{bmatrix} =
 \end{equation}
 
 However, usually the world coordinate centre is not located at point $\vec{C}$ \autoref{fig:frames}. 
-Usually it is rotated using a rotation matrix $R$ and translated on vector $\vec{t}$ where $R$ is a $3x3$ matrix with $det(R) = 1$ and $R^{-1} = R^T$. 
+Usually it is rotated using a rotation matrix $\pmb{\mathsf{R}}$ and translated on vector $\vec{t}$ where $\pmb{\mathsf{R}}$ is a $3x3$ matrix with $det(\pmb{\mathsf{R}}) = 1$ and $\pmb{\mathsf{R}}^{-1} = \pmb{\mathsf{R}}^\top$. 
 So, in the general case:
 \begin{equation}
-    P = K \begin{bmatrix} R & | & \vec{t} \end{bmatrix} = 
-    K \begin{bmatrix} R & | & - R \bf{C} \end{bmatrix}
+    \pmb{\mathsf{P}} = \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & \vec{t} \end{bmatrix} = 
+    \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & - \pmb{\mathsf{R}} \pmb{\mathsf{C}} \end{bmatrix}
 \end{equation}
 
 where $\vec{C}$ is often used as a camera position in a world reference frame. 
@@ -179,18 +179,18 @@ So matrix $\bf{P}$ have six intrinsic parameters: three Euler angles and three t
 
 \subsection{Projection equation}
 
-Image point $m = (u, v)^T$ can be obtained from a 3D point $X$ using matrix $\bf{P}$:
+Image point $\vec{m} = (u, v)\top$ can be obtained from a 3D point $\vec{X}$ using matrix $\bf{P}$:
 
 \begin{equation}
     \label{eq:projection}
     \lambda \begin{bmatrix} 
-        u \\ v \\ 1 \end{bmatrix} = P \begin{bmatrix} x \\ y \\ z \\ 1
+        u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}
 \end{equation}
 
 \begin{equation}
     \lambda \begin{bmatrix} 
-    \vec{m} \\ 1 \end{bmatrix} = P \begin{bmatrix} \vec{X} \\ 1
+    \vec{m} \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} \vec{X} \\ 1
         \end{bmatrix}
 \end{equation}
 Where $\lambda \neq 0$
@@ -198,10 +198,10 @@ Where $\lambda \neq 0$
 \section{Epipolar geometry}
 
 \subsection{Skew-symmetric 3x3 matrix}
-As it is written in a book \cite{hartley_zisserman_2004}, p. 581, a skew-symmetric or antisymetric matrix is such matrix $[b]_{\times}$ that $[b]_{\times}^T = -[b]_{\times}$. 
-For vector $b = (b_1, b_2, b_3)^T$:
+As it is written in a book \cite{hartley_zisserman_2004}, p. 581, a skew-symmetric or antisymetric matrix is such matrix $[\vec{b}]_{\times}$ that $[\vec{b}]_{\times}^\top = -[\vec{b}]_{\times}$. 
+For vector $\vec{b} = (b_1, b_2, b_3)^\top$:
 \begin{equation}
-    [b]_{\times} = \begin{bmatrix}
+    [\vec{b}]_{\times} = \begin{bmatrix}
         0 & -b_3 & b_2 \\ 
         b_3 & 0 & b_1 \\ 
         -b_2 & b_1 & 0 \\ 
@@ -210,7 +210,7 @@ For vector $b = (b_1, b_2, b_3)^T$:
 
 This matrix has some essential properties, but the most important in this thesis - it generalizes across a product as matrix multiplication.
 \begin{equation}
-    a \times b = [a]_{\times} b
+    \vec{a} \times \vec{b} = [\vec{a}]_{\times} \vec{b}
 \end{equation}
 
 \subsection{Epipolar geometry}
@@ -221,47 +221,48 @@ This matrix has some essential properties, but the most important in this thesis
     \label{fig:epipolar_std}
 \end{figure}
 
-\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $C_1$ and $C_2$ connected with a base line $\vec{b} = C_2 - C_1$. 
+\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $\vec{C_1}$ and $\vec{C_2}$ connected with a base line $\vec{b} = \vec{C_2} - \vec{C_1}$. 
 Both of them are seen as some 3d point $X$. 
-This point projections are $m_1$ and $m_2$ respectivly. 
-Points $C_1, C_2$ and $X$ form an \textit{epipolar plane} $\sigma$.
-$\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are images of \textit{epipolar lines}. 
-Epipolar line $l_1$ passes through \textit{epipole} $e_1$, where $\lambda [e_1 | 1]^T = \bf{P_2} C_1$, same with $\lambda [e_2 | 1]^T = \bf{P_1} C_2$.
+This point projections are $\vec{m_1}$ and $\vec{m_2}$ respectivly. 
+Points $\vec{C_1}, \vec{C_2}$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
+$\sigma \cap \pi_1 = \vec{l_1}$ and $\sigma \cap \pi_2 = \vec{l_2}$ are images of \textit{epipolar lines}. 
+Epipolar line $\vec{l_1}$ passes through \textit{epipole} $\vec{e_1}$, where $\lambda [\vec{e_1} | 1]^\top = \pmb{\mathsf{P}}_2 \vec{C_1}$, same with $\lambda [\vec{e_2} | 1]^\top = \pmb{\mathsf{P}}_1 \vec{C_2}$.
 
 \subsection{Epipolar constraint}
 
-Having a set of two cameras the relationship between them and constraints on them can be expressed by two new matrices \textit{Essential matrix} $E \in \mathbb{R}^{3x3}, rank(E) = 2$, \autoref{eq:E} and \textit{Fundamental matrix} $F \in \mathbb{R}^{3x3}, rank(F) = 2$, \autoref{eq:F}
+Having a set of two cameras the relationship between them and constraints on them can be expressed by two new matrices \textit{Essential matrix} $\pmb{\mathsf{E}} \in \mathbb{R}^{3x3}, rank(\pmb{\mathsf{E}}) = 2$, \autoref{eq:E} and \textit{Fundamental matrix} $\pmb{\mathsf{F}} \in \mathbb{R}^{3x3}, rank(\pmb{\mathsf{F}}) = 2$, \autoref{eq:F}
 \begin{equation}
     \label{eq:E}
-    E = R_2 [C_2 - C_1]_{\times} R_1^T = [-\vec{t}_{21}]_{\times}R_{21} = [\vec{b}]_{\times} R_{21}
+    \pmb{\mathsf{E}} = \pmb{\mathsf{R}}_2 [\vec{C_2} - \vec{C_1}]_{\times} \pmb{\mathsf{R}}_1^\top = [-\vec{t}_{21}]_{\times} \pmb{\mathsf{R}}_{21} = [\vec{b}]_{\times} \pmb{\mathsf{R}}_{21}
 \end{equation}
 \begin{equation}
     \label{eq:F}
-    F = K_2^{-T} R_2 [C_2 - C_1]_{\times} R_1^T K_1^{-1} = K_2^{-T} [-\vec{t}_{21}]_{\times} R_{21} K_1^{-1} = K_2^{-T} E K_1^{-1}
+    \pmb{\mathsf{F}} = \pmb{\mathsf{K}}_2^{-T} \pmb{\mathsf{R}}_2 [\vec{C_2} - \vec{C_1}]_{\times} \pmb{\mathsf{R}}_1^\top \pmb{\mathsf{K}}_1^{-1} = 
+    \pmb{\mathsf{K}}_2^{-T} [-\vec{t}_{21}]_{\times} \pmb{\mathsf{R}}_{21} \pmb{\mathsf{K}}_1^{-1} = 
+    \pmb{\mathsf{K}}_2^{-T} \pmb{\mathsf{E}} \pmb{\mathsf{K}}_1^{-1}
 \end{equation}
 where 
-$R_{21} = R_2 R_1^T$ is a relative camera rotation and 
-$\vec{t}_{21} = -R_2 \vec{b} = \vec{t}_2 - R_{21}\vec{t}_1$ is a relative camera translation.
-The matrix $E$ can be calculated from image correspondences, but the translation scale $b$ is lost since E is homogenous, so after a decomposition of $E$ to $R$ and $b$ the translation distance will be lost.
+$\pmb{\mathsf{R}}_{21} = \pmb{\mathsf{R}}_2 \pmb{\mathsf{R}}_1^\top$ is a relative camera rotation and 
+$\vec{t}_{21} = -\pmb{\mathsf{R}}_2 \vec{b} = \vec{t}_2 - \pmb{\mathsf{R}}_{21}\vec{t}_1$ is a relative camera translation.
 
 An algebraic expression of important properties of matrix $F$:
 \begin{equation}
     \label{eq:Fm2}
-    \lambda l_1 = F^T \begin{bmatrix} m_2 \\ 1 \end{bmatrix}    
+    \lambda \vec{l_1} = \pmb{\mathsf{F}}^\top \begin{bmatrix} \vec{m_2} \\ 1 \end{bmatrix}    
 \end{equation}
 \begin{equation}
     \label{eq:Fm1}
-    \lambda l_2 = F \begin{bmatrix} m_1 \\ 1 \end{bmatrix}    
+    \lambda \vec{l_2} = \pmb{\mathsf{F}} \begin{bmatrix} \vec{m_1} \\ 1 \end{bmatrix}
 \end{equation}
 \begin{equation}
     \label{eq:fefe}
-    F \begin{bmatrix} e_1 \\ 1 \end{bmatrix} = F^T \begin{bmatrix} e_2 \\ 1 \end{bmatrix} = 0    
+    \pmb{\mathsf{F}} \begin{bmatrix} \vec{e_1} \\ 1 \end{bmatrix} = \pmb{\mathsf{F}}^\top \begin{bmatrix} \vec{e_2} \\ 1 \end{bmatrix} = 0    
 \end{equation}
 \begin{equation}
     \label{eq:epiconstr}
-    \begin{bmatrix} m_2 & | & 1 \end{bmatrix} F \begin{bmatrix} m_1 \\ 1 \end{bmatrix} = 0    
+    \begin{bmatrix} \vec{m_2} & | & 1 \end{bmatrix} \pmb{\mathsf{F}} \begin{bmatrix} \vec{m_1} \\ 1 \end{bmatrix} = 0    
 \end{equation}
-Matrix $F$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm1} and \autoref{eq:Fm2}); epipoles $e_1$ and $e_2$ are right and left nullspaces basis vectors of $F$ respectivly (\autoref{eq:fefe}).
+Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm1} and \autoref{eq:Fm2}); epipoles $\vec{e_1}$ and $\vec{e_2}$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\autoref{eq:fefe}).
 Epipolar constraint \autoref{eq:epiconstr} means that a point and it's corespondent line are on a same plane (\autoref{fig:epipolar_std}, plane $\sigma$).
 
 \section{Stereovision}
@@ -301,28 +302,28 @@ Intel Realsense \autoref{fig:stereo_ex} has two cameras, IR sensor in case if th
 
 \begin{equation}
     \label{eq:e1e2}
-    e_1 = e_2 = \lambda \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}
+    \vec{e_1} = \vec{e_2} = \lambda \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}
 \end{equation}
 \begin{equation}
     \label{eq:e1m1}
-    \lambda l_1 = e_1 \times m1 = [e_1]_\times \begin{bmatrix} m_1 \\ 1\end{bmatrix}
+    \lambda \vec{l_1} = \vec{e_1} \times \vec{m_1} = [\vec{e_1}]_\times \begin{bmatrix} \vec{m_1} \\ 1\end{bmatrix}
 \end{equation}
 \begin{equation}
     \label{eq:F_simple}
-    F = \lambda [e_1]_\times = \lambda \begin{bmatrix}
+    \pmb{\mathsf{F}} = \lambda [\vec{e_1}]_\times = \lambda \begin{bmatrix}
         0 & 0 & 0 \\
         0 & 0 & -1 \\
         0 & 1 & 0 \\
     \end{bmatrix}
 \end{equation}
 
-It is possible to calculate only non-zero multiple of $E$ from image correspondences, so the scene can be reconstructed only up to a scale, but knowing the thanslation vector $\vec{b}$ (\autoref{fig:sch_stereo}), means having a calibrated stereopair, all distances can be calculated in world coordinates frame.
-By removing a rotation between cameras ($R = I$), all computations are simplified.
+It is possible to calculate only non-zero multiple of $\pmb{\mathsf{E}}$ from image correspondences, so the scene can be reconstructed only up to a scale, but knowing the thanslation vector $\vec{b}$ (\autoref{fig:sch_stereo}), means having a calibrated stereopair, all distances can be calculated in world coordinates frame.
+By removing a rotation between cameras ($\pmb{\mathsf{R}} = \pmb{\mathsf{I}}$), all computations are simplified.
 
-Corresponding epipolar lines lie on same image rows ($l_1 = l_2$), and intersects at "points at infinity" (\autoref{eq:e1e2}). 
-Epipole is a point of intersecting all epipolar lines, so having the intersecting point ($e_1$) and image point epipolar line can be calculated (\autoref{eq:e1m1}), therefore considering \autoref{eq:Fm1}, \autoref{eq:e1e2} and \autoref{eq:e1m1} the \autoref{eq:F_simple} is true.
+Corresponding epipolar lines lie on same image rows ($\vec{l_1} = \vec{l_2}$), and intersects at "points at infinity" (\autoref{eq:e1e2}). 
+Epipole is a point of intersecting all epipolar lines, so having the intersecting point ($\vec{e_1}$) and image point epipolar line can be calculated (\autoref{eq:e1m1}), therefore considering \autoref{eq:Fm1}, \autoref{eq:e1e2} and \autoref{eq:e1m1} the \autoref{eq:F_simple} is true.
 
-What is more, consider two correspondences $c_1 = (u_1, v)$ and $c_2 = (u_2, v) $. For a correspondences matcher it is more efficient to have a predefined corelation between features - and knowing the fact that $v$ coordinate is the same (up to some error) is good enough constraint that can accelerate matching (and looking for more features).
+What is more, consider two correspondences $\vec{a_1} = (u_1, v)^\top$ and $\vec{a_2} = (u_2, v)^\top $. For a correspondences matcher it is more efficient to have a predefined corelation between features - and knowing the fact that $v$ coordinate is the same (up to some error) is good enough constraint that can accelerate matching (and looking for more features).
 
 Using this approach it is possible to receive even a dense pointcloud as on \autoref{fig:pc_output}.
 
@@ -364,12 +365,12 @@ From the \autoref{eq:projection}:
 \begin{equation}
     \label{eq:dist_start}
     \lambda \begin{bmatrix} 
-        u \\ v \\ 1 \end{bmatrix} = K [R | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
+        u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}
 \end{equation}
 \begin{equation}
     \begin{bmatrix} x_c \\ y_c \\ z_c \end{bmatrix}
-     = [R | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
+     = [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}
 \end{equation}
 \begin{equation}
@@ -381,13 +382,13 @@ From the \autoref{eq:projection}:
 where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. Then undistorted point will be
 \begin{equation}
     \label{eq:dist_end}
-    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = K \begin{bmatrix} u' \\ v' \\ 1 \end{bmatrix}
+    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} \begin{bmatrix} u' \\ v' \\ 1 \end{bmatrix}
 \end{equation}
 
 Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated camera with projection matrix $P$ will look as in \autoref{eq:dist_start} - \autoref{eq:dist_end}.
 
 \subsection{Stereopair calibration}
 
-Stereopair calibration is a process of estimation the essential matrix $E$ for a camera pair, that also can be computed from a relative rotation matrix $R_{21}$ and a relative translation vector $\vec{t_{21}}$ of a camera pair. One of approaches is to fix one camera  pose as world coordinate frame origin $C_1 = (0, 0, 0)^T$ and compute a pose of a second camera with respect to the first one. This can be done with a PnP (Perspective-n-Point) problem solver - estimation of a calibrated camera pose given a set of $n$ 3D points in a world coordinate frame. Minimal required $n=3$. 
+Stereopair calibration is a process of estimation the essential matrix $E$ for a camera pair, that also can be computed from a relative rotation matrix $\pmb{\mathsf{R}}_{21}$ and a relative translation vector $\vec{t_{21}}$ of a camera pair. One of approaches is to fix one camera  pose as world coordinate frame origin and compute a pose of a second camera with respect to the first one. This can be done with a PnP (Perspective-n-Point) problem solver - estimation of a calibrated camera pose given a set of $n$ 3D points in a world coordinate frame. Minimal required $n=3$. 
 
-Another possible approach is given an initial guess of a cameras poses and two sets of 3D points from both cameras fix the error by minimisation of the transformation between that point sets. This approach is described in \cite{Umeyama1991}, "Least-squares estimation of transformation parameters between two point patterns" - estimateion of needed $R$ and $\vec{t}$.
+Another possible approach is given an initial guess of a cameras poses and two sets of 3D points from both cameras fix the error by minimisation of the transformation between that point sets. This approach is described in \cite{Umeyama1991}, "Least-squares estimation of transformation parameters between two point patterns" - estimateion of needed $\pmb{\mathsf{R}}$ and $\vec{t}$.
