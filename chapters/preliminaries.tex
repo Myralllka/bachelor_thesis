@@ -283,16 +283,16 @@ Epipolar constraint \autoref{eq:epiconstr} means that a point and it's corespond
     \begin{subfigure}[b]{0.31\textwidth}
       \includegraphics[width=\textwidth]{graphics/input_set.png}
       \caption{Input set of images.}
-      \label{fig:chb1}
+      \label{fig:pc_input}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.65\textwidth}
       \includegraphics[width=\textwidth]{graphics/reconstructed.png}
       \caption{reconstructed pointcloud.}
-      \label{fig:chb2}
+      \label{fig:pc_output}
     \end{subfigure}
     \caption{Three dimensional reconstruction from multiple cameras.}
-    \label{fig:chb}
+    \label{fig:pc_recons}
 \end{figure}
 
 Computer stereovision is a process of extracting a stereo (depth) image from planar image or set of images of the same scene. Usually stereocamera has two simple cameras located on some distance $\vec{b}$ pointing to the same direction, same as human eye (the scheme \autoref{fig:sch_stereo} and an example of a stereocamera \autoref{fig:stereo_ex}). 
@@ -319,7 +319,12 @@ Intel Realsense \autoref{fig:stereo_ex} has two cameras, IR sensor in case if th
 It is possible to calculate only non-zero multiple of $E$ from image correspondences, so the scene can be reconstructed only up to a scale, but knowing the thanslation vector $\vec{b}$ (\autoref{fig:sch_stereo}), means having a calibrated stereopair, all distances can be calculated in world coordinates frame.
 By removing a rotation between cameras ($R = I$), all computations are simplified.
 
-Corresponding epipolar lines lie on same image rows ($l_1 = l_2$), and intersects at "points at infinity" (\autoref{eq:e1e2}). Epipole is a point of intersecting all epipolar lines, so having the intersecting point ($e_1$) and image point epipolar line can be calculated (\autoref{eq:e1m1}), therefore considering \autoref{eq:Fm1}, \autoref{eq:e1e2} and \autoref{eq:e1m1} the \autoref{eq:F_simple} is true.
+Corresponding epipolar lines lie on same image rows ($l_1 = l_2$), and intersects at "points at infinity" (\autoref{eq:e1e2}). 
+Epipole is a point of intersecting all epipolar lines, so having the intersecting point ($e_1$) and image point epipolar line can be calculated (\autoref{eq:e1m1}), therefore considering \autoref{eq:Fm1}, \autoref{eq:e1e2} and \autoref{eq:e1m1} the \autoref{eq:F_simple} is true.
+
+What is more, consider two correspondences $c_1 = (u_1, v)$ and $c_2 = (u_2, v) $. For a correspondences matcher it is more efficient to have a predefined corelation between features - and knowing the fact that $v$ coordinate is the same (up to some error) is good enough constraint that can accelerate matching (and looking for more features).
+
+Using this approach it is possible to receive even a dense pointcloud as on \autoref{fig:pc_output}.
 
 
 \section{Calibration}
@@ -383,3 +388,6 @@ Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated 
 
 \subsection{Stereopair calibration}
 
+Stereopair calibration is a process of estimation the essential matrix $E$ for a camera pair, that also can be computed from a relative rotation matrix $R_{21}$ and a relative translation vector $\vec{t_{21}}$ of a camera pair. One of approaches is to fix one camera  pose as world coordinate frame origin $C_1 = (0, 0, 0)^T$ and compute a pose of a second camera with respect to the first one. This can be done with a PnP (Perspective-n-Point) problem solver - estimation of a calibrated camera pose given a set of $n$ 3D points in a world coordinate frame. Minimal required $n=3$. 
+
+Another possible approach is given an initial guess of a cameras poses and two sets of 3D points from both cameras fix the error by minimisation of the transformation between that point sets. This approach is described in \cite{Umeyama1991}, "Least-squares estimation of transformation parameters between two point patterns" - estimateion of needed $R$ and $\vec{t}$.
