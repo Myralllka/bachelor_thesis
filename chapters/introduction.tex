@@ -3,23 +3,42 @@
 \label{chapter:intro}
 
 % TODO add sth like motivation
-Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. Drones are already wide used in cinematography\footnote{\href{https://coptrz.com/drones-in-filmmaking-the-best-drones-for-the-job/\#:~:text=How\%20drones\%20are\%20used\%20in\%20big\%2Dbudget\%20films}{Coptrz, "How drones are used in big-budget films}} and advertising\footnote{\href{https://www.bangkokpost.com/business/2124327/the-future-of-advertising-could-be-drones\#:~:text=However\%2C\%20using\%20drones\%20is\%20a,automobile\%20shows\%20and\%20other\%20campaigns.}{Bangkokpost, "The future of advertising could be drones"}}, In Ukraine they are very helpful in farming (to apply pesticides to fields)\footnote{\href{https://techukraine.org/portfolio/droneua-solution-of-field-cultivation-by-drones-up-to-1-million-hectares-in-ukraine/\#:~:text=Since\%202019\%2C\%20spraying\%20drones\%20began,not\%20depend\%20on\%20soil\%20moisture.}{DroneUA}}. City emergency departments use UAVs  - firefighters can use them to see and evaluate the situation from the sky, localise the source of fire and deal with that\footnote{\href{https://www.dslrpros.com/firefighting-drones.html}{Fire Fighting Drones}}, sometimes it even can have some fire-extinguishing capsules as projectiles\footnote{\href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9328798}{Autonomous Firefighting Inside Buildings by an Unmanned Aerial Vehicle}}. They are also quite popular in military industry.
+Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. Drones are already wide used in cinematography\cite{Mademlis2020}, advertising\cite{Ullah2021} and in farming\cite{Kim2019}. 
+City emergency departments use UAVs  - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out\cite{Pritzl2021}. 
+They are also quite popular in the military industry.
 
-The inspiration for this project was taken from DJI obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3}} on fifth November 2021. Despite the fact that the idea is old, neither DJI nor MRS nor other research groups have a well-developed visual obstacle avoidance system, the best for now can be Skydio obstacle avoidance system \footnotetext{\href
-{https://www.skydio.com/skydio-autonomy}{Skydio autonomy}}, so this direction is very perspective for researchers. Many drones available for sale are costly, and even a well-trained pilot is afraid of crashing. At the same time, autonomous drones are more predictable than a human pilot, behave acording to algorithms and can react much faster, but only if they have a well-designed system running on board, so obstacle avoidance for autonomous MAVs will be both more challenging and more critical in future trends.
-
+The inspiration for this project was taken from DJI obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3}}. 
+Even though the idea is old, neither DJI, MRS, nor other research groups have a well-developed visual obstacle avoidance system. The best, for now, can be the Skydio system \footnotetext{\href{https://www.skydio.com/skydio-autonomy}{Skydio autonomy}}. 
+This direction is very perspective for researchers. Many drones available for sale are costly, and even well-trained pilots are afraid of crashing. 
+At the same time, autonomous drones are more predictable than manned, behave according to algorithms, and react much faster, but only if they have a well-designed system running onboard, so obstacle avoidance for autonomous MAVs will be both more challenging and more critical task in future trends.
 
 \section{Related Works}
-There are several obstacle avoidance sensors used by various MAVs: stereo vision \cite{Ruf2018}, depth cameras (as Intel RealSense), monocular vision \cite{Mejias2010}, lidar (2d or 3d) \cite{Ramasamy2016}, sonar (ultrasonic), time of flight sensors, also combinations of them can be used. In \cite{Rambabu2015} the sensor fusion of ultrasonic and infrared sensors is presented.
+There are several obstacle avoidance sensors used by various MAVs: stereo vision \cite{Ruf2018}, depth cameras (as Intel RealSense), monocular vision \cite{Mejias2010}, lidar (2d or 3d) \cite{Ramasamy2016}, sonar (ultrasonic), time of flight sensors, also combinations of them can be used. 
+In \cite{Rambabu2015} the sensor fusion of ultrasonic and infrared sensors is presented.
 
-Each of them has its pros and cons. 3D lidars are expensive but the most efficient for today; 2d lidars are used for small ground vehicles, but not suitable for most tasks for MAVs (because a car can be modelled as a 2 DoF system, while MAV always has 6 DoF), depth cameras are relatively expensive too, ultrasonic and infrared sensors both have distance limits and other minor issues. Overall, stereo vision is the most promising approach for the nearest future.
+Each of them has its pros and cons. 
+3D lidars are more expensive than other sensors, but their efficiency is one of the best nowadays; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2DoF system, while MAVs always have 6DoF. 
+Depth cameras are more expensive than simple cameras. Ultrasonic and infrared sensors have distance limits and other minor issues ( a.e. sonar can be influenced by noise from the MAVs). 
 
-Most articles uses stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Yu2018, Lin2021, Xiao2019} or deep learning approaches \cite{Back2020, FragaLamas2019, Park2020, Roghair2021}. Real-time multi-camera feedback control system is introduced in \cite{He2021}, but this solution does not imply that drone can fly in any direction, only forward moving counted, still this work is inspiring.
+In most articles stereo pair of two parallel cameras looking in the same direction is used (classical stereo pair) \cite{Yu2018, Lin2021, Xiao2019}, deep learning approaches \cite{Back2020, FragaLamas2019, Park2020, Roghair2021} and Convolutional Neural Networks \cite{Yu2013, Ma2020}. 
+The real-time multi-camera feedback control system is introduced in \cite{He2021}, but this solution does not imply one drone, only multi-drone systems.
+
+Real-time simultaneous localization and mapping (SLAM) systems can also be used for obstacle avoidance \cite{Moreno2014}. 
+These problems are pretty closely related. 
+SLAM keeps track of an object's position while constructing and updating a map of an unknown environment; obstacle avoidance is a problem of detecting and avoiding the nearest obstacles in an unknown environment to keep drones safe.
+So both problems are related to making a 3D map of an unknown environment, but for obstacle avoidance, the precision of distance measurements to the nearest objects is much more critical.
+
+Structure from Motion (SfM) is another possible algorithm that can be used to implement a system for avoiding obstacles. 
+SfM is a method of depth map reconstruction from a set of explicit images, so using this approach, dense point clouds can be computed, and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
-% multiagent , cnns, add some slam things, describe structure from motion, feeature detectors
-While obstacle avoidance considers static objects, collision avoidance is related to averting crash with moving objects like other MAVs, cars or people. It is a complicated task but more relevant to multi-robot systems, because during interactions between robots they should not brake each other. 
+This thesis aims to create a visual obstacle avoidance system for MAVs, 3D model, assemble a device, and measure its efficiency. 
+The main restrictions for MAV are size and weight: the proposed device should be light and relatively small, and it would be nice to have it cheaper than competitors.
 
-The goal of this thesis is to implement an obstacle avoidance system, and expand it to collision avoidance system for autonomous MAVs driven by a Robotic operating system (ROS)\footnote{\href{https://www.ros.org/}{ROS home page}} using the MRS UAV system \cite{Baca2021} \footnote{\href{https://github.com/ctu-mrs/mrs_uav_system}{MRS UAV system}}.
+As a basis for software, Robotic operating system (ROS)\footnote{\href{https://www.ros.org/}{ROS home page}} is used, and the MRS UAV system \cite{Baca2021} \footnote{\href{https://github.com/ctu-mrs/mrs_uav_system}{MRS UAV system}} is used as a drone control environment.
 
-The problem solution can be devided into several steps: firstly it is necessary to model such device, assemble and calibrate it, then find a pointcloud using a structure from motion algorithm for each camera in a system and find moving objects using the fact of overlaping zones for each camera pair. Then use some algorithm for path planing to correct and update the previous path. As for now, the most complecated task is to find an obsticle using a visual method, so this thesis focuses on this particular part of a problem.
+The problem solution can be divided into several steps. 
+Firstly, it is necessary to make a math model of a device that can solve the problem and describe its behaviour. 
+The next step is to make a CAD model of the cameras' holder, print and assemble it, and then calibrate it. 
+Then detect features and compute the distance to visible objects in cameras' overlapping zone: as far as a stereo pair is calibrated, the precision depends on a stereo pair calibration, cameras' calibration, key point extractor and matcher.
+As a result, provided points and features can be used in an SfM algorithm to correct a relative stereo pair position in time while moving and in a feedback loop inside the MRS system to correct its path planning concerning found obstacles.
