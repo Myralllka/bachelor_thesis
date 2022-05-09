@@ -3,5 +3,13 @@
 \label{chapter:evaluation}
 
 \section{Software tools}
+% In ROS, there is a package that can be used for a camera calibration\footnote{\href{http://wiki.ros.org/camera_calibration}{ROS camera calibration package}}. As input it takes a chessboard parameters (square size and number of squares) then in an interactive mode it collects images for calibration and as a result save a file with camera calibration matrix and distortion coeficiants (if needed).
+
+% As a basis for software, Robotic operating system (ROS)\footnote{\href{https://www.ros.org/}{ROS home page}} is used, and the MRS UAV system \cite{Baca2021} \footnote{\href{https://github.com/ctu-mrs/mrs_uav_system}{MRS UAV system}} is used as a drone control environment.
+
+% Usage of proposed aproach: at a timestamp $t_1$ it is already possible to use SfM to make a point cloud from green + red points and blue + red.
+% Here the proposed algorithm can help - it gives common points to an algorithm, so instead of SfM from 2 images it does SfM from 4 images but with bigger pressision, because $T_{static}$ remains the same, and the only necessary transformation that should be estimated is $T_{t_0t_1}$, and the innertial module can help with that.
+
+% Another possible approach is to use already working SfM algorithm implementation for a left and rigth camera separately to obtaine two pointclouds, and then align them and fix a scale using Iterative closest point algorithm with respect to fixed red pointcloud
 
 \section{Hardware tools}
