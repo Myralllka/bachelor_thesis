@@ -16,7 +16,7 @@ Homogenous coordinates are used to simplify the 2D transformation operations:
 \end{equation}
 
 \begin{equation}
-    \pmb{\mathsf{S}} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \pmb{\mathsf{R}} = \begin{bmatrix} cos(\theta) & -sin(\theta) \\ sin(\theta) & cos(\theta) \end{bmatrix}, \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix} ;
+    \pmb{\mathsf{S}} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \pmb{\mathsf{R}} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}, \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix} ;
 \end{equation}
 
 where $m_0$ is an original point,
@@ -35,7 +35,7 @@ Here are these operation in projective geometry:
     \begin{bmatrix} \vec{m}_0 \\ 1 \end{bmatrix} ;
 \end{equation}
 \begin{equation}
-    \pmb{\mathsf{S}}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \pmb{\mathsf{R}}_H = \begin{bmatrix} cos(\theta) & -sin(\theta) & 0 \\ sin(\theta) & cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \pmb{\mathsf{T}}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ;
+    \pmb{\mathsf{S}}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \pmb{\mathsf{R}}_H = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \pmb{\mathsf{T}}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ;
 \end{equation}
 where $\pmb{\mathsf{S}}_H, \pmb{\mathsf{R}}_H$ and $\pmb{\mathsf{T}}_H$ are homogenous transformation matrices.
 
