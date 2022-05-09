@@ -2,9 +2,8 @@
 
 \label{chapter:intro}
 
-% TODO add sth like motivation
-Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. Drones are already wide used in cinematography\cite{Mademlis2020}, advertising\cite{Ullah2021} and in farming\cite{Kim2019}. 
-City emergency departments use UAVs  - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out\cite{Pritzl2021}. 
+Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. Drones are already wide used in cinematography \cite{Mademlis2020}, advertising \cite{Ullah2021} and in farming \cite{Kim2019}. 
+City emergency departments use UAVs  - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out \cite{Pritzl2021}. 
 They are also quite popular in the military industry.
 
 The inspiration for this project was taken from DJI obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3}}. 
@@ -32,6 +31,13 @@ Structure from Motion (SfM) is another possible algorithm that can be used to im
 SfM is a method of depth map reconstruction from a set of explicit images, so using this approach, dense point clouds can be computed, and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{graphics/general_scheme.png}
+    \caption{General system model}
+    \label{fig:general}
+\end{figure}
+
 This thesis aims to create a visual obstacle avoidance system for MAVs, 3D model, assemble a device, and measure its efficiency. 
 The main restrictions for MAV are size and weight: the proposed device should be light and relatively small, and it would be nice to have it cheaper than competitors.
 

@@ -44,7 +44,7 @@ So in the homogenous coordinate system, all 2D transformations can be combined a
 \subsection{Vanishing point}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{graphics/parallel_intersection.jpg}
+    \includegraphics[width=0.75\textwidth]{graphics/parallel_intersection.png}
     \caption{Parallel lines intersection}
     \label{fig:intersection_parallel}
 \end{figure}
@@ -63,8 +63,8 @@ In the image \autoref{fig:intersection_parallel} let $\vec{l}_r = Pr_1 \cap Pr_2
 In the 3D world, lines $\vec{l}_l \parallel \vec{l}_r$, but after projection on the image plane $\pi$, in this case it is seen the intersecting point $P_{\infty}$
 In general cases, such a point can be computed as a cross product of two parallel lines. 
 
-Both line and point in a homogenous coordinates are expressed as vectors of three numbers: a homogenous point $\vec{x} = (x, y, z)^\top$ is $\vec{m} = (\frac{x}{z}, \frac{y}{z})^\top$, and a line $\vec{l} = (a, b, c)^\top$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
-In general case, point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $\vec{x}_{\infty} = (u, v, 0)^\top, \{u, v\} \neq 0$.
+Both line and point in a homogenous coordinates are expressed as vectors of three numbers: a homogenous point $\vec{m} = (x, y, z)^\top$ is $\vec{m} = (\frac{x}{z}, \frac{y}{z})^\top$, and a line $\vec{l} = (a, b, c)^\top$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
+In general case, point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $\vec{m}_{\infty} = (u, v, 0)^\top, \{u, v\} \neq 0$.
 Same about line - such line is called \textit{ideal line} and it's coordinates are $\vec{l} = (0, 0, c)^\top, c \neq 0$. In algebraic representation, both ideal point and line are at the plane $\pi_0$ (\autoref{fig:homogenous}, green lines).
 
 A vanishing point is an image of the point at infinity.
@@ -99,7 +99,7 @@ This model can be used to express camera geometry with a field of view angles le
 
 In the physical implementation of the Obscure camera, the projective plane is on the opposite side from the Projection centre (or Camera centre $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. However, in most computer vision literature, authors assume that it is on the same side as an object (see \autoref{fig:td_scene_3d}).
 In \autoref{fig:td_scene_3d} we are looking through a camera with camera center $C$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e}_x, \vec{e}_y, \vec{e}_z)$ on a human. 
-Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has it's projection $\vec{x}_p = (u, v)^\top$ on a plane $\pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
+Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has it's projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
 Optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image the point $ \vec{O} \cap \pi = \vec{o}$ is a center of the image, see \autoref{fig:td_scene_xy}.
 
 \subsection{Camera calibration matrix}
@@ -112,8 +112,8 @@ Optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image t
 Camera calibration matrix - a matrix that includes camera \textit{intrinsic} parameters - pixel size ($e_u$ and $e_v$) and pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio $\bf{a}$ and principle point coordinates $\vec{o} = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
 \begin{equation}
     \pmb{\mathsf{K}} = \begin{bmatrix}
-        af & -a f cot(\theta) & u_0 \\
-        0 & f / sin(\theta) & v_0 \\
+        af & -a f \cot(\theta) & u_0 \\
+        0 & \frac{f}{\sin(\theta)} & v_0 \\
         0 & 0 & 1 \\
     \end{bmatrix} 
     \textrm{ units: } [f]=px, [u_0]=px, [v_0]=px, [a]=1;
@@ -259,7 +259,7 @@ An algebraic expression of important properties of matrix $F$:
 \end{equation}
 \begin{equation}
     \label{eq:epiconstr}
-    \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \pmb{\mathsf{F}} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0,
+    \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \pmb{\mathsf{F}} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0.
 \end{equation}
 Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm1} and \autoref{eq:Fm2}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\autoref{eq:fefe}).
 Epipolar constraint \autoref{eq:epiconstr} means that a point and it's corespondent line are on a same plane (\autoref{fig:epipolar_std}, plane $\sigma$).
@@ -346,7 +346,7 @@ It is possible to receive even a dense point cloud as on \autoref{fig:pc_output}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
       \includegraphics[width=\textwidth]{graphics/chessboard_img_rect.png}
-      \caption{Rectified image with no distortion.}
+      \caption{Undistorted image with no distortion.}
       \label{fig:chb2}
     \end{subfigure}
     \caption{Camera image before and after the calibration}
@@ -356,7 +356,7 @@ It is possible to receive even a dense point cloud as on \autoref{fig:pc_output}
 Camera calibration - or \textit{Camera resection} process of computing the camera calibration matrix $K$ (\autoref{eq:kmat}).
 Usually, it is done with some pattern with predefined parameters, like a chessboard or more advanced boards (ArUco and ChArUco\footnote{\href{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}{Opencv ChArUco and ArUco boards}}).
 
-Camera calibration is necessary for geometry correction (\autoref{fig:chb}), so as a result, parallel lines in 3D are parallel to the image after the rectification, and the image is unwrapped and projected on a plane.
+Camera calibration is necessary for geometry correction (\autoref{fig:chb}), so as a result, parallel lines in 3D are parallel to the image after the undistortion, and the image is unwrapped and projected on a plane.
 
 In a real world lenses has also some distortion (\autoref{fig:chb1}) so to fix that distortion coefficients should be calculated: radial distortion $k_1, k_2, k_3, k_4, k_5, k_6$ and tangential distortion $p_1, p_2$.
 
@@ -365,7 +365,7 @@ From the \autoref{eq:projection}:
     \label{eq:dist_start}
     \lambda \begin{bmatrix} 
         u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
-    \end{bmatrix};
+    \end{bmatrix},
 \end{equation}
 \begin{equation}
     \label{eq:dist_2}
