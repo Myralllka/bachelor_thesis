@@ -2,15 +2,16 @@
 
 \label{chapter:intro}
 
-Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. Drones are already wide used in cinematography \cite{Mademlis2020}, advertising \cite{Ullah2021} and in farming \cite{Kim2019}. 
-City emergency departments use UAVs - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out \cite{Pritzl2021}.
+Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. 
+Drones are already widely used in cinematography \cite{Mademlis2020}, advertising \cite{Ullah2021} and agriculture \cite{Kim2019}. 
+City emergency departments also use Unmanned arial vehicles (UAVs) - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out \cite{Pritzl2021}.
 Another field where UAVs can be used in nearest future is transportation. 
 Fast parcel delivery \cite{San2018} and content transportastions \cite{Gupta2021,Aloqaily2022} are quite promissing fields of UAV application together with smart city comncept evolving \cite{Ortiz2019}.
-Nowadays, even collaborative transportation systems are not something fictional - swarms have become more popular, and that allows their usage for the transportation of really massive objects \cite{Bacelar2020} that one drone can not lift. 
+Nowadays, even collaborative transportation systems are something non-fictional - swarms have become more popular, and that allows their usage for the transportation of really massive objects \cite{Bacelar2020} that one drone can not lift. 
 UAVs and MAVs are also widely used in the military industry\cite{Duz2021}.
 
 As drones are used so widely, they should become safer. 
-UAVs are expensive and quite heavy, so accidents can be expensive and even cost somebody's life. 
+Many commercially available drones are expensive and quite heavy, so accidents can be expensive and even cost somebody's life. 
 Even if a drone is on remote control, the FOV of a pilot can not be more significant than the FOV of his eyes (which is about $130^\circ$), but dangerous obstacles can appear from any side.
 In this sense, autonomous robots can see and avoid obstacles much better, but only if they have a well-designed system running onboard and enough sensors to cover the area around a drone.
 
@@ -21,9 +22,9 @@ So it is always a tradeoff - the bigger UAV is, the more there may be sensors on
 
 Considering everything above, a compact obstacle avoidance system is a perspective field for research. 
 Even though the idea is old, neither DJI, MRS, nor other research groups have a well-developed visual obstacle avoidance system. 
-The best, for now, can be the Skydio system \footnotetext{\href{https://www.skydio.com/skydio-autonomy}{https://www.skydio.com/skydio-autonomy - Skydio autonomy}}, but their approach is for a forward-moving drone.
+The best, for now, can be the Skydio system \footnotetext{\href{https://www.skydio.com/skydio-autonomy}{Skydio autonomy - https://www.skydio.com/skydio-autonomy }}, but their approach is for a forward-moving drone.
 
-The inspiration for this project was taken from DJI obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{https://www.dji.com/cz/mavic-3 - DJI Mavic 3}}. 
+The inspiration for this project was taken from DJI's obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3 - https://www.dji.com/cz/mavic-3}}. 
 It uses visual data from monocular cameras with overlapping sones to cover almost the whole area around the UAV and react in real-time to obstacles nearby. 
 Unfortunately, they have no publications or implementation details, so it is only a conclusion from publicly available information.
 
@@ -32,7 +33,7 @@ Various MAVs use several obstacle avoidance sensors: stereo vision \cite{Ruf2018
 In \cite{Rambabu2015} the sensor fusion of ultrasonic and infrared sensors is presented.
 
 Each of them has its pros and cons. 
-3D lidars are more expensive than other sensors, but their efficiency is one of the best nowadays; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2DoF system, while MAVs always have 6DoF. 
+3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the envieronment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
 Depth cameras are more expensive than simple cameras. Ultrasonic and infrared sensors have distance limits and other minor issues ( a.e. sonar can be influenced by noise from the MAVs). 
 
 In most articles stereo pair of two parallel cameras looking in the same direction is used (classical stereo pair) \cite{Yu2018, Lin2021, Xiao2019}, deep learning approaches \cite{Back2020, FragaLamas2019, Park2020, Roghair2021} and Convolutional Neural Networks \cite{Yu2013, Ma2020}. 
@@ -40,11 +41,11 @@ The real-time multi-camera feedback control system is introduced in \cite{He2021
 
 Real-time simultaneous localization and mapping (SLAM) systems can also be used for obstacle avoidance \cite{Moreno2014}. 
 These problems are pretty closely related. 
-SLAM keeps track of an object's position while constructing and updating a map of an unknown environment; obstacle avoidance is a problem of detecting and avoiding the nearest obstacles in an unknown environment to keep drones safe.
+SLAM keeps track of the robot's position while constructing and updating a map of an unknown environment; obstacle avoidance is a problem of detecting and avoiding the nearest obstacles in an unknown environment to keep drones safe.
 So both problems are related to making a 3D map of an unknown environment, but for obstacle avoidance, the precision of distance measurements to the nearest objects is much more critical.
 
-Structure from Motion (SfM) is another possible algorithm that can implement a system for avoiding obstacles. 
-SfM is a method of depth map reconstruction from a set of explicit images, so using this approach, dense point clouds can be computed, and obstacles can be detected \cite{Lee2008}. 
+Structure from Motion (SfM) is another algorithm that can implement a system for avoiding obstacles. 
+SfM is a method of depth map reconstruction from a continuous sequance of images, so using this approach, dense point clouds can be computed, and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
 \begin{figure}[t]
