@@ -213,7 +213,7 @@ Notation is taken from \cite{hartley_zisserman_2004}, p. 581.
 \subsection{Epipolar geometry}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=1\textwidth]{graphics/epipolar.png}
+    \includegraphics[width=0.5\textwidth]{graphics/epipolar.png}
     \caption{Epipolar geometry scheme}
     \label{fig:epipolar_std}
 \end{figure}
@@ -266,14 +266,14 @@ Epipolar constraint \autoref{eq:epiconstr} means that a point and its coresponde
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=1\textwidth]{graphics/stereopair.png}
-    \caption{Scheme of stereovision}
+    \includegraphics[width=0.7\textwidth]{graphics/stereopair.png}
+    \caption{A stereovision scheme}
     \label{fig:sch_stereo}
 \end{figure}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.5\textwidth]{graphics/stereo_example.jpg}
-    \caption{Insustrial stereocamera example, Intel realsense D455}
+    \includegraphics[width=0.3\textwidth]{graphics/stereo_example.jpg}
+    \caption{Industrial stereocamera example, Intel realsense D455}
     \label{fig:stereo_ex}
 \end{figure}
 
@@ -314,16 +314,15 @@ Intel Realsense \autoref{fig:stereo_ex} has two cameras, an IR sensor in case th
     \end{bmatrix};
 \end{equation}
 
-It is possible to calculate only the non-zero multiple of $\pmb{\mathsf{E}}$ from image correspondences so that the scene can be reconstructed only up to a scale, but knowing the translation vector $\vec{b}$ (\autoref{fig:sch_stereo}), means having a calibrated stereo pair, all distances can be calculated in world coordinates frame.
-By removing a rotation between cameras ($\pmb{\mathsf{R}} = \pmb{\mathsf{I}}$), all computations are simplified.
+It is possible to calculate only the non-zero multiple of $\mat{E}$ from image correspondences so that the scene can be reconstructed only up to a scale, but knowing the translation vector $\vec{b}$ (\autoref{fig:sch_stereo}), means having a calibrated stereo pair, all distances can be calculated in world coordinates frame.
+By removing a rotation between cameras ($\mat{R} = \mat{I}$), all computations are simplified.
 
-Corresponding epipolar lines lie on same image rows ($\vec{l}_1 = \vec{l}_2$), and intersects at "points at infinity" (\autoref{eq:e1e2}). 
+Corresponding epipolar lines lie on same image rows ($l_1 = l_2$), and intersects at "points at infinity" (\autoref{eq:e1e2}). 
 Epipole is a point of intersecting all epipolar lines, so having the intersecting point ($\vec{e}_1$) and image point epipolar line can be calculated (\autoref{eq:e1m1}), therefore considering \autoref{eq:Fm1}, \autoref{eq:e1e2} and \autoref{eq:e1m1} the \autoref{eq:F_simple} is true.
 
-What is more, consider two correspondences $\vec{a}_1 = (u_1, v)^\top$ and $\vec{a}_2 = (u_2, v)^\top $. For a correspondences matcher it is more efficient to have a predefined corelation between features - and knowing the fact that $v$ coordinate is the same (up to some error) is good enough constraint that can accelerate matching (and looking for more features).
-
-It is possible to receive even a dense point cloud as on \autoref{fig:pc_output} with this approach.
-
+Consider two correspondences $\vec{a}_1 = (u_1, v)^\top$ and $\vec{a}_2 = (u_2, v)^\top $. 
+Having correspondent points on the same row means that feature matcher can use this correlation to accelerate a matching process.
+It is possible to receive a dense point cloud as on \autoref{fig:pc_output} with this approach.
 
 \section{Calibration}
 \label{sec:prelimin_calibration}
@@ -390,8 +389,4 @@ Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated 
 
 \subsection{Stereopair calibration}
 \label{sec:prelimin_stereocalib}
-Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair. 
-One approach is to fix one camera pose as world coordinate frame origin and compute a pose of a second camera concerning the first one. 
-It can be done with a PnP (Perspective-n-Point) problem solver - estimation of a calibrated camera pose given a set of $n$ 3D points in a world coordinate frame. Minimal required $n=3$. 
-
-Another possible approach is to give an initial guess of a camera pose, and two sets of 3D points from both cameras fix the error by minimisation the transformation between that point sets. This approach is described in \cite{Umeyama1991}, "Least-squares estimation of transformation parameters between two point patterns" - estimation of needed $\pmb{\mathsf{R}}$ and $\vec{t}$.
+Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair.
