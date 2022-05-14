@@ -1,9 +1,10 @@
 \chapter{Preliminaries}
 
 \label{chapter:preliminaries}
-\section{Homogenous coordinate system}
+\section{Homogenous coordinate systems}
 
-In projective geometry, the homogenous coordinate system is used the same way as Cartesian coordinates in Euclidean geometry.
+Homogenous coordinates are a tool to simplify certain geometrical operations by adding an extra dimension.
+For example, the general scaling, rotation and translation is expressed in non-homogenous coordinates as:
 To transform a point $x=(u, v)^\top$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $x=(u, v, 1)^\top$.
 Homogenous coordinates are used to simplify the 2D transformation operations: 
 
@@ -12,66 +13,64 @@ Homogenous coordinates are used to simplify the 2D transformation operations:
     \vec{m}_1 = 
     \pmb{\mathsf{S}} \pmb{\mathsf{R}}
     \vec{m}_0
-    + \vec{t} ;
+    + \vec{t},
 \end{equation}
 
 \begin{equation}
-    \pmb{\mathsf{S}} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \pmb{\mathsf{R}} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}, \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix} ;
+    \pmb{\mathsf{S}} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \pmb{\mathsf{R}} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}, \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix},
 \end{equation}
 
-where $m_0$ is an original point,
-$m_1$ is a transformed point,
-$\pmb{\mathsf{S}}$ is a scale matrix,
-$\pmb{\mathsf{R}}$ is a rotationa matrix and 
+where $m_0$ is the original point,
+$m_1$ is the transformed point,
+$\pmb{\mathsf{S}}$ is a scaling matrix,
+$\pmb{\mathsf{R}}$ is a rotation matrix and 
 $\vec{t}$ is a translation vector.
 
-For an object's transformation, a sequence of matrix multiplications is required. 
-However, this is not the case with translation - an addition operation is needed for that. 
-Here are these operation in projective geometry:
+The same operations can be expressed in homogenous coordinate system using one matrix multiplication as
 
 \begin{equation}
     \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 
     \pmb{\mathsf{S}}_H \pmb{\mathsf{R}}_H \pmb{\mathsf{T}}_H
-    \begin{bmatrix} \vec{m}_0 \\ 1 \end{bmatrix} ;
+    \begin{bmatrix} \vec{m}_0 \\ 1 \end{bmatrix},
 \end{equation}
 \begin{equation}
-    \pmb{\mathsf{S}}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \pmb{\mathsf{R}}_H = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \pmb{\mathsf{T}}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ;
+    \pmb{\mathsf{S}}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \pmb{\mathsf{R}}_H = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \pmb{\mathsf{T}}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ,
 \end{equation}
 where $\pmb{\mathsf{S}}_H, \pmb{\mathsf{R}}_H$ and $\pmb{\mathsf{T}}_H$ are homogenous transformation matrices.
 
 So in the homogenous coordinate system, all 2D transformations can be combined and expressed as matrix multiplications.
 
-\subsection{Vanishing point}
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.75\textwidth]{graphics/parallel_intersection.png}
-    \caption{Parallel lines intersection}
-    \label{fig:intersection_parallel}
-\end{figure}
+% \subsection{Vanishing point}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=0.75\textwidth]{graphics/parallel_intersection.png}
+%     \caption{Parallel lines intersection}
+%     \label{fig:intersection_parallel}
+% \end{figure}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=.5\textwidth]{graphics/homogenous.png}
-    \caption{Scheme of homogenous coordinates}
-    \label{fig:homogenous}
-\end{figure}
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=.5\textwidth]{graphics/homogenous.png}
+%     \caption{Scheme of homogenous coordinates}
+%     \label{fig:homogenous}
+% \end{figure}
 
-In Euclidian geometry, parallel lines are the lines that have no intersection point. 
-In projective geometry, parallel lines intersect at a point $x$ at infinity. 
+% In Euclidian geometry, parallel lines are the lines that have no intersection point. 
+% In projective geometry, parallel lines intersect at a point $x$ at infinity. 
 
-In the image \autoref{fig:intersection_parallel} let $\vec{l}_r = Pr_1 \cap Pr_2 $ and $\vec{l}_l = Pl_1 \cap Pl_2$. 
-In the 3D world, lines $\vec{l}_l \parallel \vec{l}_r$, but after projection on the image plane $\pi$, in this case it is seen the intersecting point $P_{\infty}$
-In general cases, such a point can be computed as a cross product of two parallel lines. 
+% In the image \autoref{fig:intersection_parallel} let $l_r$ be a line defined by$Pr_1$ and $Pr_2$, and $l_l$ be a line defined by $Pl_1$ and $Pl_2$. 
+% In the 3D world, lines $\vec{l}_l \parallel \vec{l}_r$, but after projection on the image plane $\pi$, lines are interesting at a point $P_\infty$.
+% In a general cases, such a point can be computed as a cross product of two parallel lines. 
 
-Both line and point in a homogenous coordinates are expressed as vectors of three numbers: a homogenous point $\vec{m} = (x, y, z)^\top$ is $\vec{m} = (\frac{x}{z}, \frac{y}{z})^\top$, and a line $\vec{l} = (a, b, c)^\top$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
-In general case, point at infinity is called an \textit{ideal point} and it is not seen on the image, it's coordinates can be expressed as $\vec{m}_{\infty} = (u, v, 0)^\top, \{u, v\} \neq 0$.
-Same about line - such line is called \textit{ideal line} and it's coordinates are $\vec{l} = (0, 0, c)^\top, c \neq 0$. In algebraic representation, both ideal point and line are at the plane $\pi_0$ (\autoref{fig:homogenous}, green lines).
+% Both line and point in a homogenous coordinates are expressed as vectors of three numbers: a homogenous point $\vec{m} = (x, y, z)^\top$ is $\vec{m} = (\frac{x}{z}, \frac{y}{z})^\top$, and a line $\vec{l} = (a, b, c)^\top$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
+% In general case, point at infinity is called an \textit{ideal point} and it is not seen on the image, its coordinates can be expressed as $\vec{m}_{\infty} = (u, v, 0)^\top, \{u, v\} \neq 0$.
+% Same about line - such line is called \textit{ideal line} and its coordinates are $\vec{l} = (0, 0, c)^\top, c \neq 0$. In algebraic representation, both ideal point and line are at the plane $\pi_0$ (\autoref{fig:homogenous}, green lines).
 
-A vanishing point is an image of the point at infinity.
-All world (4D) parallel lines share the same image vanishing point. On a \autoref{fig:intersection_parallel} a $P_{\infty}$ is an image of two parallel lines' intersection point (which is a point at infinity), so it is also a vanishing point.
+% A vanishing point is an image of the point at infinity.
+% All world (4D) parallel lines share the same image vanishing point. On a \autoref{fig:intersection_parallel} a $P_{\infty}$ is an image of two parallel lines' intersection point (which is a point at infinity), so it is also a vanishing point.
 
 \section{Pinhole camera model}
-A pinhole camera - or a canonical perspective camera model - is a model of a simple camera without any optics.
+A pinhole camera, the canonical perspective camera model - is a model of a simple camera without any optics.
 The first example is a camera obscura - a dark room with a small hole through which the image from outside is projected on the opposite wall. 
 This model can be used to express camera geometry with a field of view angles less than $180^{\circ}$.
 
@@ -99,7 +98,7 @@ This model can be used to express camera geometry with a field of view angles le
 
 In the physical implementation of the Obscure camera, the projective plane is on the opposite side from the Projection centre (or Camera centre $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. However, in most computer vision literature, authors assume that it is on the same side as an object (see \autoref{fig:td_scene_3d}).
 In \autoref{fig:td_scene_3d} we are looking through a camera with camera center $C$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e}_x, \vec{e}_y, \vec{e}_z)$ on a human. 
-Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has it's projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
+Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has its projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
 Optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image the point $ \vec{O} \cap \pi = \vec{o}$ is a center of the image, see \autoref{fig:td_scene_xy}.
 
 \subsection{Camera calibration matrix}
@@ -262,7 +261,7 @@ An algebraic expression of important properties of matrix $F$:
     \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \pmb{\mathsf{F}} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0.
 \end{equation}
 Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm1} and \autoref{eq:Fm2}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\autoref{eq:fefe}).
-Epipolar constraint \autoref{eq:epiconstr} means that a point and it's corespondent line are on a same plane (\autoref{fig:epipolar_std}, plane $\sigma$).
+Epipolar constraint \autoref{eq:epiconstr} means that a point and its corespondent line are on a same plane (\autoref{fig:epipolar_std}, plane $\sigma$).
 
 \section{Stereovision}
 
@@ -391,8 +390,8 @@ where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. The
 Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated camera with projection matrix $P$ will look as in \autoref{eq:dist_start} - \autoref{eq:dist_end}. Firstly, the point is projected on an abstract projection plane (\autoref{eq:dist_2}), then undistorted (\autoref{eq:dist_3}, \autoref{eq:dist_4}) and finally transformed from metric system of abstract projection plane to an image coordinate system (\autoref{eq:dist_end}).
 
 \subsection{Stereopair calibration}
-
-Stereo pair calibration is a process of estimating the essential matrix $E$ for a camera pair, which also can be computed from a relative rotation matrix $\pmb{\mathsf{R}}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair. 
+\label{sec:prelimin_stereocalib}
+Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair. 
 One approach is to fix one camera pose as world coordinate frame origin and compute a pose of a second camera concerning the first one. 
 It can be done with a PnP (Perspective-n-Point) problem solver - estimation of a calibrated camera pose given a set of $n$ 3D points in a world coordinate frame. Minimal required $n=3$. 
 
