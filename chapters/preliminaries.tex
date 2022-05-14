@@ -5,9 +5,7 @@
 
 Homogenous coordinates are a tool to simplify certain geometrical operations by adding an extra dimension.
 For example, the general scaling, rotation and translation is expressed in non-homogenous coordinates as:
-To transform a point $x=(u, v)^\top$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $x=(u, v, 1)^\top$.
-Homogenous coordinates are used to simplify the 2D transformation operations: 
-
+% To transform a point $m=(u, v)^\top$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $m=(u, v, 1)^\top$.
 
 \begin{equation}
     \vec{m}_1 = 
@@ -71,14 +69,14 @@ So in the homogenous coordinate system, all 2D transformations can be combined a
 
 \section{Pinhole camera model}
 A pinhole camera, the canonical perspective camera model - is a model of a simple camera without any optics.
-The first example is a camera obscura - a dark room with a small hole through which the image from outside is projected on the opposite wall. 
+The first example is the camera Obscura - a dark room with a small hole through which the image from outside is projected on the opposite wall. 
 This model can be used to express camera geometry with a field of view angles less than $180^{\circ}$.
 
 \subsection{Camera coordinate system}
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\textwidth]{graphics/td_scene.png}
-    \caption{The pinhole camera model working scheme}
+    \caption{The scheme of a pinhole camera model}
     \label{fig:td_scene_3d}
 \end{figure}
 
@@ -90,38 +88,41 @@ This model can be used to express camera geometry with a field of view angles le
 \end{figure}
 
 \begin{figure}[h]
+  \begin{subfigure}[b]{0.5\textwidth}
     \centering
-    \includegraphics[width=.4\textwidth]{graphics/td_scene_xy.png}
+    \includegraphics[width=.5\textwidth]{graphics/td_scene_xy.png}
     \caption{The pinhole camera model, x-y plane}
     \label{fig:td_scene_xy}
-\end{figure}
-
-In the physical implementation of the Obscure camera, the projective plane is on the opposite side from the Projection centre (or Camera centre $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. However, in most computer vision literature, authors assume that it is on the same side as an object (see \autoref{fig:td_scene_3d}).
-In \autoref{fig:td_scene_3d} we are looking through a camera with camera center $C$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e}_x, \vec{e}_y, \vec{e}_z)$ on a human. 
-Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has its projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located on a distance 1 from a camera center (\autoref{fig:td_scene_yz}). 
-Optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image the point $ \vec{O} \cap \pi = \vec{o}$ is a center of the image, see \autoref{fig:td_scene_xy}.
-
-\subsection{Camera calibration matrix}
-\begin{figure}[h]
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.5\textwidth}
     \centering
-    \includegraphics[width=.6\textwidth]{graphics/pixel.png}
-    \caption{Scheme of pixel, changing the image (inner) reference frame}
+    \includegraphics[width=.5\textwidth]{graphics/pixel.png}
+    \caption{A scheme of a pixel skew}
     \label{fig:Kframes}
+  \end{subfigure}
 \end{figure}
-Camera calibration matrix - a matrix that includes camera \textit{intrinsic} parameters - pixel size ($e_u$ and $e_v$) and pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio $\bf{a}$ and principle point coordinates $\vec{o} = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
+
+In the physical implementation of the camera Obscura, the projective plane is on the opposite side from the projection center (or camera center $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. 
+However, in most computer vision literature, authors assume that it is on the same side as the object (see \autoref{fig:td_scene_3d}).
+In \autoref{fig:td_scene_3d} a camera with camera center $C$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e}_x, \vec{e}_y, \vec{e}_z)$ is observing human. 
+Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has a projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located on a distance $f$ from the camera center (\autoref{fig:td_scene_yz}). 
+The optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image the point $ \vec{O} \cap \pi = \vec{o}$ is the center of the image, see \autoref{fig:td_scene_xy}.
+
+\subsection{Camera matrix}
+The camera calibration matrix is a matrix that includes the camera's \textit{intrinsic} parameters - focal length, pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio \textit{a} and principle point coordinates $\vec{o} = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
 \begin{equation}
-    \pmb{\mathsf{K}} = \begin{bmatrix}
-        af & -a f \cot(\theta) & u_0 \\
-        0 & \frac{f}{\sin(\theta)} & v_0 \\
+    \mat{K} = \begin{bmatrix}
+        f_x & -a f \cot(\theta) & u_0 \\
+        0 & f_y & v_0 \\
         0 & 0 & 1 \\
     \end{bmatrix} 
-    \textrm{ units: } [f]=px, [u_0]=px, [v_0]=px, [a]=1;
+    \textrm{ ,units: } [f]=m, [u_0]=px, [v_0]=px, [a]=1,
 \end{equation}
 
+where $f_x = af$, $f_y = \frac{f}{\sin{\theta}}$, $f$ is a focal length used to convert world length ratios to pixels.
 
-Where $f$ is a focal length used to convert world length ratios to pixels.
-
-In the modern world, every digital camera has a calibration matrix with a square pixel, so in most cases, the camera matrix looks like this:
+Most modern digital cameras have no skew and square pixels, so in most cases, the camera matrix can be simplified to:
 
 \begin{equation}
     \label{eq:kmat}
@@ -137,12 +138,12 @@ In the modern world, every digital camera has a calibration matrix with a square
 \begin{figure}[h]
     \centering
     \includegraphics[width=.5\textwidth]{graphics/frames.png}
-    \caption{Changing the world (outer) reference frame}
+    \caption{Transformation from world to camera coordinate frames}
     \label{fig:frames}
 \end{figure}
 
 To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $\pmb{\mathsf{P}}$ is used. 
-The canonical projection matrix $\pmb{\mathsf{P}}_0$ assumes that the camera is in the world coordinate centre and that the calibration matrix $\pmb{\mathsf{K}} = \pmb{\mathsf{I}}$
+The canonical projection matrix $\pmb{\mathsf{P}}_0$ assumes that the camera is in the world coordinate center and that the calibration matrix $\pmb{\mathsf{K}} = \pmb{\mathsf{I}}$
 \begin{equation}
 \pmb{\mathsf{P}}_0 = \begin{bmatrix} \pmb{\mathsf{I}} & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix}
@@ -152,8 +153,9 @@ The canonical projection matrix $\pmb{\mathsf{P}}_0$ assumes that the camera is 
     \end{bmatrix};
 \end{equation}
 
-However, this case is degenerate. 
-As far as each camera is different, the canonical projection matrix is never used. Instead, image projection matrix $\pmb{\mathsf{P}}$ is used, with applied calibration matrix $\pmb{\mathsf{K}}$ to transform canonical $\pmb{\mathsf{P}}_0$ to perspective $\pmb{\mathsf{P}}$:
+However, this case is impractical. 
+The canonical projection matrix is not used in practice because each real camera is different. 
+Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\mat{K}$ to transform canonical $\mat{P}_0$ to perspective $\mat{P}$:
 
 \begin{equation}
 \pmb{\mathsf{P}} = \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{I}} & | & \vec{0} \end{bmatrix} = 
@@ -161,37 +163,34 @@ As far as each camera is different, the canonical projection matrix is never use
     f_x & 0 & u_0 & 0 \\
     0 & f_y & v_0 & 0 \\ 
     0 & 0 & 1 & 0 \\
-    \end{bmatrix}; 
+    \end{bmatrix}.
 \end{equation}
 
-However, usually, the world coordinate centre is not located at point $\vec{C}$ \autoref{fig:frames}. 
-Usually it is rotated using a rotation matrix $\pmb{\mathsf{R}}$ and translated on vector $\vec{t}$ where $\pmb{\mathsf{R}}$ is a $3x3$ matrix with $det(\pmb{\mathsf{R}}) = 1$ and $\pmb{\mathsf{R}}^{-1} = \pmb{\mathsf{R}}^\top$. 
-So, in the general case:
+The world coordinate center is usually not located at point $\vec{C}$ (\autoref{fig:frames}). 
+It may be rotated using a rotation matrix $\mat{R}$ and translated on vector $\vec{t}$ where $\mat{R}$ is a $3x3$ matrix with $det(\mat{R}) = 1$ and $\mat{R}^{-1} = \mat{R}^\top$. 
+Therefor, in the general case the projection can be expressed as
 \begin{equation}
     \pmb{\mathsf{P}} = \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & \vec{t} \end{bmatrix} = 
-    \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & - \pmb{\mathsf{R}} \pmb{\mathsf{C}} \end{bmatrix};
+    \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & - \pmb{\mathsf{R}} \pmb{\mathsf{C}} \end{bmatrix},
 \end{equation}
 
-where $\vec{C}$ is often used as a camera position in a world reference frame. 
-So matrix $\bf{P}$ have six intrinsic parameters: three Euler angles and three translation components. 
+where $\vec{C}$ is the camera's position in a world reference frame. 
 
-\subsection{Projection equation}
-
-Image point $\vec{m} = (u, v)\top$ can be obtained from a 3D point $\vec{X}$ using matrix $\bf{P}$:
+Image point $\vec{m} = (u, v)^\top$ can be obtained from a 3D point $\vec{X}$ using the projection matrix $\mat{P}$ as
 
 \begin{equation}
     \label{eq:projection}
     \lambda \begin{bmatrix} 
         u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} x \\ y \\ z \\ 1
-    \end{bmatrix};
+    \end{bmatrix},
 \end{equation}
 
 \begin{equation}
     \lambda \begin{bmatrix} 
     \vec{m} \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} \vec{X} \\ 1
-\end{bmatrix};
+\end{bmatrix},
 \end{equation}
-Where $\lambda \neq 0$
+where $\lambda \neq 0$ is a free scaling parameter.
 
 \section{Epipolar geometry}
 
@@ -260,7 +259,7 @@ An algebraic expression of important properties of matrix $F$:
     \label{eq:epiconstr}
     \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \pmb{\mathsf{F}} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0.
 \end{equation}
-Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm1} and \autoref{eq:Fm2}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\autoref{eq:fefe}).
+Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm2} and \autoref{eq:Fm1}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\autoref{eq:fefe}).
 Epipolar constraint \autoref{eq:epiconstr} means that a point and its corespondent line are on a same plane (\autoref{fig:epipolar_std}, plane $\sigma$).
 
 \section{Stereovision}

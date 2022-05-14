@@ -53,6 +53,13 @@ headsepline, % Uncomment to get a line under the header
 \usepackage{caption}
 \usepackage{subcaption}
 %----------------------------------------------------------------------------------------
+%	CUSTOM COMMANDS
+%----------------------------------------------------------------------------------------
+
+\newcommand{\mat}[1]{\pmb{\mathsf{#1}}}
+\newcommand{\pt}[1]{\pmb{\mathsf{#1}}}
+
+%----------------------------------------------------------------------------------------
 %	MARGIN SETTINGS
 %----------------------------------------------------------------------------------------
 
@@ -146,7 +153,7 @@ headsepline, % Uncomment to get a line under the header
 
 \begin{declaration}
 \addchaptertocentry{\authorshipname} % Add the declaration to the table of contents
-\noindent I, \authorname, declare that this thesis titled, \enquote{\ttitle} and the work presented in it are my own. I confirm that:
+\noindent I, \authorname, declare that this thesis titled \enquote{\ttitle} and the work presented in it are my own. I confirm that:
 
 \begin{itemize} 
 \item This work was done wholly or mainly while in candidature for a research degree at this University.
@@ -199,13 +206,14 @@ headsepline, % Uncomment to get a line under the header
 \begin{acknowledgements}
 \addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
 
-I would like to thank my supervisor Ing. Matouš Vrba and all CTU MRS Group for the opportunity to have an internship there for last one and a half year, all of them was kind, they helped me a lot with advice's and sharing their experience, CTU FEE for interesting and useful for this thesis courses. I want to admire that nothing my study will not take place without my small family - Ukrainian Catholic University, especially Applied Science Faculty, all teachers and deanery for saving all students from all the worst sides of Ukrainian education system and providing only the best quality education without corruption and plagiarism.
+I would like to thank my supervisor Ing. Matouš Vrba and all CTU MRS Group members for the opportunity to have an internship there for the last one and a half year, all of them were kind, they helped me a lot with advice's and shared their experience, CTU FEE for interesting and useful for this thesis courses. 
+I want to admire that nothing during my studies would take place without my small family - Ukrainian Catholic University, especially Applied Science Faculty, all teachers and deanery for saving all students from all the worst sides of Ukrainian education system and providing only the best quality education without corruption and plagiarism.
 \\
 
-Especially I want to thank all defenders of my Motherland, The Armed Forces of Ukraine, who protect the whole Europe during the russo-Ukraian war at the cost of their own lives to make it possible for all of us to live in peace and for me to write this thesis.
+Especially, I want to thank all defenders of my Motherland, The Armed Forces of Ukraine, who protect the whole Europe during the russo-Ukraian war at the cost of their own lives to make it possible for all of us to live in peace and for me to write this thesis.
 \\
 
-Finally, I would like to thank my family who supported me during whole my life, my mother Svitlana and my father Roman.
+Finally, I would like to thank my family who supported me during my whole life, my mother Svitlana and my father Roman.
 \end{acknowledgements}
 
 %----------------------------------------------------------------------------------------
@@ -225,10 +233,11 @@ Finally, I would like to thank my family who supported me during whole my life, 
 \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
 \textbf{UAV} & \textbf{U}nmanned \textbf{A}erial \textbf{V}ehicle\\
 \textbf{MAV} & \textbf{M}icro Unmanned \textbf{A}erial \textbf{V}ehicle\\
-\textbf{ROS} & \textbf{R}obotic \textbf{O}perating \textbf{S}ystem\\
+\textbf{ROS} & \textbf{R}obot \textbf{O}perating \textbf{S}ystem\\
 \textbf{DoF} & \textbf{D}egree \textbf{o}f \textbf{F}reedom\\
 \textbf{SLAM} & \textbf{S}imultaneous \textbf{L}ocalization \textbf{A}nd \textbf{M}apping \\
 \textbf{SfM} & \textbf{S}tructure \textbf{f}rom \textbf{M}otion \\
+\textbf{PnP} & \textbf{P}erspective \textbf{n} \textbf{P}oints \\
 \textbf{FOV} & \textbf{F}ield \textbf{O}f \textbf{V}iew \\
 % \textbf{MRS} & \textbf{M}ulti \textbf{R}obot \textbf{S}ystems Group\\
 
@@ -255,14 +264,16 @@ Finally, I would like to thank my family who supported me during whole my life, 
 
 % Symbol & Name & Unit \\
 
-$\vec{t}$ & Column vector that reresents a point/line/vector & \\
-$\pmb{\mathsf{A}}$ & Matrix & \\
+$\vec{t}$ & A column vector that reresents a point or a vector & \\
+$\pmb{\mathsf{A}}$ & A matrix & \\
 $\pmb{\mathsf{A}}^\top$ & Transpose of a matrix & \\
-$\pmb{\mathsf{R}}$ & Rotation matrix 3x3, $det(\pmb{\mathsf{R}}) = 1, \pmb{\mathsf{R}}^\top = \pmb{\mathsf{R}}^{-1}$ & \\
-$\pmb{\mathsf{I}}$ & Identity matrix & \\
-$f$ & focal length & px \\
+$\pmb{\mathsf{R}}$ & A rotation matrix 3x3, $det(\pmb{\mathsf{R}}) = 1, \pmb{\mathsf{R}}^\top = \pmb{\mathsf{R}}^{-1}$ & \\
+$\pmb{\mathsf{I}}$ & The Identity matrix & \\
+$l$ & A line & \\
+$\mathsf{P}$ & A point & \\
+$f$ & focal length & m \\
 $\vec{x} \times \vec{y}$ & cross product of $\vec{x}$ and $\vec{y}$ & \\
-$[\vec{x}]_\times$ & The matrix such that $[\vec{x}]_\times\vec{y} = \vec{x} \times \vec{y} $ & \\
+$[\vec{x}]_\times$ & Such matrix that $[\vec{x}]_\times\vec{y} = \vec{x} \times \vec{y} $ & \\
 $\lambda$ & Any non-zero scalar & \\
  & & \\
  & & \\
