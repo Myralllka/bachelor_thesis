@@ -223,8 +223,8 @@ Notation is taken from \cite{hartley_zisserman_2004}, p. 581.
 Both of them are seen as some 3d point $X$. 
 This point projections are $\vec{m}_1$ and $\vec{m}_2$ respectivly. 
 Points $\vec{C}_1, \vec{C}_2$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
-$\sigma \cap \pi_1 = \vec{l}_1$ and $\sigma \cap \pi_2 = \vec{l}_2$ are images of \textit{epipolar lines}. 
-Epipolar line $\vec{l}_1$ passes through \textit{epipole} $\vec{e}_1$, where $\lambda [\vec{e}_1 | 1]^\top = \pmb{\mathsf{P}}_2 \vec{C}_1$, same with $\lambda [\vec{e}_2 | 1]^\top = \pmb{\mathsf{P}}_1 \vec{C}_2$.
+$\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are images of \textit{epipolar lines}. 
+Epipolar line $l_1$ passes through \textit{epipole} $\vec{e}_1$, where $\lambda [\vec{e}_1 | 1]^\top = \pmb{\mathsf{P}}_2 \vec{C}_1$, same with $\lambda [\vec{e}_2 | 1]^\top = \pmb{\mathsf{P}}_1 \vec{C}_2$.
 
 \subsection{Epipolar constraint}
 
@@ -304,7 +304,7 @@ Intel Realsense \autoref{fig:stereo_ex} has two cameras, an IR sensor in case th
 \end{equation}
 \begin{equation}
     \label{eq:e1m1}
-    \lambda \vec{l}_1 = \vec{e}_1 \times \vec{m}_1 = [\vec{e}_1]_\times \begin{bmatrix} \vec{m}_1 \\ 1\end{bmatrix};
+    \lambda l_1 = \vec{e}_1 \times \vec{m}_1 = [\vec{e}_1]_\times \begin{bmatrix} \vec{m}_1 \\ 1\end{bmatrix};
 \end{equation}
 \begin{equation}
     \label{eq:F_simple}
