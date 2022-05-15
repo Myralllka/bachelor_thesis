@@ -1,0 +1,38 @@
+\chapter{Implementation}
+\label{chapter:implementation}
+
+
+\section{Hardware}
+Camera holder CAD model was created in a Fusion360. 
+:TODO: add image here
+
+(camera model) cameras were chosen for this project because they have a global shutter, good image quality and they cheaper than average camera in a market.
+(table with important camera properties).
+
+Camera lence has $150^\circ$ FOV, which gives enough overlapping zone to detect features.
+
+\section{Software tools}
+
+\subsection{ROS}
+As a basis for software, Robotic operating system (ROS)\footnote{\href{https://www.ros.org/}{ROS home page}} is used, and the MRS UAV system \cite{Baca2021} \footnote{\href{https://github.com/ctu-mrs/mrs_uav_system}{MRS UAV system}} is used as a drone control environment.
+
+In ROS, there is a package that can be used for a camera calibration\footnote{\href{http://wiki.ros.org/camera_calibration}{ROS camera calibration package}}. As input it takes a chessboard parameters (square size and number of squares) then in an interactive mode it collects images for calibration and as a result save a file with camera calibration matrix and distortion coeficiants (if needed).
+
+
+% Usage of proposed aproach: at a timestamp $t_1$ it is already possible to use SfM to make a point cloud from green + red points and blue + red.
+% Here the proposed algorithm can help - it gives common points to an algorithm, so instead of SfM from 2 images it does SfM from 4 images but with bigger pressision, because $T_{static}$ remains the same, and the only necessary transformation that should be estimated is $T_{t_0t_1}$, and the innertial module can help with that.
+
+% Another possible approach is to use already working SfM algorithm implementation for a left and rigth camera separately to obtaine two pointclouds, and then align them and fix a scale using Iterative closest point algorithm with respect to fixed red pointcloud
+
+
+% subsection sec:lsq_umeyama
+% Then, using \cite{Umeyama1991} "Least-squares estimation of transformation parameters between two point patterns" find a corection transformation $T_{correction}$.
+
+
+% triangulation Opencv
+% TDV page 92
+
+% \subsection{The Golden Standard Method}
+% The Golden Standard Method for triangulation implies error correction to minimize the given error, reprojection or algebraic.
+% It uses the singular value decomposition triangulation together with 
+% It takes projection matrices $\mat{P}_1$, $\mat{P}_2$ and set of correspondences as input, and returns set of 3D points.

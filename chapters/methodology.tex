@@ -2,19 +2,23 @@
 
 \label{chapter:methodology}
 
-% Camera calibration
-% This is done by knowing the 3D position of each interest point and it's projections (colored sircles on \autoref{fig:calib}), and after taking a sample of images on a static camera and the pattern moving along X and Y axis with different scale and skew.
-% Then some algorithm can be used to estimate unknown parameters of a calibration matrix, for example: estimate the camera projection matrix (can be done from 6 correspondences) and decompose it to $R$, $\vec{t}$ and $K$ 
+The main task of this thesis is to create a compact obstacle avoidance system such that it can be mounted on MAVs with size and weight restrictions.
+There are related works of a monocular stereovision using SfM or Optical flow algorithms. 
+Also, there are some stereovision approaches with standard stereo cameras as on \autoref{fig:stereo_ex}.
+The method that combines mono and stereo camera approaches is presented further.
 
-% The problem solution can be divided into several steps. 
-% Firstly, it is necessary to make a math model of a device that can solve the problem and describe its behaviour. 
-% The next step is to make a CAD model of the cameras' holder, print and assemble it, and then calibrate it. 
-% Then detect features and compute the distance to visible objects in cameras' overlapping zone: as far as a stereo pair is calibrated, the precision depends on a stereo pair calibration, cameras' calibration, key point extractor and matcher.
-% As a result, provided points and features can be used in an SfM algorithm to correct a relative stereo pair position in time while moving and in a feedback loop inside the MRS system to correct its path planning concerning found obstacles.
-The main task of this thesis is to create a compact obstacle avoidance system such that it can be mount on MAVs with size and weight restrictions.
-There are related works of a monocular stereovision using SfM or Optical flow algorithms, also there are some stereovison approaches with a standard stereocameras as on \autoref{fig:stereo_ex}.
+The problem solution can be divided into several steps. 
+Firstly, it is necessary to make a math model of a solution and describe its behaviour. 
+Secondly, choose hardware parts - cameras and suitable lenses and calibrate each separate camera (\autoref{sec:prelimin_calibration}).
+Thirdly, make a computer-aided design (CAD) model of the cameras' holder, print, and calibrate it (\autoref{sec:prelimin_stereocalib}).
+Fourthly, implement a Robotic operating system (ROS) driver for a proposed device. 
+This driver collects images from both cameras with the same timestamp and publishes them together.
+Then detect features on both images, find and filter correspondences.
+The last step is to compute the distance to visible objects in the cameras' overlapping zone.
 
-The method that combines monocamera and stereocamera approaches is presented further.
+As far as the stereo pair is calibrated, the 3D pose estimation depends on a stereo pair calibration, cameras' calibration, key point extractor and matcher.
+As a result, extracted features can be used in an SfM algorithm to correct a relative drone pose between $t_0$ and $t_1$ on \autoref{fig:intro_general}.
+Estimated distances to objects can be used in a feedback loop inside the system to correct its path planning, considering the obstacles found.
 
 \section{Model description}
 
@@ -26,38 +30,130 @@ The method that combines monocamera and stereocamera approaches is presented fur
 \end{figure}
 
 On the \autoref{fig:td90deg}: there are two cameras with centers at $C_1$ and $C_2$ with a known static translation $\vec{t}_{21}$ and rotation $\mat{R}_{21}$, where $\mat{R}_{21}$ corresponds to Euler angle $90^\circ$ rotation in the epipolar plane (\autoref{fig:epipolar_std}, plane $\sigma$).
-Both cameras' intrinsic parameters are known and images are synchronized in time, FOV of both cameras have an interesting zone.
+Both cameras' intrinsic parameters are known, and images are synchronized in time; the FOV of both cameras have an intersecting zone.
 Let images from cameras with centers at $C_1$ and $C_2$ be \textit{im1} and \textit{im2} respectively.
 In the overlapping zone, there are two interesting points detected and matched as images of a same 3D point $\vec{X}$: $\vec{m}_1$ on \textit{im1} and $\vec{m}_2$ on \textit{im2}.
-The 3D pose of a point $\vec{X}$ in world measurement units is obtain from known vectors $\vec{X} - \vec{C}_1$, $\vec{X} - \vec{C}_2$ and $\vec{t_{21}}$. 
+The 3D pose of a point $\vec{X}$ in world measurement units is obtain from known vectors $\vec{X} - \vec{C}_1$, $\vec{X} - \vec{C}_2$ and $\vec{t}_{21}$. 
 
-Described method assumes that each camera is calibrated, stereopair is also calibrated - both $t_{21}$ and $R_{21}$ are known.
+The described method assumes that each camera is calibrated, and the stereo pair is also calibrated - both $t_{21}$ and $R_{21}$ are known.
 
 \section{General multicamera calibration}
-There are multiple algorithms to do a stereopair calibration (\autoref{sec:prelimin_stereocalib}). 
-Usually calibration chessboard is used (\autoref{fig:calib}) for a standard stereocamera with paralell or converging optical rays.
-It can be detected and used only when the whole chessboard is seen on both images.
-For cameras with a small overlapping zone and diverging optical rays it is a disadvantage, only if a really big chessboard is used on a relatively big distance.
-For this reason it is better to use some other pattern, for example set of apriltags \cite{Malyuta2019}. 
+There are multiple algorithms to do a stereo pair calibration (\autoref{sec:prelimin_stereocalib}). 
+Usually, a calibration chessboard is used (\autoref{fig:calib}) for a standard stereo camera with parallel or converging optical rays.
+It can be detected and used only when the whole chessboard is seen in both images.
+It is a disadvantage for cameras with a small overlapping zone and diverging optical rays, only if a really big chessboard is used at a considerable distance.
+For this reason, it is better to use some other pattern, for example, a set of apriltags \cite{Malyuta2019}. 
 
 \subsection{Least-square estimation of transformation}
 \label{sec:lsq_umeyama}
-The first approach assumes that cameras poses are pre-known and the only necessary step is to correct one camera pose with respect to another.
+The first approach assumes that cameras' poses are pre-measured, and the only necessary step is to correct one camera pose with respect to another.
 Firstly it detects apriltag's from \textit{im1} and \textit{im2}, compute their 3D poses.
-Then, estimate a transformation parameters between two point sets, which means find a corection transformation $T_{correction}$.
-After it is done, 
-apply it to correct $\mat{R}_{21}$ and $\vec{t}_{21}$.
+Then, estimate transformation parameters between two point sets, and find the correction transformation $T_{correction}$.
+The last step is to apply $T_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of second camera.
 
-\subsection{PnP-based}
-Another, more general approach is based on a solving of a Perspective-n-Point (PnP) problem.
-General PnP is the problem of estimation a camera pose given a known set of 3D points and it's 2D projections. 
-For this algorith no initial pose estimation is needed, but if there is one - it can accelerate the solver.
+\subsection{PnP-based algorithm}
+\label{sec:pnp}
+Another, a more general approach is based on solving a Perspective-n-Point (PnP) problem.
+PnP is the problem of estimating a camera pose given a known set of 3D points and respective 2D projections. 
+No initial pose estimation is needed for this algorithm, but if there is one, it can accelerate the solver.
 
 % \subsection{}
-% It is also possible to make a calibration having correctly matched correspondences only, but the pressision can be worse.
+% It is also possible to calibrate with correctly matched correspondences only, but the precision can worsen.
 % Having two calibrated cameras, it is possible to compute essential matrix $\mat{E}$ \autoref{eq:E} from at least 5 corresponding points, and then decompose it to $\mat{R}_{21}$ and $\vec{t}_{21}$.
 
-\section{Features extraction and matching}
+\section{Features extraction, matching and filtering}
+
+In a computer vision, \textit{features} are representations of unique pieces of information from the image scene, such as points, edges and objects.
+A feature detector is an algorithm for extracting features from an image.
+There are multiple of them, but in this solution, ORB \cite{Rublee2011} is used. 
+This algorithm claims to be of the same accuracy as SIFT but a few times faster. 
+
+The next important part is a feature matcher. 
+After keypoints with descriptors are detected on both images, the matcher should match them between each other.
+Brute-Force matcher is one of the most simple matchers.
+It takes one descriptor from one set, somehow computing the distances to all descriptors from the second set, matching them and repeating it to minimize the distance between two sets.
+Even after this process, there will be some outliers.
+Distance to corresponding epipolar lines can be used to filter them. \autoref{eq:epiconstr} is true only in an ideal case; otherwise the equation result will be not $0$ but the distance from reprojected point to its corresponding epipolar line.
+
+\subsection{Reprojection error}
+In ideal case, when calibration matrix has no error and stereopair position computed precisely, rays $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects in a point $\vec{X}$. 
+However, calibrations are done with some precision only, so reprojection error is used to measure this precision.
+
+After the 3D pose of a point is computed, to measure its reprojection error, it should be projected back on an image, and a new distance should be computed.
+
+Consider a general projection matrix $\mat{P}_i$ as
+\begin{equation}
+    \label{eq:p_general}
+    \mat{P}_i = \begin{bmatrix} (p_i^1)^\top \\ (p_i^2)^\top \\ (p_i^3)^\top \end{bmatrix},
+\end{equation}
+the reprojection error is defined as 
+\begin{equation}
+    e^2(\underline{X}) = \sum_{c=1}^{2}{  
+    \begin{bmatrix}
+        \begin{pmatrix}
+            u_c - \frac{(p_c^1)^\top \underline{X}}{(p_c^3)^\top \underline{X}}
+        \end{pmatrix}^2 + 
+        \begin{pmatrix}
+            v_c - \frac{(p_c^2)^\top \underline{X}}{(p_c^3)^\top \underline{X}}
+        \end{pmatrix}^2
+    \end{bmatrix}
+    },
+\end{equation}
+where $m_c = \begin{bmatrix} u_c \\ v_c \end{bmatrix}$, $\underline{X} = \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix}$.
 
 \section{Features pose estimation}
+
+3D scene points' poses can be computed by having pairs of correspondent points.
+This process is called triangulation.
+
+\subsection{Shortest distance}
+One method to make a triangulation is to find the shortest distance between two rays.
+According to epipolar geometry properties, \autoref{epipolar_geometry}, vectors $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects at the 3D point $\vec{X}$.
+However, in the real world, lines can be at some distance from each other, so $\vec{X}$ is the point closest to both lines.
+
+It is possible to compute $\vec{d}_1$ and $\vec{d}_2$ in the common coordinate frame having cameras' poses and image features.
+Then define two lines $d_1$ and $d_2$ in a vector form:
+\begin{equation}
+    d_1: p_1 = \vec{C}_1 + t \vec{d}_1,
+\end{equation}
+\begin{equation}
+    d_2: p_2 = \vec{C}_2 + s \vec{d}_2,
+\end{equation}
+where $\vec{d}_1$ and $\vec{d}_2$ are directional vectors, $\vec{C}_1$ and $\vec{C}_2$ are 3D points located on respective lines, $s$ and $t$ are free parameters that uniquely define points $p_1$ and $p_2$. 
+To minimize the distance between two lines, such $p_1$ and $p_2$ are needed that the line with directional vector $\vec{p_1p_2} = \vec{l}$ will be orthogonal to $d_1$ and $d_2$ (\autoref{eq:ldd1}, \autoref{eq:ldd2}).
+\begin{equation}
+    \label{eq:ldd1}
+    \vec{l} \cdot \vec{d}_1 = 0,
+\end{equation}
+\begin{equation}
+    \label{eq:ldd2}
+    \vec{l} \cdot \vec{d}_2 = 0.
+\end{equation}
+It is a system of two equations with two $s$ and $t$ unknown.
+So after $s$ and $t$ are found, $\vec{X}$ can be compute as $\vec{X} = \frac{p_1 + p_2}{2}$.
+
+\subsection{SVD Triangulation}
+Singular value decomposition (SVD) triangulation computes 3D points from camera matrices $\mat{P}_1$, $\mat{P}_2$ and 2D correspondences described in \cite{hartley_zisserman_2004}.
+Considering projection equation \autoref{eq:projection}, let 
+\begin{equation}
+    \lambda_i \begin{bmatrix} 
+        u_i \\ v_i \\ 1 \end{bmatrix} = \mat{P}_i
+    \begin{bmatrix} \vec{X} \\ 1
+    \end{bmatrix},
+\end{equation} 
+where $\mat{P}_i$ fron \autoref{eq:p_general}, $\lambda_i \neq 0$, i = \{1, 2\}.
+After eliminating $\lambda_1$, $\lambda_2$, let $D$ be such matrix that
+\begin{equation}
+    \mat{D} \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix} = \vec{0}, \;\;\;\;\;
+    \mat{D} = \begin{bmatrix}
+        u_1 (p_1^3)^\top - (p_1^1)^\top \\
+        v_1 (p_1^3)^\top - (p_1^2)^\top \\
+        u_2 (p_2^3)^\top - (p_2^1)^\top \\
+        v_2 (p_2^3)^\top - (p_2^2)^\top \\
+    \end{bmatrix}, \;\;\;\;\; \mat{D} \in \mathbb{R}^{4, 4}.
+\end{equation}
+
+The solution is $u_4$, the last column of the $\mat{U}$ matrix from $\mathsf{SVD}(\mat{D}^\top \mat{D}) = \mat{U}, \mat{S}, \mat{V}^\top$.
+
+
 
