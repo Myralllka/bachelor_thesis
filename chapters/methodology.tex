@@ -9,8 +9,8 @@ The method that combines mono and stereo camera approaches is presented further.
 
 The problem solution can be divided into several steps. 
 Firstly, it is necessary to make a math model of a solution and describe its behaviour. 
-Secondly, choose hardware parts - cameras and suitable lenses and calibrate each separate camera (\autoref{sec:prelimin_calibration}).
-Thirdly, make a computer-aided design (CAD) model of the cameras' holder, print, and calibrate it (\autoref{sec:prelimin_stereocalib}).
+Secondly, choose hardware parts - cameras and suitable lenses and calibrate each separate camera. 
+Thirdly, make a computer-aided design (CAD) model of the cameras' holder, print, and calibrate it.
 Fourthly, implement a Robotic operating system (ROS) driver for a proposed device. 
 This driver collects images from both cameras with the same timestamp and publishes them together.
 Then detect features on both images, find and filter correspondences.
@@ -19,6 +19,8 @@ The last step is to compute the distance to visible objects in the cameras' over
 As far as the stereo pair is calibrated, the 3D pose estimation depends on a stereo pair calibration, cameras' calibration, key point extractor and matcher.
 As a result, extracted features can be used in an SfM algorithm to correct a relative drone pose between $t_0$ and $t_1$ on \autoref{fig:intro_general}.
 Estimated distances to objects can be used in a feedback loop inside the system to correct its path planning, considering the obstacles found.
+
+This chapter describes a general maths model of a solution, and all algorithms used in a process: for camera calibration, stereopair calibration points' pose obtaining and error measurements.
 
 \section{Model description}
 
@@ -48,14 +50,18 @@ For this reason, it is better to use some other pattern, for example, a set of a
 \label{sec:lsq_umeyama}
 The first approach assumes that cameras' poses are pre-measured, and the only necessary step is to correct one camera pose with respect to another.
 Firstly it detects apriltag's from \textit{im1} and \textit{im2}, compute their 3D poses.
-Then, estimate transformation parameters between two point sets, and find the correction transformation $T_{correction}$.
-The last step is to apply $T_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of second camera.
+Then, estimate transformation parameters between two point sets, and find the correction transformation $\mat{T}_{correction}$.
+The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of second camera.
 
 \subsection{PnP-based algorithm}
 \label{sec:pnp}
 Another, a more general approach is based on solving a Perspective-n-Point (PnP) problem.
-PnP is the problem of estimating a camera pose given a known set of 3D points and respective 2D projections. 
+PnP is the problem of estimating a camera pose (translation and rotation) given a known set of 3D points and respective 2D projections from calibrated camera
+\begin{equation}
+    \lambda_i \begin{bmatrix} \vec{m}_i \\ 1 \end{bmatrix} = \mat{K} \mat{R} (\vec{X}_i - C), \;\; i = \{0..n\}.
+\end{equation}
 No initial pose estimation is needed for this algorithm, but if there is one, it can accelerate the solver.
+
 
 % \subsection{}
 % It is also possible to calibrate with correctly matched correspondences only, but the precision can worsen.
@@ -108,7 +114,7 @@ This process is called triangulation.
 
 \subsection{Shortest distance}
 One method to make a triangulation is to find the shortest distance between two rays.
-According to epipolar geometry properties, \autoref{epipolar_geometry}, vectors $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects at the 3D point $\vec{X}$.
+According to epipolar geometry properties, \autoref{sec:epipolar_geometry}, vectors $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects at the 3D point $\vec{X}$.
 However, in the real world, lines can be at some distance from each other, so $\vec{X}$ is the point closest to both lines.
 
 It is possible to compute $\vec{d}_1$ and $\vec{d}_2$ in the common coordinate frame having cameras' poses and image features.
@@ -120,7 +126,7 @@ Then define two lines $d_1$ and $d_2$ in a vector form:
     d_2: p_2 = \vec{C}_2 + s \vec{d}_2,
 \end{equation}
 where $\vec{d}_1$ and $\vec{d}_2$ are directional vectors, $\vec{C}_1$ and $\vec{C}_2$ are 3D points located on respective lines, $s$ and $t$ are free parameters that uniquely define points $p_1$ and $p_2$. 
-To minimize the distance between two lines, such $p_1$ and $p_2$ are needed that the line with directional vector $\vec{p_1p_2} = \vec{l}$ will be orthogonal to $d_1$ and $d_2$ (\autoref{eq:ldd1}, \autoref{eq:ldd2}).
+To minimize the distance between two lines, such $p_1$ and $p_2$ are needed that the line with directional vector $\vec{p_1p_2} = \vec{l}$ will be orthogonal to $d_1$ and $d_2$ which means
 \begin{equation}
     \label{eq:ldd1}
     \vec{l} \cdot \vec{d}_1 = 0,
@@ -133,15 +139,18 @@ It is a system of two equations with two $s$ and $t$ unknown.
 So after $s$ and $t$ are found, $\vec{X}$ can be compute as $\vec{X} = \frac{p_1 + p_2}{2}$.
 
 \subsection{SVD Triangulation}
-Singular value decomposition (SVD) triangulation computes 3D points from camera matrices $\mat{P}_1$, $\mat{P}_2$ and 2D correspondences described in \cite{hartley_zisserman_2004}.
-Considering projection equation \autoref{eq:projection}, let 
+Singular value decomposition (SVD) triangulation is another method, which is both more optimal and wide-used.
+It computes 3D points from camera matrices $\mat{P}_1$, $\mat{P}_2$ and 2D correspondences. 
+This method is described in \cite{hartley_zisserman_2004}.
+
+The projection equation \eqref{eq:projection} can be rewritten as
 \begin{equation}
     \lambda_i \begin{bmatrix} 
         u_i \\ v_i \\ 1 \end{bmatrix} = \mat{P}_i
     \begin{bmatrix} \vec{X} \\ 1
     \end{bmatrix},
 \end{equation} 
-where $\mat{P}_i$ fron \autoref{eq:p_general}, $\lambda_i \neq 0$, i = \{1, 2\}.
+where $\mat{P}_i$ decomposes as in \eqref{eq:p_general}, and $\lambda_i \neq 0$, i = \{1, 2\}.
 After eliminating $\lambda_1$, $\lambda_2$, let $D$ be such matrix that
 \begin{equation}
     \mat{D} \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix} = \vec{0}, \;\;\;\;\;

@@ -170,6 +170,7 @@ The world coordinate center is usually not located at point $\vec{C}$ (\autoref{
 It may be rotated using a rotation matrix $\mat{R}$ and translated on vector $\vec{t}$ where $\mat{R}$ is a $3x3$ matrix with $det(\mat{R}) = 1$ and $\mat{R}^{-1} = \mat{R}^\top$. 
 Therefor, in the general case the projection can be expressed as
 \begin{equation}
+    \label{eq:PKRt}
     \pmb{\mathsf{P}} = \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & \vec{t} \end{bmatrix} = 
     \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & - \pmb{\mathsf{R}} \pmb{\mathsf{C}} \end{bmatrix},
 \end{equation}
@@ -195,55 +196,55 @@ where $\lambda \neq 0$ is a free scaling parameter.
 \section{Epipolar geometry}
 
 \subsection{Skew-symmetric 3x3 matrix}
-A skew-symmetric or antisymetric matrix is such matrix $[\vec{b}]_{\times}$ that $[\vec{b}]_{\times}^\top = -[\vec{b}]_{\times}$. 
-For vector $\vec{b} = (b_1, b_2, b_3)^\top$:
+A skew-symmetric or antisymetric matrix of vector $\vec{b} = (b_1, b_2, b_3)^\top$ is defined as
 \begin{equation}
     [\vec{b}]_{\times} = \begin{bmatrix}
         0 & -b_3 & b_2 \\ 
         b_3 & 0 & b_1 \\ 
         -b_2 & b_1 & 0 \\ 
-    \end{bmatrix};
+    \end{bmatrix}.
 \end{equation}
 
-This matrix has some essential properties, but the most important in this thesis - it generalizes across a product as matrix multiplication.
+This matrix has several useful properties, but the most important in this thesis is that it generalizes a cross product as matrix multiplication:
 \begin{equation}
-    \vec{a} \times \vec{b} = [\vec{a}]_{\times} \vec{b};
+    \vec{a} \times \vec{b} = [\vec{a}]_{\times} \vec{b}.
 \end{equation}
-Notation is taken from \cite{hartley_zisserman_2004}, p. 581.
+The notation is taken from \cite{hartley_zisserman_2004}, p. 581.
 \subsection{Epipolar geometry}
-\label{epipolar_geometry}
+\label{sec:epipolar_geometry}
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{graphics/epipolar.png}
-    \caption{Epipolar geometry scheme}
+    \caption{A scheme of epipolar geometry}
     \label{fig:epipolar_std}
 \end{figure}
 
-\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $\vec{C}_1$ and $\vec{C}_2$ connected with a base line $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
-Both of them are seen as some 3d point $X$. 
-This point projections are $\vec{m}_1$ and $\vec{m}_2$ respectivly. 
+\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $\vec{C}_1$ and $\vec{C}_2$ connected with a base vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
+Both of the cameras observes a 3D point $X$. 
+Projections of this point to $\pi_1$ and $\pi_2$ are $\vec{m}_1$ and $\vec{m}_2$ respectivly. 
 Points $\vec{C}_1, \vec{C}_2$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
-$\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are images of \textit{epipolar lines}. 
-Epipolar line $l_1$ passes through \textit{epipole} $\vec{e}_1$, where $\lambda [\vec{e}_1 | 1]^\top = \pmb{\mathsf{P}}_2 \vec{C}_1$, same with $\lambda [\vec{e}_2 | 1]^\top = \pmb{\mathsf{P}}_1 \vec{C}_2$.
+The lines $\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are \textit{epipolar lines}. 
+The epipolar line $l_1$ passes through an \textit{epipole} $\vec{e}_1$ and through point $\vec{m_1}$, where $\lambda [\vec{e}_1 | 1]^\top = \mat{P}_1 \vec{C}_2$
+Similarly, line $l_2$ passes through an \textit{epipole} $\vec{e}_2$ and through point $\vec{m_2}$, where $\lambda [\vec{e}_2 | 1]^\top = \mat{P}_2 \vec{C}_1$.
 
-\subsection{Epipolar constraint}
-
-Having a set of two cameras the relationship between them and constraints on them can be expressed by two new matrices \textit{Essential matrix} $\pmb{\mathsf{E}} \in \mathbb{R}^{3x3}, rank(\pmb{\mathsf{E}}) = 2$, \autoref{eq:E} and \textit{Fundamental matrix} $\pmb{\mathsf{F}} \in \mathbb{R}^{3x3}, rank(\pmb{\mathsf{F}}) = 2$, \autoref{eq:F}
+\subsection{The epipolar constraint}
+Having a set of two cameras the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\pmb{\mathsf{E}} \in \mathbb{R}^{3x3},( rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
 \begin{equation}
     \label{eq:E}
-    \pmb{\mathsf{E}} = \pmb{\mathsf{R}}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \pmb{\mathsf{R}}_1^\top = [-\vec{t}_{21}]_{\times} \pmb{\mathsf{R}}_{21} = [\vec{b}]_{\times} \pmb{\mathsf{R}}_{21};
+    \pmb{\mathsf{E}} = \pmb{\mathsf{R}}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \pmb{\mathsf{R}}_1^\top = [-\vec{t}_{21}]_{\times} \pmb{\mathsf{R}}_{21} = [\vec{b}]_{\times} \pmb{\mathsf{R}}_{21},
 \end{equation}
+and matrix $\mat{F}$ as
 \begin{equation}
     \label{eq:F}
     \pmb{\mathsf{F}} = \pmb{\mathsf{K}}_2^{-T} \pmb{\mathsf{R}}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \pmb{\mathsf{R}}_1^\top \pmb{\mathsf{K}}_1^{-1} = 
     \pmb{\mathsf{K}}_2^{-T} [-\vec{t}_{21}]_{\times} \pmb{\mathsf{R}}_{21} \pmb{\mathsf{K}}_1^{-1} = 
-    \pmb{\mathsf{K}}_2^{-T} \pmb{\mathsf{E}} \pmb{\mathsf{K}}_1^{-1};
+    \pmb{\mathsf{K}}_2^{-T} \pmb{\mathsf{E}} \pmb{\mathsf{K}}_1^{-1},
 \end{equation}
 where 
-$\pmb{\mathsf{R}}_{21} = \pmb{\mathsf{R}}_2 \pmb{\mathsf{R}}_1^\top$ is a relative camera rotation and 
-$\vec{t}_{21} = -\pmb{\mathsf{R}}_2 \vec{b} = \vec{t}_2 - \pmb{\mathsf{R}}_{21}\vec{t}_1$ is a relative camera translation.
+$\mat{R}_{21} = \mat{R}_2 \mat{R}_1^\top$ is a relative camera rotation and 
+$\vec{t}_{21} = -\mat{R}_2 \vec{b} = \vec{t}_2 - \mat{R}_{21}\vec{t}_1$ is a relative camera translation.
 
-An algebraic expression of important properties of matrix $F$:
+An algebraic expression of the important properties of matrix $F$ using notation from \autoref{sec:epipolar_geometry} are:
 \begin{equation}
     \label{eq:Fm2}
     \lambda l_1 = \pmb{\mathsf{F}}^\top \begin{bmatrix} \vec{m}_2 \\ 1 \end{bmatrix},
@@ -260,10 +261,11 @@ An algebraic expression of important properties of matrix $F$:
     \label{eq:epiconstr}
     \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \pmb{\mathsf{F}} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0.
 \end{equation}
-Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\autoref{eq:Fm2} and \autoref{eq:Fm1}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\autoref{eq:fefe}).
-Epipolar constraint \autoref{eq:epiconstr} means that a point and its corespondent line are on a same plane (\autoref{fig:epipolar_std}, plane $\sigma$).
+Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\eqref{eq:Fm2} and \eqref{eq:Fm1}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\eqref{eq:fefe}).
+Epipolar constraint \eqref{eq:epiconstr} means that a point and its corespondent line are on the same plane (\eqref{fig:epipolar_std}, plane $\sigma$).
 
 \section{Stereovision}
+TODO: fixit =)
 
 \begin{figure}[h]
     \centering
@@ -294,36 +296,37 @@ Epipolar constraint \autoref{eq:epiconstr} means that a point and its coresponde
     \label{fig:pc_recons}
 \end{figure}
 
-Computer stereo vision is a process of extracting a stereo (depth) image from a planar image or set of images of the same scene. Usually, a stereo camera has two simple cameras located at some distance $\vec{b}$ pointing in the same direction, the same as the human eye (the scheme \autoref{fig:sch_stereo} and an example of a stereo camera \autoref{fig:stereo_ex}). 
-Sometimes fusion of multiple cameras and other sensors can be used:
-Intel Realsense \autoref{fig:stereo_ex} has two cameras, an IR sensor in case the images have almost no texture and a color sensor. 
+Computer stereo vision is a process of extracting a stereo (depth) image from a planar image or set of images of the same scene. Usually, a stereo camera has two simple cameras located at distance $|\vec{b}|$ pointing in the same direction, the same as the human eye (a scheme is in \autoref{fig:sch_stereo} and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
+Sometimes fusion of multiple cameras and other sensors can be used: the Intel Realsense \autoref{fig:stereo_ex} has two cameras, color sensor and an IR projector in case the images have almost no texture.
 
+It is possible to calculate only the non-zero multiple of $\mat{E}$ from image correspondences so that the scene can be reconstructed only up to a scale, but knowing the translation vector $\vec{b}$ (refer to \autoref{fig:sch_stereo}), the scale can be calculated.
+
+The corresponding epipolar lines lie on the same image rows ($l_1 = l_2$), and intersect at "points at infinity", which algebraically means
 \begin{equation}
     \label{eq:e1e2}
-    \vec{e}_1 = \vec{e}_2 = \lambda \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix},
+    \vec{e}_1 = \vec{e}_2 = \lambda \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}.
 \end{equation}
+The epipole is a point of intersecting all epipolar lines, so having the intersecting point ($\vec{e}_1$) and image point, the epipolar line can be calculated as
 \begin{equation}
     \label{eq:e1m1}
-    \lambda l_1 = \vec{e}_1 \times \vec{m}_1 = [\vec{e}_1]_\times \begin{bmatrix} \vec{m}_1 \\ 1\end{bmatrix},
+    \lambda l_1 = \vec{e}_1 \times \begin{bmatrix}
+        \vec{m}_1 \\ 1
+    \end{bmatrix} = [\vec{e}_1]_\times \begin{bmatrix} \vec{m}_1 \\ 1\end{bmatrix},
 \end{equation}
+therefore considering \eqref{eq:Fm1}, \eqref{eq:Fm2}, \eqref{eq:e1e2} and \eqref{eq:e1m1} 
+
 \begin{equation}
     \label{eq:F_simple}
     \pmb{\mathsf{F}} = \lambda [\vec{e}_1]_\times = \lambda \begin{bmatrix}
         0 & 0 & 0 \\
         0 & 0 & -1 \\
         0 & 1 & 0 \\
-    \end{bmatrix},
+    \end{bmatrix}.
 \end{equation}
 
-It is possible to calculate only the non-zero multiple of $\mat{E}$ from image correspondences so that the scene can be reconstructed only up to a scale, but knowing the translation vector $\vec{b}$ (\autoref{fig:sch_stereo}), means having a calibrated stereo pair, all distances can be calculated in world coordinates frame.
-By removing a rotation between cameras ($\mat{R} = \mat{I}$), all computations are simplified.
-
-Corresponding epipolar lines lie on same image rows ($l_1 = l_2$), and intersects at "points at infinity" (\autoref{eq:e1e2}). 
-Epipole is a point of intersecting all epipolar lines, so having the intersecting point ($\vec{e}_1$) and image point epipolar line can be calculated (\autoref{eq:e1m1}), therefore considering \autoref{eq:Fm1}, \autoref{eq:e1e2} and \autoref{eq:e1m1} the \autoref{eq:F_simple} is true.
-
-Consider two correspondences $\vec{a}_1 = (u_1, v)^\top$ and $\vec{a}_2 = (u_2, v)^\top $. 
+Furthermore, let us consider two correspondences $\vec{a}_1 = (u_1, v)^\top$ and $\vec{a}_2 = (u_2, v)^\top $. 
 Having correspondent points on the same row means that feature matcher can use this correlation to accelerate a matching process.
-It is possible to receive a dense point cloud as on \autoref{fig:pc_output} with this approach.
+It is possible to reconstruct a dense point cloud as in \autoref{fig:pc_output} with this approach.
 
 \section{Calibration}
 \label{sec:prelimin_calibration}
@@ -352,26 +355,29 @@ It is possible to receive a dense point cloud as on \autoref{fig:pc_output} with
     \label{fig:chb}
 \end{figure}
 
-Camera calibration - or \textit{Camera resection} process of computing the camera calibration matrix $K$ (\autoref{eq:kmat}).
-Usually, it is done with some pattern with predefined parameters, like a chessboard or more advanced boards (ArUco and ChArUco\footnote{\href{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}{Opencv ChArUco and ArUco boards}}).
+Camera calibration - or \textit{Camera resectioning} is a process of computing the camera calibration matrix $\mat{K}$ (see in \eqref{eq:kmat}).
+Usually, it is done with some pattern with predefined parameters, like a chessboard or more advanced markers (ArUco and ChArUco\footnote{\href{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}{Opencv ChArUco and ArUco calibration patterns - \url{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}}} etc).
 
-Camera calibration is necessary for geometry correction (\autoref{fig:chb}), so as a result, parallel lines in 3D are parallel to the image after the undistortion, and the image is unwrapped and projected on a plane.
+The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further distances estimation (\autoref{fig:chb}). 
+It is used in most maths for image processing and stereovision, for example \eqref{eq:F}, \eqref{eq:PKRt}
 
-In a real world lenses has also some distortion (\autoref{fig:chb1}) so to fix that distortion coefficients should be calculated: radial distortion $k_1, k_2, k_3, k_4, k_5, k_6$ and tangential distortion $p_1, p_2$.
+In the real world, lenses have distortion (see \autoref{fig:chb1}), to compensate that distortion a polynomial model is typically used with coefficients $k_1 ... k_6$ for radial distortion and $p_1, p_2$ for tangential distortion.
 
-From the \autoref{eq:projection}:
+Eq \eqref{eq:projection} can be rewritten as
 \begin{equation}
     \label{eq:dist_start}
     \lambda \begin{bmatrix} 
         u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
-    \end{bmatrix},
+    \end{bmatrix}.
 \end{equation}
+Let us now redefine this equation to consider the distortion. A 3D point in the camera frame is 
 \begin{equation}
     \label{eq:dist_2}
     \begin{bmatrix} x_c \\ y_c \\ z_c \end{bmatrix}
      = [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
-    \end{bmatrix},
+    \end{bmatrix}.
 \end{equation}
+The distortion model is defined as 
 \begin{equation}
     \label{eq:dist_3}
     x'' = \frac{x_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + p_1(r + 2x') + 2p_2\frac{x_c y_c}{z^2_c},
@@ -380,14 +386,14 @@ From the \autoref{eq:projection}:
     \label{eq:dist_4}
     y'' = \frac{y_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + 2p_1(\frac{x_c y_c}{z_c^2}) + p_2(r + 2y'),
 \end{equation}
-where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. Then undistorted point will be
+where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. Then the undistorted point will be
 \begin{equation}
     \label{eq:dist_end}
     \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} \begin{bmatrix} x'' \\ y'' \\ 1 \end{bmatrix}.
 \end{equation}
 
-Considering \autoref{eq:kmat}, image of a point $X$ seen through the calibrated camera with projection matrix $P$ will look as in \autoref{eq:dist_start} - \autoref{eq:dist_end}. Firstly, the point is projected on an abstract projection plane (\autoref{eq:dist_2}), then undistorted (\autoref{eq:dist_3}, \autoref{eq:dist_4}) and finally transformed from metric system of abstract projection plane to an image coordinate system (\autoref{eq:dist_end}).
+Considering \eqref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. Firstly, the point is projected to an abstract projection plane (\eqref{eq:dist_2}), then undistorted (\eqref{eq:dist_3}, \eqref{eq:dist_4}) and finally transformed from the metric system of abstract projection plane to the image coordinate system (\eqref{eq:dist_end}).
 
-\subsection{Stereopair calibration}
+\subsection{Stere opair calibration}
 \label{sec:prelimin_stereocalib}
 Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair.
