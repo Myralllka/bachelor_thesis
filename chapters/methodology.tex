@@ -18,9 +18,9 @@ The last step is to compute the distance to visible objects in the cameras' over
 
 As far as the stereo pair is calibrated, the 3D pose estimation depends on a stereo pair calibration, cameras' calibration, key point extractor and matcher.
 As a result, extracted features can be used in an SfM algorithm to correct a relative drone pose between $t_0$ and $t_1$ on \autoref{fig:intro_general}.
-Estimated distances to objects can be used in a feedback loop inside the system to correct its path planning, considering the obstacles found.
+Estimating distances to objects can be used in a feedback loop inside the system to correct path planning, considering the obstacles found.
 
-This chapter describes a general maths model of a solution, and all algorithms used in a process: for camera calibration, stereopair calibration points' pose obtaining and error measurements.
+This chapter describes a general maths model of a solution and all algorithms used in a process: for camera calibration, stereo pair calibration points' pose obtaining and error measurements.
 
 \section{Model description}
 
@@ -51,7 +51,7 @@ For this reason, it is better to use some other pattern, for example, a set of a
 The first approach assumes that cameras' poses are pre-measured, and the only necessary step is to correct one camera pose with respect to another.
 Firstly it detects apriltag's from \textit{im1} and \textit{im2}, compute their 3D poses.
 Then, estimate transformation parameters between two point sets, and find the correction transformation $\mat{T}_{correction}$.
-The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of second camera.
+The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of the second camera.
 
 \subsection{PnP-based algorithm}
 \label{sec:pnp}
@@ -60,7 +60,7 @@ PnP is the problem of estimating a camera pose (translation and rotation) given 
 \begin{equation}
     \lambda_i \begin{bmatrix} \vec{m}_i \\ 1 \end{bmatrix} = \mat{K} \mat{R} (\vec{X}_i - \vec{C}), \;\; i = \{0..n\}.
 \end{equation}
-No initial pose estimation is needed for this algorithm, but if there is one, it can accelerate the solver.
+No initial pose estimation is needed for this algorithm, but it can accelerate the solver if there is one.
 
 \begin{figure}[h]
     \centering
@@ -75,7 +75,7 @@ Firstly, let us define $\vec{v}_i = \mat{K}^{-1}\begin{bmatrix}\vec{m}_i \\ 1 \e
     \label{eq:p3p_gen}
     \lambda_i \vec{v}_i = \mat{R} (\vec{X}_i - \vec{C}).
 \end{equation}
-If there is no rotation, the situation would look like on a figure \autoref{fig:p3p} where vectors $\vec{d}_i$ are known, so there are 3 equations with 3 unknown (vector $\vec{C}$).
+If there is no rotation, the situation will look like on a figure \autoref{fig:p3p} where vectors $\vec{d}_i$ are known, so there is a system of three equations with three unknowns (vector $\vec{C}$).
 If there is a rotation, firstly it can be elliminated by defining $z_i$ As
 \begin{equation}
     \label{eq:p3p_rot}
@@ -86,7 +86,7 @@ Considering only angles between $\vec{v}_i$ and apply the cosine law per triangl
     ||\vec{d}_{ij}|| = z_i^2 + z_j^2 - 2z_iz_jc_{ij},
 \end{equation}
 where $||\vec{d}_{ij}|| = || \vec{X}_j - \vec{X}_i ||$, $c_{ij} = \cos(\angle \vec{v}_i \vec{v}_j)$.
-After solving the system of three equations with three unknown $z_i$, there will be 4 sollutions that should be verified on additional points \cite{Fischler1981}.
+After solving the system of three equations with three unknown $z_i$, there will be 4 sollutions including unreal, that should be verified on additional points \cite{Fischler1981}.
 Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) from $\vec{X}_i$ and $z_i$; then $\lambda_i$ from \eqref{eq:p3p_rot} and $\mat{R}$ from \eqref{eq:p3p_gen}.
 % \subsection{}
 % It is also possible to calibrate with correctly matched correspondences only, but the precision can worsen.
@@ -104,7 +104,7 @@ After keypoints with descriptors are detected on both images, the matcher should
 Brute-Force matcher is one of the most simple matchers.
 It takes one descriptor from one set, somehow computing the distances to all descriptors from the second set, matching them and repeating it to minimize the distance between two sets.
 Even after this process, there will be some outliers.
-Distance to corresponding epipolar lines can be used to filter them. \autoref{eq:epiconstr} is true only in an ideal case; otherwise the equation result will be not $0$ but the distance from reprojected point to its corresponding epipolar line.
+Distance to corresponding epipolar lines can be used to filter them. \autoref{eq:epiconstr} is valid only in an ideal case; otherwise, the equation result will be not $0$ but the distance from the reprojected point to its corresponding epipolar line.
 
 \subsection{Reprojection error}
 In ideal case, when calibration matrix has no error and stereopair position computed precisely, rays $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects in a point $\vec{X}$. 
@@ -164,7 +164,7 @@ It is a system of two equations with two $s$ and $t$ unknown.
 So after $s$ and $t$ are found, $\vec{X}$ can be compute as $\vec{X} = \frac{p_1 + p_2}{2}$.
 
 \subsection{SVD Triangulation}
-Singular value decomposition (SVD) triangulation is another method, which is both more optimal and wide-used.
+Singular value decomposition (SVD) triangulation is another method that is more optimal and wide-used.
 It computes 3D points from camera matrices $\mat{P}_1$, $\mat{P}_2$ and 2D correspondences. 
 This method is described in \cite{hartley_zisserman_2004}.
 
