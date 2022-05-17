@@ -2,6 +2,13 @@
 
 \label{chapter:methodology}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.8\textwidth]{graphics/td90deg.png}
+    \caption{The proposed approach model}
+    \label{fig:td90deg}
+\end{figure}
+
 The main task of this thesis is to create a compact obstacle avoidance system such that it can be mounted on MAVs with size and weight restrictions.
 There are related works of a monocular stereovision using SfM or Optical flow algorithms. 
 Also, there are some stereovision approaches with standard stereo cameras as on \autoref{fig:stereo_ex}.
@@ -24,13 +31,6 @@ This chapter describes a general maths model of a solution and all algorithms us
 
 \section{Model description}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=.7\textwidth]{graphics/td90deg.png}
-    \caption{The proposed approach model}
-    \label{fig:td90deg}
-\end{figure}
-
 On the \autoref{fig:td90deg}: there are two cameras with centers at $C_1$ and $C_2$ with a known static translation $\vec{t}_{21}$ and rotation $\mat{R}_{21}$, where $\mat{R}_{21}$ corresponds to Euler angle $90^\circ$ rotation in the epipolar plane (\autoref{fig:epipolar_std}, plane $\sigma$).
 Both cameras' intrinsic parameters are known, and images are synchronized in time; the FOV of both cameras have an intersecting zone.
 Let images from cameras with centers at $C_1$ and $C_2$ be \textit{im1} and \textit{im2} respectively.
@@ -41,11 +41,19 @@ The described method assumes that each camera is calibrated, and the stereo pair
 
 \section{General multicamera calibration}
 \label{sec:stereocalib}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.2\textwidth]{graphics/aptags.png}
+    \caption{The apriltags board used for the stereopair calibration}
+    \label{fig:aptags}
+\end{figure}
+
 There are multiple algorithms to do a stereo pair calibration (\autoref{sec:prelimin_stereocalib}). 
-Usually, a calibration chessboard is used (\autoref{fig:calib}) for a standard stereo camera with parallel or converging optical rays.
+Usually, a calibration chessboard is used (\autoref{fig:chb}) for a standard stereo camera with parallel or converging optical rays.
 It can be detected and used only when the whole chessboard is seen in both images.
 It is a disadvantage for cameras with a small overlapping zone and diverging optical rays, only if a really big chessboard is used at a considerable distance.
-For this reason, it is better to use some other pattern, for example, a set of apriltags \cite{Malyuta2019}. 
+For this reason, it is better to use some other pattern, for example, a set of apriltags \cite{Malyuta2019} which can be detected separately. 
 
 \subsection{Least-square estimation of transformation}
 \label{sec:lsq_umeyama}
@@ -94,7 +102,7 @@ Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) fro
 % Having two calibrated cameras, it is possible to compute essential matrix $\mat{E}$ \autoref{eq:E} from at least 5 corresponding points, and then decompose it to $\mat{R}_{21}$ and $\vec{t}_{21}$.
 
 \section{Features extraction, matching and filtering}
-
+\label{sec:features}
 In a computer vision, \textit{features} are representations of unique pieces of information from the image scene, such as points, edges and objects.
 A feature detector is an algorithm for extracting features from an image.
 There are multiple of them, but in this solution, ORB \cite{Rublee2011} is used. 
@@ -165,6 +173,7 @@ It is a system of two equations with two $s$ and $t$ unknown.
 So after $s$ and $t$ are found, $\vec{X}$ can be compute as $\vec{X} = \frac{p_1 + p_2}{2}$.
 
 \subsection{SVD Triangulation}
+\label{sec:svdtriang}
 Singular value decomposition (SVD) triangulation is another method that is more optimal and wide-used.
 It computes 3D points from camera matrices $\mat{P}_1$, $\mat{P}_2$ and 2D correspondences. 
 This method is described in \cite{hartley_zisserman_2004}.
