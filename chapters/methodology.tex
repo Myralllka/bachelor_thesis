@@ -58,11 +58,36 @@ The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_
 Another, a more general approach is based on solving a Perspective-n-Point (PnP) problem.
 PnP is the problem of estimating a camera pose (translation and rotation) given a known set of 3D points and respective 2D projections from calibrated camera
 \begin{equation}
-    \lambda_i \begin{bmatrix} \vec{m}_i \\ 1 \end{bmatrix} = \mat{K} \mat{R} (\vec{X}_i - C), \;\; i = \{0..n\}.
+    \lambda_i \begin{bmatrix} \vec{m}_i \\ 1 \end{bmatrix} = \mat{K} \mat{R} (\vec{X}_i - \vec{C}), \;\; i = \{0..n\}.
 \end{equation}
 No initial pose estimation is needed for this algorithm, but if there is one, it can accelerate the solver.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.3\textwidth]{graphics/p3p.png}
+    \caption{The P3P algotrithm visualization}
+    \label{fig:p3p}
+\end{figure}
 
+The situation when $n=3$ is the minimal amount of points to solve the PnP problem, this method is called P3P.  
+Firstly, let us define $\vec{v}_i = \mat{K}^{-1}\begin{bmatrix}\vec{m}_i \\ 1 \end{bmatrix}$, $\vec{v}_i \in \mathbb{R}^3$ . Then
+\begin{equation}
+    \label{eq:p3p_gen}
+    \lambda_i \vec{v}_i = \mat{R} (\vec{X}_i - \vec{C}).
+\end{equation}
+If there is no rotation, the situation would look like on a figure \autoref{fig:p3p} where vectors $\vec{d}_i$ are known, so there are 3 equations with 3 unknown (vector $\vec{C}$).
+If there is a rotation, firstly it can be elliminated by defining $z_i$ As
+\begin{equation}
+    \label{eq:p3p_rot}
+    |\lambda_i| \cdot ||\vec{v}_i|| = || \vec{X}_i - \vec{C} || = z_i.
+\end{equation}
+Considering only angles between $\vec{v}_i$ and apply the cosine law per triangle ($\vec{C}$, $\vec{X}_i$, $\vec{X}_j$), $i, j = 1, 2, 3, i \neq j$
+\begin{equation}
+    ||\vec{d}_{ij}|| = z_i^2 + z_j^2 - 2z_iz_jc_{ij},
+\end{equation}
+where $||\vec{d}_{ij}|| = || \vec{X}_j - \vec{X}_i ||$, $c_{ij} = \cos(\angle \vec{v}_i \vec{v}_j)$.
+After solving the system of three equations with three unknown $z_i$, there will be 4 sollutions that should be verified on additional points \cite{Fischler1981}.
+Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) from $\vec{X}_i$ and $z_i$; then $\lambda_i$ from \eqref{eq:p3p_rot} and $\mat{R}$ from \eqref{eq:p3p_gen}.
 % \subsection{}
 % It is also possible to calibrate with correctly matched correspondences only, but the precision can worsen.
 % Having two calibrated cameras, it is possible to compute essential matrix $\mat{E}$ \autoref{eq:E} from at least 5 corresponding points, and then decompose it to $\mat{R}_{21}$ and $\vec{t}_{21}$.
