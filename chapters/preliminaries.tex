@@ -24,7 +24,7 @@ $\pmb{\mathsf{S}}$ is a scaling matrix,
 $\pmb{\mathsf{R}}$ is a rotation matrix and 
 $\vec{t}$ is a translation vector.
 
-The same operations can be expressed in homogenous coordinate system using one matrix multiplication as
+The same operations can be expressed in a homogenous coordinate system using one matrix multiplication as
 
 \begin{equation}
     \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 
@@ -220,7 +220,7 @@ The notation is taken from \cite{hartley_zisserman_2004}, p. 581.
 \end{figure}
 
 \autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $\vec{C}_1$ and $\vec{C}_2$ connected with a base vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
-Both of the cameras observes a 3D point $X$. 
+Both of the cameras observe a 3D point $X$. 
 Projections of this point to $\pi_1$ and $\pi_2$ are $\vec{m}_1$ and $\vec{m}_2$ respectivly. 
 Points $\vec{C}_1, \vec{C}_2$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
 The lines $\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are \textit{epipolar lines}. 
@@ -265,7 +265,6 @@ Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ 
 Epipolar constraint \eqref{eq:epiconstr} means that a point and its corespondent line are on the same plane (\eqref{fig:epipolar_std}, plane $\sigma$).
 
 \section{Stereovision}
-TODO: fixit =)
 
 \begin{figure}[h]
     \centering
@@ -276,28 +275,45 @@ TODO: fixit =)
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.3\textwidth]{graphics/stereo_example.jpg}
-    \caption{Industrial stereocamera example, Intel realsense D455}
+    \caption{Industrial stereocamera example, Intel Realsense D455}
     \label{fig:stereo_ex}
 \end{figure}
 
-\begin{figure}[h]
-    \begin{subfigure}[b]{0.31\textwidth}
-      \includegraphics[width=\textwidth]{graphics/input_set.png}
-      \caption{Input set of images.}
-      \label{fig:pc_input}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.65\textwidth}
-      \includegraphics[width=\textwidth]{graphics/reconstructed.png}
-      \caption{reconstructed pointcloud.}
-      \label{fig:pc_output}
-    \end{subfigure}
-    \caption{Three dimensional reconstruction from multiple cameras.}
-    \label{fig:pc_recons}
-\end{figure}
+% \begin{figure}[h]
+%   \begin{subfigure}[b]{0.3\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{graphics/01.jpg}
+%     \caption{The first image}
+%     \label{fig:stereo_1}
+%   \end{subfigure}
+%   \hfill
+%   \begin{subfigure}[b]{0.3\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{graphics/02.jpg}
+%     \caption{The second image}
+%     \label{fig:stereo_2}
+%   \end{subfigure}
+%   \hfill
+%   \begin{subfigure}[b]{0.3\textwidth}
+%     \centering
+%     \includegraphics[width=\textwidth]{graphics/disparity.png}
+%     \caption{The disparity map}
+%     \label{fig:stereo_disp}
+%   \end{subfigure}
+% \end{figure}
 
-Computer stereo vision is a process of extracting a stereo (depth) image from a planar image or set of images of the same scene. Usually, a stereo camera has two simple cameras located at distance $|\vec{b}|$ pointing in the same direction, the same as the human eye (a scheme is in \autoref{fig:sch_stereo} and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
-Sometimes fusion of multiple cameras and other sensors can be used: the Intel Realsense \autoref{fig:stereo_ex} has two cameras, color sensor and an IR projector in case the images have almost no texture.
+Every digital image has only 2D information about a scene projected onto the image plane as in the \autoref{fig:td_scene_3d}.
+Computer stereo vision is a process of extracting a depth image from a pair of images of the same scene. 
+The depth maps are then used in SLAM, obstacle avoidance or detailed environment reconstruction in robotics.
+In the \autoref{chapter:intro} the most common methods of a depth vision are described, and among them, there are computationally expensive Neural Networks approaches and expensive in terms of money Lidars.
+The stereo camera is a tradeoff between price and processing complexity.
+
+Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in the \autoref{fig:sch_stereo}, and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
+Sometimes, a fusion of multiple cameras and other sensors can be used: the Intel Realsense shown in \autoref{fig:stereo_ex} has two cameras, a color sensor and an IR projector in case the images have almost no texture.
+% The intermediate result of a depth reconstruction is a disparity map computation.
+% Disparity map is such a matrix of dimensions $H \times W \times 1$, where $H$ and $W$ are the max height and width of the image pair, and the last channel is a distance of this point, 
+% The disparity map from \autoref{fig:stereo_1} and \autoref{fig:stereo_2} is in the \autoref{fig:stereo_disp}.
+
 
 It is possible to calculate only the non-zero multiple of $\mat{E}$ from image correspondences so that the scene can be reconstructed only up to a scale, but knowing the translation vector $\vec{b}$ (refer to \autoref{fig:sch_stereo}), the scale can be calculated.
 
@@ -325,7 +341,7 @@ therefore considering \eqref{eq:Fm1}, \eqref{eq:Fm2}, \eqref{eq:e1e2} and \eqref
 \end{equation}
 
 Furthermore, let us consider two correspondences $\vec{a}_1 = (u_1, v)^\top$ and $\vec{a}_2 = (u_2, v)^\top $. 
-Having correspondent points on the same row means that feature matcher can use this correlation to accelerate a matching process.
+Having correspondent points on the same row means that the feature matcher can use this correlation to accelerate a matching process.
 It is possible to reconstruct a dense point cloud as in \autoref{fig:pc_output} with this approach.
 
 \section{Calibration}
@@ -359,7 +375,7 @@ Camera calibration - or \textit{Camera resectioning} is a process of computing t
 Usually, it is done with some pattern with predefined parameters, like a chessboard or more advanced markers (ArUco and ChArUco\footnote{\href{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}{Opencv ChArUco and ArUco calibration patterns - \url{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}}} etc).
 
 The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further distances estimation (\autoref{fig:chb}). 
-It is used in most maths for image processing and stereovision, for example \eqref{eq:F}, \eqref{eq:PKRt}
+It is used in most maths for image processing and stereovision, for example, \eqref{eq:F}, \eqref{eq:PKRt}
 
 In the real world, lenses have distortion (see \autoref{fig:chb1}), to compensate that distortion a polynomial model is typically used with coefficients $k_1 ... k_6$ for radial distortion and $p_1, p_2$ for tangential distortion.
 
@@ -394,6 +410,6 @@ where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. The
 
 Considering \eqref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. Firstly, the point is projected to an abstract projection plane (\eqref{eq:dist_2}), then undistorted (\eqref{eq:dist_3}, \eqref{eq:dist_4}) and finally transformed from the metric system of abstract projection plane to the image coordinate system (\eqref{eq:dist_end}).
 
-\subsection{Stere opair calibration}
+\subsection{Stereo pair calibration}
 \label{sec:prelimin_stereocalib}
-Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair.
+Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair. The algorithms are described in the \autoref{sec:stereocalib}.

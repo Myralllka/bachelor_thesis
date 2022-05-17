@@ -22,7 +22,7 @@ So it is always a tradeoff - the bigger UAV is, the more there may be sensors on
 
 Considering everything above, a compact obstacle avoidance system is a perspective field for research. 
 Even though the idea is old, neither DJI, MRS, nor other research groups have a well-developed visual obstacle avoidance system. 
-The best, for now, can be the Skydio system \footnotetext{\href{https://www.skydio.com/skydio-autonomy}{Skydio autonomy - https://www.skydio.com/skydio-autonomy }}, but their approach is for a forward-moving drone.
+The best, for now, can be the Skydio system\footnote{\href{https://www.skydio.com/skydio-autonomy}{Skydio autonomy - https://www.skydio.com/skydio-autonomy }}, but their approach is for a forward-moving drone.
 
 The inspiration for this project was taken from DJI's obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3 - https://www.dji.com/cz/mavic-3}}. 
 It uses visual data from monocular cameras with overlapping sones to cover almost the whole area around the UAV and react in real-time to obstacles nearby. 
@@ -36,7 +36,7 @@ Each of them has its pros and cons.
 3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the envieronment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
 Depth cameras are more expensive than simple cameras. Ultrasonic and infrared sensors have distance limits and other minor issues ( a.e. sonar can be influenced by noise from the MAVs). 
 
-In most articles, stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Yu2018, Lin2021, Xiao2019} are used.
+In most articles, stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Lin2021, Xiao2019} are used.
 Deep learning approaches \cite{Back2020, FragaLamas2019, Park2020, Roghair2021} and Convolutional Neural Networks \cite{Yu2013, Ma2020} are also quite popular.
 The real-time multi-camera feedback control system is introduced in \cite{He2021}, but this solution does not imply one drone, only multi-drone systems.
 
@@ -45,8 +45,24 @@ These problems are pretty closely related.
 SLAM keeps track of the robot's position while constructing and updating a map of an unknown environment; obstacle avoidance is a problem of detecting and avoiding the nearest obstacles in an unknown environment to keep drones safe.
 So both problems are related to making a 3D map of an unknown environment, but for obstacle avoidance, the precision of distance measurements to the nearest objects is much more critical.
 
+\begin{figure}[h]
+    \begin{subfigure}[b]{0.31\textwidth}
+      \includegraphics[width=\textwidth]{graphics/input_set.png}
+      \caption{The input for SfM}
+      \label{fig:pc_input}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.65\textwidth}
+      \includegraphics[width=\textwidth]{graphics/reconstructed.png}
+      \caption{The output of SfM}
+      \label{fig:pc_output}
+    \end{subfigure}
+    \caption{The SfM example}
+    \label{fig:pc_recons}
+\end{figure}
+
 Structure from Motion (SfM) is another algorithm that can implement a system for avoiding obstacles. 
-SfM is a method of depth map reconstruction from a continuous sequance of images, so using this approach, dense point clouds can be computed, and obstacles can be detected \cite{Lee2008}. 
+SfM is a method of depth map reconstruction from a continuous sequance of images as in the \autoref{fig:pc_input}, so using this approach, dense point cloud as in \autoref{fig:pc_output} can be computed, and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
 \begin{figure}[t]

@@ -40,6 +40,7 @@ The 3D pose of a point $\vec{X}$ in world measurement units is obtain from known
 The described method assumes that each camera is calibrated, and the stereo pair is also calibrated - both $t_{21}$ and $R_{21}$ are known.
 
 \section{General multicamera calibration}
+\label{sec:stereocalib}
 There are multiple algorithms to do a stereo pair calibration (\autoref{sec:prelimin_stereocalib}). 
 Usually, a calibration chessboard is used (\autoref{fig:calib}) for a standard stereo camera with parallel or converging optical rays.
 It can be detected and used only when the whole chessboard is seen in both images.
@@ -134,7 +135,7 @@ where $m_c = \begin{bmatrix} u_c \\ v_c \end{bmatrix}$, $\underline{X} = \begin{
 
 \section{Features pose estimation}
 
-3D scene points' poses can be computed by having pairs of correspondent points.
+3D scene points' poses can be computed by having pairs of correspondent points taken by calibrated cameras.
 This process is called triangulation.
 
 \subsection{Shortest distance}
