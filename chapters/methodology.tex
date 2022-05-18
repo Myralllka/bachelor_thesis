@@ -218,11 +218,16 @@ Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) fro
 In a computer vision, \textit{features} are representations of unique pieces of information from the image scene, such as points, edges and objects.
 A feature detector is an algorithm for extracting features from an image.
 There are multiple of them, but in this solution, ORB \cite{Rublee2011} is used. 
-This algorithm claims to be of the same accuracy as the state-of-the-art SIFT detector but a few times faster. 
+This algorithm claims to be of the same accuracy as the state-of-the-art SIFT detector but a few times faster \cite{Sharif2017}. 
+
+
 
 The next important part is a feature matcher. 
 After keypoints with descriptors are detected on both images, the matcher should match them between each other, to create correspondences.
 It can be done by bruteforce comparison of descriptors, nearest neighbors approximation or even using neural networks.
+
+Brute-Force matcher is one of the most simple matchers.
+It takes one descriptor from one set, somehow computing the distances to all descriptors from the second set, matching them and repeating it to minimize the distance between two sets.
 
 \section{Features pose estimation}
 
@@ -230,6 +235,7 @@ It can be done by bruteforce comparison of descriptors, nearest neighbors approx
 This process is called triangulation.
 
 \subsection{Shortest distance}
+\label{sec:shortest_distance}
 One method to make a triangulation is to find the shortest distance between two rays.
 According to epipolar geometry properties, \autoref{sec:epipolar_geometry}, vectors $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects at the 3D point $\vec{X}$.
 However, in the real world, lines can be at some distance from each other, so $\vec{X}$ is the point closest to both lines.
@@ -243,7 +249,7 @@ Then define two lines $d_1$ and $d_2$ in a vector form:
     d_2: p_2 = \vec{C}_2 + s \vec{d}_2,
 \end{equation}
 where $\vec{d}_1$ and $\vec{d}_2$ are directional vectors, $\vec{C}_1$ and $\vec{C}_2$ are 3D points located on respective lines, $s$ and $t$ are free parameters that uniquely define points $p_1$ and $p_2$. 
-To minimize the distance between two lines, such $p_1$ and $p_2$ are needed that the line with directional vector $\vec{p_1p_2} = \vec{l}$ will be orthogonal to $d_1$ and $d_2$ which means
+To minimize the distance between two lines, such $p_1$ and $p_2$ are needed that the line with directional vector $p_2 - p_1 = \vec{l}$ will be orthogonal to $d_1$ and $d_2$ which means
 \begin{equation}
     \label{eq:ldd1}
     \vec{l} \cdot \vec{d}_1 = 0,

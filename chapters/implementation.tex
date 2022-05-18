@@ -22,7 +22,7 @@ In this section there is a description of the implemented solution: hardware in 
   \label{The proposed sollution prototype}
 \end{figure}
 
-The camera holder CAD model was created in a Fusion360 software considering requirements of rotation $90^\circ$ and the distance close to the average MAV sizes, the screenshot from modelling process is in \autoref{fig:proto_scheme}.
+The camera holder CAD model was created in a Fusion360 software considering requirements of rotation $90^\circ$ and the distance close to the average MAV sizes, the screenshot from the modelling process is in \autoref{fig:proto_scheme}.
 The 3d-printed solution prototype with cameras mounted is in the \autoref{fig:proto_printed}
 
 Basler daA1600-60um cameras were chosen for this project because they have a global shutter to capture moving objects, good image quality and they are not so expensive.
@@ -41,28 +41,26 @@ Basler daA1600-60um cameras were chosen for this project because they have a glo
 
 Cameras' lences have $120^\circ$ FOV, which gives enough overlapping zone to detect features in $\sigma$ (see \autoref{fig:sch_stereo}).
 
-Intel NUC with 8 cores CPU is used as the on-board computer for MAV. 
-No external GPU is needed, so all algorithms should take it into consideration.
+Intel NUC with 8 cores CPU is used as the onboard computer for MAV. 
+No external GPU is needed, so all algorithms should consider it.
 
 \section{Software tools}
 \label{sec:impl_software}
 
-The proposed solution uses Robotic operating system (ROS)\cite{Rospaper} as the middleware.
-ROS is the whole ecosystem with hundrets of already implemented algorithms and libraries to interact with robots between Its parts and sensors.
-It is an opens-ource tool, so the apriltag detector and camera driver used in this thesis are based on official modules from ROS community.
+The proposed solution uses the Robotic operating system (ROS)\cite{Rospaper} as the middleware.
+ROS is the whole ecosystem with hundreds of already implemented algorithms and libraries to interact with robots between Its parts and sensors.
+It is an open-source tool, so the apriltag detector and camera driver used in this thesis are based on official modules from the ROS community.
 
-The MRS UAV system \cite{Baca2021} is used as a drone control environment. It is based on ROS, but it is the special framework for MAV's to implement and test path planning, control, computer vision, objects tracking and much more problems related to MAV's.
+The MRS UAV system \cite{Baca2021} is used as a drone control environment. It is based on ROS, but it is the unique framework for MAVs to implement and test path planning, control, computer vision, object tracking, and many more MAV-related problems.
 
 OpenCV \cite{opencv} is an open-source library for computer vision.
-Some of algorithms used in this thesis are taken from this library, PnP (\autoref{sec:pnp}) and improved version of triangulation from \autoref{sec:svdtriang} called "The Golden Standard Triangulation Method" which is a combination of SVD triangulation with applied Sampson correction.
-Also feature detector and matcher (\autoref{sec:features}) both are used from the OpenCV.
-
-Eigen \cite{Eigen} library is used for all linear algebra. 
+Eigen \cite{Eigen} is an efficient library for linear algebra.
+Some solution algorithm implementations were used in both of them.
 
 \section{Integration}
 \label{sec:impl_integration}
 
-Implementation steps are described in the same order as in a \autoref{chapter:methodology}: calibrations, features matching, extracting 3D poses of features, error computation.
+Implementation steps are described in the same order as in a \autoref{chapter:methodology}: calibrations, features matching, extracting 3D poses of features, and error computation.
 
 \begin{figure}[h]
     \centering
@@ -72,25 +70,31 @@ Implementation steps are described in the same order as in a \autoref{chapter:me
 \end{figure}
 
 There is a package\footnote{\url{http://wiki.ros.org/camera_calibration}} in ROS ecosystem, that was used for the camera calibration process described in \autoref{sec:meth_calib}. 
-It takes a chessboard parameters (square size and number of squares) as input, then in the interactive mode (see \autoref{fig:calib}) it collects images for calibration and as a result creates a file with camera calibration matrix and distortion coeficients, if the lens has it.
+It takes a chessboard parameter (square size and the number of squares) as input.
+Then in the interactive mode (see \autoref{fig:calib}), it collects images for calibration and, as a result, creates a file with the camera calibration matrix and distortion coefficients if the lens has it.
 
-There are two implemented methods of a stereo pair calibration described in \autoref{sec:stereocalib}.
-Both of them uses an apriltag calibration pattern, shown in the \autoref{fig:aptags}.
-The main reason why this pattern was chosen is because each tag can be detected indevidually, so there is no need to have all of them simultaneously in the overlapping zone.
+There are two implemented methods of stereo pair calibration described in \autoref{sec:stereocalib}.
+Both of them use an apriltag calibration pattern, shown in the \autoref{fig:aptags}.
+The main reason why this pattern was chosen is that each tag can be detected individually, so there is no need to have all of them simultaneously in the overlapping zone.
 The first method is implemented using the "Least-square estimation of transformation between two point sets" \cite{Umeyama1991} implementation from Eigen.
 As the initial poses, measurements from the CAD model are used.
 The second method is implemented using the OpenCV PnP solver.
-As far as a standard apriltag detector outputs only the 3D poses of detected tags, it was modified to publish an external information needed for the PnP algorithm - 2D coordinates of apriltags' corners in each image.
+As far as a standard apriltag detector outputs only the 3D poses of detected tags, it was modified to publish external information needed for the PnP algorithm - 2D coordinates of apriltags' corners in each image.
 
-After both cameras and stereo pair are calibrated, next step is an image synchronisation and features detection, matching and filtering (\autoref{sec:features}). 
+After both cameras and stereo pair are calibrated, the following steps are features detection, matching and filtering (\autoref{sec:features}) for a synchronized pair of images. 
+The synchronization is done on the stereo pair driver level.
 
-Brute-Force matcher is one of the most simple matchers.
-It takes one descriptor from one set, somehow computing the distances to all descriptors from the second set, matching them and repeating it to minimize the distance between two sets.
+As described in \autoref{sec:features}, ORB detector and brute-force matcher from OpenCV were used for features detection and matching.
 Even after this process, there will be some outliers.
-Distance to corresponding epipolar lines can be used to filter them. \autoref{eq:epiconstr} is valid only in an ideal case; otherwise, the equation result will be not $0$ but the distance from the reprojected point to its corresponding epipolar line.
+Distance from features to the corresponding epipolar lines can be used to filter them. 
+This distance can be computed using the equation \autoref{eq:epiconstr}.
+Its result is $0$ only in an ideal case; otherwise, the equation result will be the distance from the reprojected point to its corresponding epipolar line.
 
+The next step is to reconstruct the 3D scene from obtained feature points.
+There are two different methods implemented for that, described in \autoref{sec:svdtriang} and \autoref{sec:shortest_distance}.
+One of them is an algebraic solution of the shortest distance between two rays, so it completely depends on calibration quality.
+Another one is called "The Golden Standard Triangulation Method", which combines SVD triangulation with applied Sampson correction. 
+The implementation from the OpenCV is used.
 
-% Usage of proposed aproach: at a timestamp $t_1$ it is already possible to use SfM to make a point cloud from green + red points and blue + red.
-% Here the proposed algorithm can help - it gives common points to an algorithm, so instead of SfM from 2 images it does SfM from 4 images but with bigger pressision, because $T_{static}$ remains the same, and the only necessary transformation that should be estimated is $T_{t_0t_1}$, and the innertial module can help with that.
-
-% Another possible approach is to use already working SfM algorithm implementation for a left and rigth camera separately to obtaine two pointclouds, and then align them and fix a scale using Iterative closest point algorithm with respect to fixed red pointcloud
+As a result, obstacles in the cameras' overlapping zone are detected in a format of the point cloud and correspondent feature points on both images.
+Recalling the \autoref{fig:intro_general}, the proposed solution providing a pointcloud with obstacles in a red zone at each timestamp $t_i$. 
