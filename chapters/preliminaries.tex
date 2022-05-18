@@ -187,13 +187,13 @@ Image point $\vec{m} = (u, v)^\top$ can be obtained from a 3D point $\vec{X}$ us
 \end{equation}
 
 \begin{equation}
-    \lambda \begin{bmatrix} 
+    \label{eq:proj_min}
+    \lambda 
+    \begin{bmatrix} 
     \vec{m} \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} \vec{X} \\ 1
-\end{bmatrix},
+    \end{bmatrix},
 \end{equation}
 where $\lambda \neq 0$ is a free scaling parameter.
-
-\section{Epipolar geometry}
 
 \subsection{Skew-symmetric 3x3 matrix}
 A skew-symmetric or antisymetric matrix of vector $\vec{b} = (b_1, b_2, b_3)^\top$ is defined as
@@ -210,7 +210,8 @@ This matrix has several useful properties, but the most important in this thesis
     \vec{a} \times \vec{b} = [\vec{a}]_{\times} \vec{b}.
 \end{equation}
 The notation is taken from \cite{hartley_zisserman_2004}, p. 581.
-\subsection{Epipolar geometry}
+
+\section{Epipolar geometry}
 \label{sec:epipolar_geometry}
 \begin{figure}[h]
     \centering
@@ -309,100 +310,64 @@ In the \autoref{chapter:intro} the most common methods of a depth vision are des
 The stereo camera is a tradeoff between price and processing complexity.
 
 Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in the \autoref{fig:sch_stereo}, and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
-Sometimes, a fusion of multiple cameras and other sensors can be used: the Intel Realsense shown in \autoref{fig:stereo_ex} has two cameras, a color sensor and an IR projector in case the images have almost no texture.
+Sometimes, a fusion of multiple cameras and other sensors can be used: the Intel Realsense shown in \autoref{fig:stereo_ex} has two cameras, a color sensor and an IR projector in case the images have no texture or no feature points was detected.
 % The intermediate result of a depth reconstruction is a disparity map computation.
 % Disparity map is such a matrix of dimensions $H \times W \times 1$, where $H$ and $W$ are the max height and width of the image pair, and the last channel is a distance of this point, 
 % The disparity map from \autoref{fig:stereo_1} and \autoref{fig:stereo_2} is in the \autoref{fig:stereo_disp}.
 
 
-It is possible to calculate only the non-zero multiple of $\mat{E}$ from image correspondences so that the scene can be reconstructed only up to a scale, but knowing the translation vector $\vec{b}$ (refer to \autoref{fig:sch_stereo}), the scale can be calculated.
+% It is possible to calculate only the non-zero multiple of $\mat{E}$ from image correspondences so that the scene can be reconstructed only up to a scale, but knowing the translation vector $\vec{b}$ (refer to \autoref{fig:sch_stereo}), the scale can be calculated.
 
-The corresponding epipolar lines lie on the same image rows ($l_1 = l_2$), and intersect at "points at infinity", which algebraically means
+% The corresponding epipolar lines lie on the same image rows ($l_1 = l_2$), and intersect at "points at infinity", which algebraically means
+% \begin{equation}
+%     \label{eq:e1e2}
+%     \vec{e}_1 = \vec{e}_2 = \lambda \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}.
+% \end{equation}
+% The epipole is a point of intersecting all epipolar lines, so having the intersecting point ($\vec{e}_1$) and image point, the epipolar line can be calculated as
+% \begin{equation}
+%     \label{eq:e1m1}
+%     \lambda l_1 = \vec{e}_1 \times \begin{bmatrix}
+%         \vec{m}_1 \\ 1
+%     \end{bmatrix} = [\vec{e}_1]_\times \begin{bmatrix} \vec{m}_1 \\ 1\end{bmatrix},
+% \end{equation}
+% therefore considering \eqref{eq:Fm1}, \eqref{eq:Fm2}, \eqref{eq:e1e2} and \eqref{eq:e1m1} 
+
+% \begin{equation}
+%     \label{eq:F_simple}
+%     \pmb{\mathsf{F}} = \lambda [\vec{e}_1]_\times = \lambda \begin{bmatrix}
+%         0 & 0 & 0 \\
+%         0 & 0 & -1 \\
+%         0 & 1 & 0 \\
+%     \end{bmatrix}.
+% \end{equation}
+
+% Furthermore, let us consider two correspondences $\vec{a}_1 = (u_1, v)^\top$ and $\vec{a}_2 = (u_2, v)^\top $. 
+% Having correspondent points on the same row means that the feature matcher can use this correlation to accelerate a matching process.
+% It is possible to reconstruct a dense point cloud as in \autoref{fig:pc_output} with this approach.
+
+\section{Reprojection error}
+\label{sec:error_reprojection}
+In ideal case, when calibration matrix has no error and stereopair position computed precisely, rays $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects in a point $\vec{X}$. 
+However, calibrations are done with some precision only, so reprojection error is used to measure this precision.
+
+After the 3D pose of a point is computed, to measure its reprojection error, it should be projected back on an image, and a new distance should be computed.
+
+Consider a general projection matrix $\mat{P}_i$ as
 \begin{equation}
-    \label{eq:e1e2}
-    \vec{e}_1 = \vec{e}_2 = \lambda \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}.
+    \label{eq:p_general}
+    \mat{P}_i = \begin{bmatrix} (p_i^1)^\top \\ (p_i^2)^\top \\ (p_i^3)^\top \end{bmatrix},
 \end{equation}
-The epipole is a point of intersecting all epipolar lines, so having the intersecting point ($\vec{e}_1$) and image point, the epipolar line can be calculated as
+the reprojection error is defined as 
 \begin{equation}
-    \label{eq:e1m1}
-    \lambda l_1 = \vec{e}_1 \times \begin{bmatrix}
-        \vec{m}_1 \\ 1
-    \end{bmatrix} = [\vec{e}_1]_\times \begin{bmatrix} \vec{m}_1 \\ 1\end{bmatrix},
+    e^2(\underline{X}) = \sum_{c=1}^{2}{  
+    \begin{bmatrix}
+        \begin{pmatrix}
+            u_c - \frac{(p_c^1)^\top \underline{X}}{(p_c^3)^\top \underline{X}}
+        \end{pmatrix}^2 + 
+        \begin{pmatrix}
+            v_c - \frac{(p_c^2)^\top \underline{X}}{(p_c^3)^\top \underline{X}}
+        \end{pmatrix}^2
+    \end{bmatrix}
+    },
 \end{equation}
-therefore considering \eqref{eq:Fm1}, \eqref{eq:Fm2}, \eqref{eq:e1e2} and \eqref{eq:e1m1} 
-
-\begin{equation}
-    \label{eq:F_simple}
-    \pmb{\mathsf{F}} = \lambda [\vec{e}_1]_\times = \lambda \begin{bmatrix}
-        0 & 0 & 0 \\
-        0 & 0 & -1 \\
-        0 & 1 & 0 \\
-    \end{bmatrix}.
-\end{equation}
-
-Furthermore, let us consider two correspondences $\vec{a}_1 = (u_1, v)^\top$ and $\vec{a}_2 = (u_2, v)^\top $. 
-Having correspondent points on the same row means that the feature matcher can use this correlation to accelerate a matching process.
-It is possible to reconstruct a dense point cloud as in \autoref{fig:pc_output} with this approach.
-
-\section{Calibration}
-\label{sec:prelimin_calibration}
-\subsection{Single camera calibration}
-
-\begin{figure}[h]
-    \begin{subfigure}[b]{0.45\textwidth}
-      \includegraphics[width=\textwidth]{graphics/chessboard_img.png}
-      \caption{Original image with radial distortion.}
-      \label{fig:chb1}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-      \includegraphics[width=\textwidth]{graphics/chessboard_img_rect.png}
-      \caption{Undistorted image with no distortion.}
-      \label{fig:chb2}
-    \end{subfigure}
-    \caption{Camera image before and after the calibration}
-    \label{fig:chb}
-\end{figure}
-
-Camera calibration - or \textit{Camera resectioning} is a process of computing the camera calibration matrix $\mat{K}$ (see in \eqref{eq:kmat}).
-Usually, it is done with some pattern with predefined parameters, like a chessboard or more advanced markers (ArUco and ChArUco\footnote{\href{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}{Opencv ChArUco and ArUco calibration patterns - \url{https://docs.opencv.org/4.x/df/d4a/tutorial_charuco_detection.html}}} etc).
-
-The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further distances estimation (\autoref{fig:chb}). 
-It is used in most maths for image processing and stereovision, for example, \eqref{eq:F}, \eqref{eq:PKRt}
-
-In the real world, lenses have distortion (see \autoref{fig:chb1}), to compensate that distortion a polynomial model is typically used with coefficients $k_1 ... k_6$ for radial distortion and $p_1, p_2$ for tangential distortion.
-
-Eq \eqref{eq:projection} can be rewritten as
-\begin{equation}
-    \label{eq:dist_start}
-    \lambda \begin{bmatrix} 
-        u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
-    \end{bmatrix}.
-\end{equation}
-Let us now redefine this equation to consider the distortion. A 3D point in the camera frame is 
-\begin{equation}
-    \label{eq:dist_2}
-    \begin{bmatrix} x_c \\ y_c \\ z_c \end{bmatrix}
-     = [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
-    \end{bmatrix}.
-\end{equation}
-The distortion model is defined as 
-\begin{equation}
-    \label{eq:dist_3}
-    x'' = \frac{x_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + p_1(r + 2x') + 2p_2\frac{x_c y_c}{z^2_c},
-\end{equation}
-\begin{equation}
-    \label{eq:dist_4}
-    y'' = \frac{y_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + 2p_1(\frac{x_c y_c}{z_c^2}) + p_2(r + 2y'),
-\end{equation}
-where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. Then the undistorted point will be
-\begin{equation}
-    \label{eq:dist_end}
-    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} \begin{bmatrix} x'' \\ y'' \\ 1 \end{bmatrix}.
-\end{equation}
-
-Considering \eqref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. Firstly, the point is projected to an abstract projection plane (\eqref{eq:dist_2}), then undistorted (\eqref{eq:dist_3}, \eqref{eq:dist_4}) and finally transformed from the metric system of abstract projection plane to the image coordinate system (\eqref{eq:dist_end}).
-
-\subsection{Stereo pair calibration}
-\label{sec:prelimin_stereocalib}
-Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair. The algorithms are described in the \autoref{sec:stereocalib}.
+where $m_c = \begin{bmatrix} u_c \\ v_c \end{bmatrix}$, $\underline{X} = \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix}$.
