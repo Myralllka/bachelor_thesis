@@ -28,12 +28,29 @@ The inspiration for this project was taken from DJI's obstacle avoidance technol
 It uses visual data from monocular cameras with overlapping sones to cover almost the whole area around the UAV and react in real-time to obstacles nearby. 
 Unfortunately, they have no publications or implementation details, so it is only a conclusion from publicly available information.
 
+\label{sec:problem_definition}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.7\textwidth]{graphics/general_scheme.png}
+    \caption{ A general scheme of the multi-camera obstacle detection problem.}
+    \label{fig:intro_general}
+\end{figure}
+
+Figure \autoref{fig:intro_general} presents a scheme of the proposed system.
+In the figure, $T_{static}$ is the transformation between the cameras obtained with stereopair calibration. 
+At time $t_0$, a new pair of images is received.
+A feature detector extracts points of interest from the image.
+Points that lie in the part of the images corresponding to the overlapping field of view (the red point cloud in \autoref{fig:intro_general}) are then selected and correspondence matches between these points from the two images are found based on their features.
+A calibrated projection model of the cameras and the transformation $T_{static}$ are used to estimate 3D points from the matched point pairs.
+Then at time $t_1$, when a new pair of images is received, the same process is repeated. 
+The obtained point cloud is used to find the scale of the points obtained using the SfM algorithm from images captured at $t_0$ and $t_1$ (the blue and green point clouds on \autoref{fig:intro_general}).
+
 \section{Related Works}
 Various MAVs use several obstacle avoidance sensors: stereo vision \cite{Ruf2018}, depth cameras (as Intel RealSense), monocular vision \cite{Mejias2010}, lidar (2d or 3d) \cite{Ramasamy2016}, sonar (ultrasonic), time of flight sensors, also combinations of them can be used. 
 In \cite{Rambabu2015} the sensor fusion of ultrasonic and infrared sensors is presented.
 
 Each of them has its pros and cons. 
-3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the envieronment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
+3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the environment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
 Depth cameras are more expensive than simple cameras. Ultrasonic and infrared sensors have distance limits and other minor issues ( a.e. sonar can be influenced by noise from the MAVs). 
 
 In most articles, a stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Lin2021, Xiao2019} is used.
@@ -46,18 +63,18 @@ SLAM keeps track of the robot's position while constructing and updating a map o
 So both problems are related to making a 3D map of an unknown environment, but for obstacle avoidance, the precision of distance measurements to the nearest objects is much more critical.
 
 \begin{figure}[h]
-    \begin{subfigure}[b]{0.31\textwidth}
+    \begin{subfigure}[h]{0.31\textwidth}
       \includegraphics[width=\textwidth]{graphics/input_set.png}
       \caption{Input images.}
       \label{fig:pc_input}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.65\textwidth}
+    \begin{subfigure}[h]{0.65\textwidth}
       \includegraphics[width=\textwidth]{graphics/reconstructed.png}
       \caption{Output of an SfM algorithm.}
       \label{fig:pc_output}
     \end{subfigure}
-    \caption{Ilustration of Structure from Motion}
+    \caption{Ilustration of Structure from Motion, source - \url{https://github.com/Myralllka/CTU_3d_computer_vision/}}
     \label{fig:pc_recons}
 \end{figure}
 
@@ -66,27 +83,15 @@ SfM is a method of depth map reconstruction from a continuous sequance of images
 Using this approach, a dense point cloud as in \autoref{fig:pc_output} can be computed and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
-\label{sec:problem_definition}
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=0.7\textwidth]{graphics/general_scheme.png}
-    \caption{ A general scheme of the multi-camera obstacle detection problem.}
-    \label{fig:intro_general}
-\end{figure}
-
 This thesis aims to design a visual obstacle avoidance system for MAVs, 3D model it, assemble a device and measure its efficiency. 
 The proposed solution assumes an MAV with limited size and lifting force that limits the number of sensors on it. 
 The MAV is thus equipped with two calibrated cameras with a known transformation between them. 
 Fields of view of the cameras overlap enough to detect close obstacles.
 Framerate of the cameras is sufficient to operate in real-time (at least 30 frames per second (fps)), and the frames are synchronized in time.
 The MAV is equipped with an onboard computer with enough computational power to process the images at a rate sufficient for the obstacle avoidance.
-The flight envieronment is assumed to be well-lit and to contain objects with well-distinguishable visual features tat can be observed by the cameras.
+The flight environment is assumed to be well-lit and to contain objects with well-distinguishable visual features that can be observed by the cameras.
+These features should be more or less unique to simplify the distinguishing.
+The expected output is a reconstructed 3D environment around the drone in the form of a point cloud which represents the nearest objects.
+Depends on the estimated distance, these are the possible obstacles that should be avoided.
+Then it can be integrated with the MAV control system to provide it with obstacles, but the solution working rate on the MAV's hardware should be sufficient anough for agile manoeuvering and obstacle avoidance.
 
-Figure \autoref{fig:intro_general} presents a scheme of the proposed system.
-In the figure, $T_{static}$ is the transformation between the cameras obtained with stereopair calibration. 
-At time $t_0$, a new pair of images is received.
-A feature detector extracts points of interest from the image.
-Points that lie in the part of the images corresponding to the overlapping field of view (the red point cloud in \autoref{fig:intro_general}) are then selected and correspondence matches between these points from the two images are found based on their features.
-A calibrated projection model of the cameras and the transformation $T_{static}$ are used to estimate 3D points from the matched point pairs.
-Then at time $t_1$, when a new pair of images is received, the same process is repeated. 
-The obtained point cloud is used to find the scale of the points obtained using the SfM algorithm from images captured at $t_0$ and $t_1$ (the blue and green point clouds on \autoref{fig:intro_general}).
