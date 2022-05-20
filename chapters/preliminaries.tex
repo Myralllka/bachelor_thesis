@@ -9,32 +9,32 @@ For example, the general scaling, rotation and translation is expressed in non-h
 
 \begin{equation}
     \vec{m}_1 = 
-    \pmb{\mathsf{S}} \pmb{\mathsf{R}}
+    \mat{S} \mat{R}
     \vec{m}_0
     + \vec{t},
 \end{equation}
 
 \begin{equation}
-    \pmb{\mathsf{S}} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \pmb{\mathsf{R}} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}, \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix},
+    \mat{S} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \mat{R} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}, \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix},
 \end{equation}
 
 where $m_0$ is the original point,
-$m_1$ is the transformed point,
-$\pmb{\mathsf{S}}$ is a scaling matrix,
-$\pmb{\mathsf{R}}$ is a rotation matrix and 
+$m_1$ is the transformed point, 
+$\mat{S}$ is a scaling matrix,
+$\mat{R}$ is a rotation matrix and 
 $\vec{t}$ is a translation vector.
 
 The same operations can be expressed in a homogenous coordinate system using one matrix multiplication as
 
 \begin{equation}
     \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 
-    \pmb{\mathsf{S}}_H \pmb{\mathsf{R}}_H \pmb{\mathsf{T}}_H
+    \mat{S}_H \mat{R}_H \mat{T}_H
     \begin{bmatrix} \vec{m}_0 \\ 1 \end{bmatrix},
 \end{equation}
 \begin{equation}
-    \pmb{\mathsf{S}}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \pmb{\mathsf{R}}_H = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \pmb{\mathsf{T}}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ,
+    \mat{S}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \mat{R}_H = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \mat{T}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ,
 \end{equation}
-where $\pmb{\mathsf{S}}_H, \pmb{\mathsf{R}}_H$ and $\pmb{\mathsf{T}}_H$ are homogenous transformation matrices.
+where $\mat{S}_H, \mat{R}_H$ and $\mat{T}_H$ are homogenous transformation matrices.
 
 So in the homogenous coordinate system, all 2D transformations can be combined and expressed as matrix multiplications.
 
@@ -126,7 +126,7 @@ Most modern digital cameras have no skew and square pixels, so in most cases, th
 
 \begin{equation}
     \label{eq:kmat}
-    \pmb{\mathsf{K}} = \begin{bmatrix}
+    \mat{K} = \begin{bmatrix}
         f_x & 0 & u_0 \\
         0 & f_y & v_0 \\
         0 & 0 & 1 \\
@@ -142,10 +142,10 @@ Most modern digital cameras have no skew and square pixels, so in most cases, th
     \label{fig:frames}
 \end{figure}
 
-To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $\pmb{\mathsf{P}}$ is used. 
-The canonical projection matrix $\pmb{\mathsf{P}}_0$ assumes that the camera is in the world coordinate center and that the calibration matrix $\pmb{\mathsf{K}} = \pmb{\mathsf{I}}$
+To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $\mat{P}$ is used. 
+The canonical projection matrix $\mat{P}_0$ assumes that the camera is in the world coordinate center and that the calibration matrix $\mat{K} = \mat{I}$
 \begin{equation}
-\pmb{\mathsf{P}}_0 = \begin{bmatrix} \pmb{\mathsf{I}} & | & \vec{0} \end{bmatrix} = 
+\mat{P}_0 = \begin{bmatrix} \mat{I} & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix}
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
@@ -158,7 +158,7 @@ The canonical projection matrix is not used in practice because each real camera
 Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\mat{K}$ to transform canonical $\mat{P}_0$ to perspective $\mat{P}$:
 
 \begin{equation}
-\pmb{\mathsf{P}} = \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{I}} & | & \vec{0} \end{bmatrix} = 
+\mat{P} = \mat{K} \begin{bmatrix} \mat{I} & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix} 
     f_x & 0 & u_0 & 0 \\
     0 & f_y & v_0 & 0 \\ 
@@ -171,8 +171,8 @@ It may be rotated using a rotation matrix $\mat{R}$ and translated on vector $\v
 Therefor, in the general case the projection can be expressed as
 \begin{equation}
     \label{eq:PKRt}
-    \pmb{\mathsf{P}} = \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & \vec{t} \end{bmatrix} = 
-    \pmb{\mathsf{K}} \begin{bmatrix} \pmb{\mathsf{R}} & | & - \pmb{\mathsf{R}} \pmb{\mathsf{C}} \end{bmatrix},
+    \mat{P} = \mat{K} \begin{bmatrix} \mat{R} & | & \vec{t} \end{bmatrix} = 
+    \mat{K} \begin{bmatrix} \mat{R} & | & - \mat{R} \mat{C} \end{bmatrix},
 \end{equation}
 
 where $\vec{C}$ is the camera's position in a world reference frame. 
@@ -182,7 +182,7 @@ Image point $\vec{m} = (u, v)^\top$ can be obtained from a 3D point $\vec{X}$ us
 \begin{equation}
     \label{eq:projection}
     \lambda \begin{bmatrix} 
-        u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} x \\ y \\ z \\ 1
+        u \\ v \\ 1 \end{bmatrix} = \mat{P} \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix},
 \end{equation}
 
@@ -190,7 +190,7 @@ Image point $\vec{m} = (u, v)^\top$ can be obtained from a 3D point $\vec{X}$ us
     \label{eq:proj_min}
     \lambda 
     \begin{bmatrix} 
-    \vec{m} \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} \vec{X} \\ 1
+    \vec{m} \\ 1 \end{bmatrix} = \mat{P} \begin{bmatrix} \vec{X} \\ 1
     \end{bmatrix},
 \end{equation}
 where $\lambda \neq 0$ is a free scaling parameter.
@@ -229,17 +229,17 @@ The epipolar line $l_1$ passes through an \textit{epipole} $\vec{e}_1$ and throu
 Similarly, line $l_2$ passes through an \textit{epipole} $\vec{e}_2$ and through point $\vec{m_2}$, where $\lambda [\vec{e}_2 | 1]^\top = \mat{P}_2 \vec{C}_1$.
 
 \subsection{The epipolar constraint}
-Having a set of two cameras the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\pmb{\mathsf{E}} \in \mathbb{R}^{3x3},( rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
+Having a set of two cameras the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\mat{E} \in \mathbb{R}^{3x3},( rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
 \begin{equation}
     \label{eq:E}
-    \pmb{\mathsf{E}} = \pmb{\mathsf{R}}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \pmb{\mathsf{R}}_1^\top = [-\vec{t}_{21}]_{\times} \pmb{\mathsf{R}}_{21} = [\vec{b}]_{\times} \pmb{\mathsf{R}}_{21},
+    \mat{E} = \mat{R}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \mat{R}_1^\top = [-\vec{t}_{21}]_{\times} \mat{R}_{21} = [\vec{b}]_{\times} \mat{R}_{21},
 \end{equation}
 and matrix $\mat{F}$ as
 \begin{equation}
     \label{eq:F}
-    \pmb{\mathsf{F}} = \pmb{\mathsf{K}}_2^{-T} \pmb{\mathsf{R}}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \pmb{\mathsf{R}}_1^\top \pmb{\mathsf{K}}_1^{-1} = 
-    \pmb{\mathsf{K}}_2^{-T} [-\vec{t}_{21}]_{\times} \pmb{\mathsf{R}}_{21} \pmb{\mathsf{K}}_1^{-1} = 
-    \pmb{\mathsf{K}}_2^{-T} \pmb{\mathsf{E}} \pmb{\mathsf{K}}_1^{-1},
+    \mat{F} = \mat{K}_2^{-T} \mat{R}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \mat{R}_1^\top \mat{K}_1^{-1} = 
+    \mat{K}_2^{-T} [-\vec{t}_{21}]_{\times} \mat{R}_{21} \mat{K}_1^{-1} = 
+    \mat{K}_2^{-T} \mat{E} \mat{K}_1^{-1},
 \end{equation}
 where 
 $\mat{R}_{21} = \mat{R}_2 \mat{R}_1^\top$ is a relative camera rotation and 
@@ -248,21 +248,21 @@ $\vec{t}_{21} = -\mat{R}_2 \vec{b} = \vec{t}_2 - \mat{R}_{21}\vec{t}_1$ is a rel
 An algebraic expression of the important properties of matrix $F$ using notation from \autoref{sec:epipolar_geometry} are:
 \begin{equation}
     \label{eq:Fm2}
-    \lambda l_1 = \pmb{\mathsf{F}}^\top \begin{bmatrix} \vec{m}_2 \\ 1 \end{bmatrix},
+    \lambda l_1 = \mat{F}^\top \begin{bmatrix} \vec{m}_2 \\ 1 \end{bmatrix},
 \end{equation}
 \begin{equation}
     \label{eq:Fm1}
-    \lambda l_2 = \pmb{\mathsf{F}} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix},
+    \lambda l_2 = \mat{F} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix},
 \end{equation}
 \begin{equation}
     \label{eq:fefe}
-    \pmb{\mathsf{F}} \begin{bmatrix} \vec{e}_1 \\ 1 \end{bmatrix} = \pmb{\mathsf{F}}^\top \begin{bmatrix} \vec{e}_2 \\ 1 \end{bmatrix} = 0,
+    \mat{F} \begin{bmatrix} \vec{e}_1 \\ 1 \end{bmatrix} = \mat{F}^\top \begin{bmatrix} \vec{e}_2 \\ 1 \end{bmatrix} = 0,
 \end{equation}
 \begin{equation}
     \label{eq:epiconstr}
-    \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \pmb{\mathsf{F}} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0.
+    \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \mat{F} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0.
 \end{equation}
-Matrix $\pmb{\mathsf{F}}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\eqref{eq:Fm2} and \eqref{eq:Fm1}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\pmb{\mathsf{F}}$ respectivly (\eqref{eq:fefe}).
+Matrix $\mat{F}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\eqref{eq:Fm2} and \eqref{eq:Fm1}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\mat{F}$ respectivly (\eqref{eq:fefe}).
 Epipolar constraint \eqref{eq:epiconstr} means that a point and its corespondent line are on the same plane (\eqref{fig:epipolar_std}, plane $\sigma$).
 
 \section{Stereovision}
@@ -334,7 +334,7 @@ Sometimes, a fusion of multiple cameras and other sensors can be used: the Intel
 
 % \begin{equation}
 %     \label{eq:F_simple}
-%     \pmb{\mathsf{F}} = \lambda [\vec{e}_1]_\times = \lambda \begin{bmatrix}
+%     \mat{F} = \lambda [\vec{e}_1]_\times = \lambda \begin{bmatrix}
 %         0 & 0 & 0 \\
 %         0 & 0 & -1 \\
 %         0 & 1 & 0 \\

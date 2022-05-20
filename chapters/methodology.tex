@@ -111,7 +111,7 @@ Minimisation of the reprojection error from \autoref{sec:error_reprojection} for
 % \begin{equation}
 %     \lambda 
 %     \begin{bmatrix} 
-%     \vec{m} \\ 1 \end{bmatrix} = \pmb{\mathsf{P}} \begin{bmatrix} \vec{X} \\ 1
+%     \vec{m} \\ 1 \end{bmatrix} = \mat{P} \begin{bmatrix} \vec{X} \\ 1
 %     \end{bmatrix},
 % \end{equation}
 
@@ -121,14 +121,14 @@ The equation \eqref{eq:projection} can be rewritten as
 \begin{equation}
     \label{eq:dist_start}
     \lambda \begin{bmatrix} 
-        u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
+        u \\ v \\ 1 \end{bmatrix} = \mat{K} [\mat{R} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}.
 \end{equation}
 Let us now redefine this equation to consider the distortion. A 3D point in the camera frame is 
 \begin{equation}
     \label{eq:dist_2}
     \begin{bmatrix} x_c \\ y_c \\ z_c \end{bmatrix}
-     = [\pmb{\mathsf{R}} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
+     = [\mat{R} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}.
 \end{equation}
 The distortion model is defined as 
@@ -143,7 +143,7 @@ The distortion model is defined as
 where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. Then the undistorted point will be
 \begin{equation}
     \label{eq:dist_end}
-    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \pmb{\mathsf{K}} \begin{bmatrix} x'' \\ y'' \\ 1 \end{bmatrix}.
+    \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mat{K} \begin{bmatrix} x'' \\ y'' \\ 1 \end{bmatrix}.
 \end{equation}
 
 Considering \eqref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. 
