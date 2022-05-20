@@ -15,7 +15,9 @@ For example, the general scaling, rotation and translation is expressed in non-h
 \end{equation}
 
 \begin{equation}
-    \mat{S} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \mat{R} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}, \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix},
+    \mat{S} = \begin{bmatrix} s_x & 0 \\ 0 & s_y \end{bmatrix}, \;\; 
+    \mat{R} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{bmatrix}, \;\;
+    \vec{t} = \begin{bmatrix} t_x \\ t_y \end{bmatrix},
 \end{equation}
 
 where $m_0$ is the original point,
@@ -32,7 +34,9 @@ The same operations can be expressed in a homogenous coordinate system using one
     \begin{bmatrix} \vec{m}_0 \\ 1 \end{bmatrix},
 \end{equation}
 \begin{equation}
-    \mat{S}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \mat{R}_H = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \mat{T}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ,
+    \mat{S}_H = \begin{bmatrix} s_x & 0 & 1\\ 0 & s_y & 1 \\ 0 & 0 & 1\end{bmatrix}, \;\;
+    \mat{R}_H = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & 0 \\ \sin(\theta) & \cos(\theta) & 0 \\ 0 & 0 & 1 \end{bmatrix}, \;\;
+    \mat{T}_H = \begin{bmatrix} 1 & 0 & t_x\\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix} ,
 \end{equation}
 where $\mat{S}_H, \mat{R}_H$ and $\mat{T}_H$ are homogenous transformation matrices.
 
@@ -68,6 +72,7 @@ So in the homogenous coordinate system, all 2D transformations can be combined a
 % All world (4D) parallel lines share the same image vanishing point. On a \autoref{fig:intersection_parallel} a $P_{\infty}$ is an image of two parallel lines' intersection point (which is a point at infinity), so it is also a vanishing point.
 
 \section{Pinhole camera model}
+\label{sec:pinhole_camera_model}
 A pinhole camera, the canonical perspective camera model - is a model of a simple camera without any optics.
 The first example is the camera Obscura - a dark room with a small hole through which the image from outside is projected on the opposite wall. 
 This model can be used to express camera geometry with a field of view angles less than $180^{\circ}$.
@@ -76,31 +81,30 @@ This model can be used to express camera geometry with a field of view angles le
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{graphics/td_scene.png}
-    \caption{The scheme of a pinhole camera model}
+    \caption{The scheme of a pinhole camera model.}
     \label{fig:td_scene_3d}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{graphics/td_scene_yz.png}
-    \caption{The pinhole camera model, y-z plane}
+    \caption{The pinhole camera model, y-z plane.}
     \label{fig:td_scene_yz}
 \end{figure}
 
 \begin{figure}[h]
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \includegraphics[width=0.74\textwidth]{graphics/td_scene_xy.png}
-    \caption{The pinhole camera model, x-y plane}
-    \label{fig:td_scene_xy}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.49\textwidth}
-    \centering
-    \includegraphics[width=1\textwidth]{graphics/pixel.png}
-    \caption{A scheme of a pixel skew}
-    \label{fig:Kframes}
-  \end{subfigure}
+    \begin{subfigure}[b]{0.49\textwidth}
+      \includegraphics[width=0.79\textwidth]{graphics/td_scene_xy.png}
+      \caption{Input images.}
+      \label{fig:td_scene_xy}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+      \includegraphics[width=\textwidth]{graphics/pixel.png}
+      \caption{Output of an SfM algorithm.}
+      \label{fig:Kframes}
+    \end{subfigure}
+    \caption{}
 \end{figure}
 
 In the physical implementation of the camera Obscura, the projective plane is on the opposite side from the projection center (or camera center $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. 
@@ -113,11 +117,11 @@ The optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the ima
 The camera calibration matrix is a matrix that includes the camera's \textit{intrinsic} parameters - focal length, pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio \textit{a} and principle point coordinates $\vec{o} = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
 \begin{equation}
     \mat{K} = \begin{bmatrix}
-        f_x & -a f \cot(\theta) & u_0 \\
+        f_x & -f_x \cot(\theta) & u_0 \\
         0 & f_y & v_0 \\
         0 & 0 & 1 \\
-    \end{bmatrix} 
-    \textrm{ ,units: } [f]=m, [u_0]=px, [v_0]=px, [a]=1,
+    \end{bmatrix},
+    \textrm{\;units: } [f_x]=\frac{px}{m},\; [f_y]=\frac{px}{m},\; [u_0]=px,\; [v_0]=px,
 \end{equation}
 
 where $f_x = af$, $f_y = \frac{f}{\sin{\theta}}$, $f$ is a focal length used to convert world length ratios to pixels.
@@ -130,7 +134,7 @@ Most modern digital cameras have no skew and square pixels, so in most cases, th
         f_x & 0 & u_0 \\
         0 & f_y & v_0 \\
         0 & 0 & 1 \\
-    \end{bmatrix};
+    \end{bmatrix}.
 \end{equation}
 
 \subsection{Projection matrix}
@@ -138,7 +142,7 @@ Most modern digital cameras have no skew and square pixels, so in most cases, th
 \begin{figure}[h]
     \centering
     \includegraphics[width=.5\textwidth]{graphics/frames.png}
-    \caption{Transformation from world to camera coordinate frames}
+    \caption{Transformation from world to camera coordinate frames.}
     \label{fig:frames}
 \end{figure}
 
@@ -150,7 +154,7 @@ The canonical projection matrix $\mat{P}_0$ assumes that the camera is in the wo
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
     0 & 0 & 1 & 0 \\
-    \end{bmatrix};
+    \end{bmatrix}.
 \end{equation}
 
 However, this case is impractical. 
@@ -229,7 +233,7 @@ The epipolar line $l_1$ passes through an \textit{epipole} $\vec{e}_1$ and throu
 Similarly, line $l_2$ passes through an \textit{epipole} $\vec{e}_2$ and through point $\vec{m_2}$, where $\lambda [\vec{e}_2 | 1]^\top = \mat{P}_2 \vec{C}_1$.
 
 \subsection{The epipolar constraint}
-Having a set of two cameras the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\mat{E} \in \mathbb{R}^{3x3},( rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
+Having a set of two cameras the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\mat{E} \in \mathbb{R}^{3x3},(\rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (\rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
 \begin{equation}
     \label{eq:E}
     \mat{E} = \mat{R}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \mat{R}_1^\top = [-\vec{t}_{21}]_{\times} \mat{R}_{21} = [\vec{b}]_{\times} \mat{R}_{21},
@@ -270,13 +274,13 @@ Epipolar constraint \eqref{eq:epiconstr} means that a point and its corespondent
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{graphics/stereopair.png}
-    \caption{A stereovision scheme}
+    \caption{Illustration of a typical stereocamera setup.}
     \label{fig:sch_stereo}
 \end{figure}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.3\textwidth]{graphics/stereo_example.jpg}
-    \caption{Industrial stereocamera example, Intel Realsense D455}
+    \includegraphics[width=0.5\textwidth]{graphics/stereo_example.jpg}
+    \caption{An example of an industrial stereocamera Intel Realsense D455.}
     \label{fig:stereo_ex}
 \end{figure}
 
@@ -310,7 +314,7 @@ In the \autoref{chapter:intro} the most common methods of a depth vision are des
 The stereo camera is a tradeoff between price and processing complexity.
 
 Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in the \autoref{fig:sch_stereo}, and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
-Sometimes, a fusion of multiple cameras and other sensors can be used: the Intel Realsense shown in \autoref{fig:stereo_ex} has two cameras, a color sensor and an IR projector in case the images have no texture or no feature points was detected.
+Sometimes, a fusion of multiple cameras and other sensors is used, such as in case of the Intel Realsense shown in \autoref{fig:stereo_ex} that has two IR cameras, a color sensor and an infra red projector to project some features onto the environment in there are insufficient features already present (for example when observing a white wall).
 % The intermediate result of a depth reconstruction is a disparity map computation.
 % Disparity map is such a matrix of dimensions $H \times W \times 1$, where $H$ and $W$ are the max height and width of the image pair, and the last channel is a distance of this point, 
 % The disparity map from \autoref{fig:stereo_1} and \autoref{fig:stereo_2} is in the \autoref{fig:stereo_disp}.

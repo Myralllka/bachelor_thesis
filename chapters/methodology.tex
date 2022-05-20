@@ -5,133 +5,125 @@
 \begin{figure}[h]
     \centering
     \includegraphics[width=.8\textwidth]{graphics/td90deg.png}
-    \caption{The proposed approach model}
+    \caption[The proposed approach model.]{Ilustration of the proposed approach. $\vec{C}_1$, $\vec{C}_2$ are optical centers of two cameras with projection plaes $\pi_1$ and $\pi_2$, $\vec{O}_1$ , $\vec{O}_2$ are the corresponding optical axes. The 3D point $\vec{X}$ is in the cameras' overlapping sone, $\vec{m}_1$ and $\vec{m}_2$ are its projections on corresponding image planes.}
     \label{fig:td90deg}
 \end{figure}
 
 The main task of this thesis is to create a compact obstacle avoidance system such that it can be mounted on MAVs with size and weight restrictions.
-There are related works of a monocular stereovision using SfM or Optical flow algorithms. 
-Also, there are some stereovision approaches with standard stereo cameras as on \autoref{fig:stereo_ex}.
-The method that combines mono and stereo camera approaches is presented further.
+The proposed method is related to SfM or optical flow algorithms as well as standard stereo matching algorithms (see \autoref{fig:stereo_ex}).
 
-The problem solution can be divided into several steps. 
-Firstly, it is necessary to make a math model of a solution and describe its behaviour. 
-Secondly, choose hardware parts - cameras and suitable lenses and calibrate each separate camera. 
-Thirdly, make a computer-aided design (CAD) model of the cameras' holder, print, and calibrate it.
-Fourthly, implement a Robotic operating system (ROS) driver for a proposed device. 
-This driver collects images from both cameras with the same timestamp and publishes them together.
-Then detect features on both images, find and filter correspondences.
-The last step is to compute the distance to visible objects in the cameras' overlapping zone.
+Firstly, synchronized images from both cameras are captured. Features are detected using the feature extractor \autoref{sec:features} in the areas of these images that correspond to the overlapping part of their field of view. 
+These features are then matched using the brute-force matcher.
+The 3D position of each of these features relative to the cameras is estimated using a calibrated projection model and known relative transformation between the cameras.
+Finally, the obtained 3D positions are the output of this algorithm. 
 
-As far as the stereo pair is calibrated, the 3D pose estimation depends on a stereo pair calibration, cameras' calibration, key point extractor and matcher.
-As a result, extracted features can be used in an SfM algorithm to correct a relative drone pose between $t_0$ and $t_1$ on \autoref{fig:intro_general}.
-Estimating distances to objects can be used in a feedback loop inside the system to correct path planning, considering the obstacles found.
+Quality of the 3D point estimation depends on the calibration of the cameras' relative transformation, the calibration of their projection model, the key point extractor and the matcher.
+The obtained 3D points can be used to estimate the scale in an SfM algorithm that runs parallel to to the described method (refer to  \autoref{fig:intro_general}).
+The estimated distance to nearby objects can be used in a feedback loop inside the system to correct path planning, considering the obstacles found.
 
-This chapter describes a general maths model of a solution and all algorithms used in a process: for camera calibration, stereo pair calibration points' pose obtaining and error measurements.
+This chapter describes the mathematical model of the problem and all algorithms used in the process: calibration of the projection model, calibration of the relative transformation between the cameras, feature extruction, feature matching and estimation of the 3D position of the matched features.
 
-\section{Model description}
+\section{Description of the optical setup}
 
-On the \autoref{fig:td90deg}: there are two cameras with centers at $C_1$ and $C_2$ with a known static translation $\vec{t}_{21}$ and rotation $\mat{R}_{21}$, where $\mat{R}_{21}$ corresponds to Euler angle $90^\circ$ rotation in the epipolar plane (\autoref{fig:epipolar_std}, plane $\sigma$).
-Both cameras' intrinsic parameters are known, and images are synchronized in time; the FOV of both cameras have an intersecting zone.
-Let images from cameras with centers at $C_1$ and $C_2$ be \textit{im1} and \textit{im2} respectively.
-In the overlapping zone, there are two interesting points detected and matched as images of a same 3D point $\vec{X}$: $\vec{m}_1$ on \textit{im1} and $\vec{m}_2$ on \textit{im2}.
-The 3D pose of a point $\vec{X}$ in world measurement units is obtain from known vectors $\vec{X} - \vec{C}_1$, $\vec{X} - \vec{C}_2$ and $\vec{t}_{21}$. 
+The optical setup assumed by the proposed method shown in \autoref{fig:td90deg}.
+There are two cameras with optical centers at $C_1$ and $C_2$ with a known static translation $\vec{t}_{21}$ and rotation $\mat{R}_{21}$ between coordinate frames of the cameras.
+The rotation represented by $\mat{R}_{21}$ is assumed to be close to $90^\circ$ rotation in the epipolar plane (marked as $\sigma$ in \autoref{fig:epipolar_std}).
+As described in \autoref{sec:problem_definition}, parameters of the mathematical projection model of the two cameras are assumed to be known. 
+In practice, these are obtained using a calibration process, that is described in the next section.
+Furthermore, it is assumed that the images coming from the cameras are synchronized and that the FOVs of both cameras have an intersecting zone.
+Let us denote images from the two cameras as $i_1$ and $i_2$, a point in the environment $\vec{X}$ and its images in the two cameras $\vec{m}_1$ in image $i_1$ and $\vec{m}_2$ in image $i_2$.
 
-The described method assumes that each camera is calibrated, and the stereo pair is also calibrated - both $t_{21}$ and $R_{21}$ are known.
-
-\section{Single camera calibration}
+\section{Projection model of a camera and its calibration}
 \label{sec:meth_calib}
 \begin{figure}[h]
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
       \includegraphics[width=\textwidth]{graphics/chessboard_img.png}
-      \caption{Original image with radial distortion.}
+      \caption{Original image with radial distortion. Objects with straight edges appear curved in the image due to the distortion.}
       \label{fig:chb1}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[t]{0.45\textwidth}
       \includegraphics[width=\textwidth]{graphics/chessboard_img_rect.png}
-      \caption{Undistorted image with no distortion.}
+      \caption{Image with no distortion. Edges that are straight in 3D are straight in the image.}
       \label{fig:chb2}
     \end{subfigure}
-    \caption{Camera image before and after the calibration}
+    \caption{An image from the camera before and after applying undistortion.}
     \label{fig:chb}
 \end{figure}
 
-Camera calibration - is a process of computing the camera calibration matrix $\mat{K}$ (see \eqref{eq:kmat}).
-Usually, it is done with some pattern with predefined parameters, like a chessboard or more advanced markers (ChArUco and ArUco \cite{aruco} etc).
+Camera calibration is the process of empirically estimating the camera calibration matrix $\mat{K}$ (refer to \eqref{eq:kmat}) and distortion parameters of the camera's optical system for the pinhole camera model described in \autoref{sec:pinhole_camera_model}.
+Usually, this is done with some pattern with predefined parameters, like a chessboard or more advanced markers (ChArUco and ArUco \cite{aruco} etc).
 
-The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further distances estimation (\autoref{fig:chb}). 
-It is used in most maths for image processing and stereovision, for example, \eqref{eq:PKRt}, \eqref{eq:F}
+The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further estimating of distance (see \autoref{fig:chb}). 
 
-In the real world, lenses have distortion (see \autoref{fig:chb1}), to compensate that distortion a polynomial model is typically used with coefficients $k_1 ... k_6$ for radial distortion and $p_1, p_2$ for tangential distortion.
+In the real world, lenses have distortion (see \autoref{fig:chb1}).
+To compensate that distortion, a polynomial model is often used with coefficients $k_1, ... , k_6$ for radial distortion and $p_1, p_2$ for tangential distortion.
 
-\paragraph{The minimal problem for camera calibration.} 
-It is the problem of obtaining a projection matrix $\mat{P}$ given $k=6$ correspondences of 3D scene points and 2D image points $\{(\vec{X}_i, \vec{m}_i)\}_{i=1}^k$.
+\subsection{The minimal problem for camera calibration.} 
+It is the problem of obtaining a projection matrix $\mat{P}$ given $n=6$ correspondences of 3D scene points and 2D image points $\{(\vec{X}_i, \vec{m}_i)\}_{i=1}^n$.
 Let the projection matrix $\mat{P}$ be 
 \begin{equation}
     \label{eq:p_calib}
     \mat{P} = \begin{bmatrix}
-        q_1^\top & q_{14} \\
-        q_2^\top & q_{24} \\
-        q_3^\top & q_{34} \\
-    \end{bmatrix},    
+        \vec{q}_1^\top & q_{14} \\
+        \vec{q}_2^\top & q_{24} \\
+        \vec{q}_3^\top & q_{34} \\
+    \end{bmatrix}.
 \end{equation}
-then the equation \eqref{eq:proj_min} can be expand to
+
+Then the equation \eqref{eq:proj_min} can be expanded to
 \begin{equation}
-    \lambda_i u_i = q_1^\top \vec{X}_i + q_{14}, \;\;\;
-    \lambda_i v_i = q_2^\top \vec{X}_i + q_{24}, \;\;\;
-    \lambda_i = q_3^\top \vec{X}_i + q_{34}, \;\;\;
+    \lambda_i u_i = \vec{q}_1^\top \vec{X}_i + q_{14}, \;\;\;
+    \lambda_i v_i = \vec{q}_2^\top \vec{X}_i + q_{24}, \;\;\;
+    \lambda_i = \vec{q}_3^\top \vec{X}_i + q_{34}, \;\;\;
 \end{equation}
-where $\vec{m}_i = \begin{bmatrix} u_i \\ v_i \end{bmatrix}$, $ \lambda \in \mathbb{R}$, $\lambda \neq 0$, $i = 1, 2 ... k$, $k = 6$.
-After elimination of $\lambda_i$
+where $\vec{m}_i = \begin{bmatrix} u_i \\ v_i \end{bmatrix}$, $ \lambda \in \mathbb{R}^{+}$, $i = 1, 2, ..., 6$.
+After elimination of $\lambda_i$, we obtain
 \begin{equation}
-    (q_3^\top \vec{X}_i + q_{34})u_i = q_1^\top \vec{X}_i + q_{14},
+    (\vec{q}_3^\top \vec{X}_i + q_{34})u_i = \vec{q}_1^\top \vec{X}_i + q_{14},
 \end{equation}
 \begin{equation}
-    (q_3^\top \vec{X}_i + q_{34})v_i = q_2^\top \vec{X}_i + q_{24},
+    (\vec{q}_3^\top \vec{X}_i + q_{34})v_i = \vec{q}_2^\top \vec{X}_i + q_{24}.
 \end{equation}
-then
+
+Then
 \begin{equation}
+    \label{eq:Aqmat}
     \mat{A} \vec{q} = \begin{bmatrix}
         \vec{X}_1^\top & 1 & \vec{0}^\top & 0 & -u_1 \vec{X}_1^\top & -u1 \\
         \vec{0}^\top & 0 & \vec{X}_1^\top & 1 & -v_1 \vec{X}_1^\top & -v_1 \\ 
         \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
         \vec{X}_k^\top & 1 & \vec{0}^\top & 0 & -u_k \vec{X}_k^\top & -uk \\
         \vec{0}^\top & 0 & \vec{X}_k^\top & 1 & -v_k \vec{X}_k^\top & -v_k \\ 
-    \end{bmatrix} \cdot \begin{bmatrix}
-        q_1 \\ q_{14} \\ q_2 \\ q_{24} \\ q_3 \\ q_{34}
-    \end{bmatrix} = 0,
+    \end{bmatrix} \begin{bmatrix}
+        \vec{q}_1 \\ q_{14} \\ \vec{q}_2 \\ q_{24} \\ \vec{q}_3 \\ q_{34}
+    \end{bmatrix} = \vec{0},
 \end{equation}
-so for $k=6$, $\mat{A} \in \mathbb{R}^{12, 12}$, $\vec{q} \in \mathbb{R}^{12}$. If $\mat{A}$ has rank 12, there is no non-trivial null space for $\mat(A)$.
+so for $k=6$, $\mat{A} \in \mathbb{R}^{12 \times 12}$, $\vec{q} \in \mathbb{R}^{12}$. If $\mat{A}$ has rank 12, there is no non-trivial null space for $\mat{A}$.
 
-It can be solved by so-called \textit{Jack-Knife estimation}: iterate through all rows of the matrix $\mat{A}$, $i = 1..12$, let $\mat{A}_i$ be the matrix $\mat{A}$ without $i$-th row.
-Then if the right null-space of $\mat{A}_i$ is not empty, matrix $\mat{P}$ from the vector $\vec{q}$ (see \eqref{eq:p_calib}) can be decompesed to $\mat{K}_i$ $\mat{R}_i$ and $\vec{t}_i$.
-Minimisation of the reprojection error from \autoref{sec:error_reprojection} for $i = 1..12$ then can be used to find the correct $\mat{P}$.
+\autoref{eq:Aqmat} can be solved by the so-called \textit{Jack-Knife estimation}. 
+Let us denote a matrix $\mat{A}$ with the $i$-th row removed as $\mat{A}_i$. 
+The \textit{Jack-Knife estimation} iterates through $i = 1, \dots, 12$.
+In each iteration, if the right null-space of $\mat{A}_i$ is not empty, the matrix $\mat{P}_i$ can be decomposed to $\mat{K}_i$ $\mat{R}_i$ and $\vec{t}_i$.
+Minimisation of the reprojection error from \autoref{sec:error_reprojection} for $i = 1, \dots, 12$ then can be used to find the best estimate of $\mat{P}$.
 
-% \begin{equation}
-%     \lambda 
-%     \begin{bmatrix} 
-%     \vec{m} \\ 1 \end{bmatrix} = \mat{P} \begin{bmatrix} \vec{X} \\ 1
-%     \end{bmatrix},
-% \end{equation}
-
-\paragraph{Distortion correction.}
-After matrix $\mat{P}$ was obtained, distortion vector can be found as well.
-The equation \eqref{eq:projection} can be rewritten as
+\subsection{Distortion correction.}
+After the matrix $\mat{P}$ is obtained, parameters of the distortion can be found as well.
+The equation \eqref{eq:projection} can be rewritten using the relation from equation \eqref{eq:PKRt} as
 \begin{equation}
     \label{eq:dist_start}
     \lambda \begin{bmatrix} 
         u \\ v \\ 1 \end{bmatrix} = \mat{K} [\mat{R} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}.
 \end{equation}
-Let us now redefine this equation to consider the distortion. A 3D point in the camera frame is 
+Let us now redefine this equation to consider the distortion. A 3D point in the camera frame can be expressed as 
 \begin{equation}
     \label{eq:dist_2}
     \begin{bmatrix} x_c \\ y_c \\ z_c \end{bmatrix}
      = [\mat{R} | \vec{t}] \begin{bmatrix} x \\ y \\ z \\ 1
     \end{bmatrix}.
 \end{equation}
-The distortion model is defined as 
+The distortion model is then defined as 
 \begin{equation}
     \label{eq:dist_3}
     x'' = \frac{x_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + p_1(r + 2x') + 2p_2\frac{x_c y_c}{z^2_c},
@@ -140,14 +132,14 @@ The distortion model is defined as
     \label{eq:dist_4}
     y'' = \frac{y_c}{z_c} \frac{1 + k_1r^2 + k_2r^4 + k_3r^6}{1 + k_4r^2 + k_5r^4 + k_6r^6} + 2p_1(\frac{x_c y_c}{z_c^2}) + p_2(r + 2y'),
 \end{equation}
-where $x' = (\frac{x_c}{z_c})^2$; $y' = (\frac{y_c}{z_c})^2$; $r = x' + y'$. Then the undistorted point will be
+where $x' = (\frac{x_c}{z_c})^2$, $\;y' = (\frac{y_c}{z_c})^2$, $\;r = x' + y'$. Then, the corresponding undistorted point will be
 \begin{equation}
     \label{eq:dist_end}
     \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mat{K} \begin{bmatrix} x'' \\ y'' \\ 1 \end{bmatrix}.
 \end{equation}
 
-Considering \eqref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. 
-Firstly, the point is projected to an abstract projection plane (\eqref{eq:dist_2}), then undistorted (\eqref{eq:dist_3}, \eqref{eq:dist_4}) and finally transformed from the metric system of abstract projection plane to the image coordinate system (\eqref{eq:dist_end}).
+Considering \autoref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. 
+Firstly, the point is projected to an abstract projection plane (\autoref{eq:dist_2}), then distortion compensation is applied using the model described by equations \eqref{eq:dist_3} and \eqref{eq:dist_4} and finally, the point is transformed from the metric system of the abstract projection plane to the image coordinate system (\autoref{eq:dist_end}).
 
 \section{General multicamera calibration}
 \label{sec:stereocalib}

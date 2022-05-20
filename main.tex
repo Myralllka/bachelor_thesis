@@ -58,6 +58,7 @@ headsepline, % Uncomment to get a line under the header
 %----------------------------------------------------------------------------------------
 
 \newcommand{\mat}[1]{\pmb{\mathsf{#1}}}
+\DeclareMathOperator{\rank}{rank}
 % \newcommand{\pt}[1]{\mathsf{#1}}
 
 %----------------------------------------------------------------------------------------
@@ -242,6 +243,7 @@ Finally, I would like to thank my family who supported me during my whole life, 
 \textbf{FOV} & \textbf{F}ield \textbf{O}f \textbf{V}iew \\
 \textbf{SVD} & \textbf{S}ingular \textbf{V}alue \textbf{D}ecomposition \\
 \textbf{MRS} & \textbf{M}ulti \textbf{R}obot \textbf{S}ystems Group\\
+\textbf{fps} & \textbf{f}rames \textbf{p}er \textbf{s}econd\\
 
 \end{abbreviations}
 
@@ -266,18 +268,18 @@ Finally, I would like to thank my family who supported me during my whole life, 
 
 % Symbol & Name & Unit \\
 
-$\vec{t}$ & A column vector that reresents a point or a vector & \\
-$\pmb{\mathsf{A}}$ & A matrix & \\
-$\pmb{\mathsf{A}}^\top$ & Transpose of a matrix & \\
-$\pmb{\mathsf{R}}$ & A rotation matrix 3x3, $det(\pmb{\mathsf{R}}) = 1, \pmb{\mathsf{R}}^\top = \pmb{\mathsf{R}}^{-1}$ & \\
-$\pmb{\mathsf{I}}$ & The Identity matrix & \\
-$l$ & A line & \\
-$\mathsf{P}$ & A point & \\
-$f$ & Focal length & m \\
-$\vec{x} \times \vec{y}$ & Cross product of $\vec{x}$ and $\vec{y}$ & \\
-$[\vec{x}]_\times$ & Such matrix that $[\vec{x}]_\times\vec{y} = \vec{x} \times \vec{y} $ & \\
-$\lambda$ & Any non-zero scalar & \\
-$||\vec{a}||$ & The norm of the vector $\vec{a}$ & \\
+$\vec{t}$ & a column vector that reresents a point or a vector & \\
+$\mat{A}$ & a matrix & \\
+$\mat{A}^\top$ & transpose of a matrix & \\
+$\mat{R}$ & a rotation matrix 3x3, $\det(\mat{R}) = 1, \mat{R}^\top = \mat{R}^{-1}$ & \\
+$\mat{I}$ & the identity matrix & \\
+$l$ & a line & \\
+$\mathsf{P}$ & a point & \\
+$f$ & focal length & \\
+$\vec{x} \times \vec{y}$ & cross product of $\vec{x}$ and $\vec{y}$ & \\
+$[\vec{x}]_\times$ & such matrix that $[\vec{x}]_\times\vec{y} = \vec{x} \times \vec{y} $ & \\
+$\lambda$ & any non-zero scalar & \\
+$||\vec{a}||$ & the norm of the vector $\vec{a}$ & \\
  & & \\
  & & \\
  & & \\

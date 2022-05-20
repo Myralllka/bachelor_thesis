@@ -22,9 +22,9 @@ So it is always a tradeoff - the bigger UAV is, the more there may be sensors on
 
 Considering everything above, a compact obstacle avoidance system is a perspective field for research. 
 Even though the idea is old, neither DJI, MRS, nor other research groups have a well-developed visual obstacle avoidance system. 
-The best, for now, can be the Skydio system\footnote{\href{https://www.skydio.com/skydio-autonomy}{Skydio autonomy - https://www.skydio.com/skydio-autonomy }}, but their approach is for a forward-moving drone.
+The best, for now, can be the Skydio system\footnote{\href{https://www.skydio.com/skydio-autonomy}{Skydio autonomy: https://www.skydio.com/skydio-autonomy }}, but their approach is for a forward-moving drone.
 
-The inspiration for this project was taken from DJI's obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3 - https://www.dji.com/cz/mavic-3}}. 
+The inspiration for this project was taken from DJI's obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3: https://www.dji.com/cz/mavic-3}}. 
 It uses visual data from monocular cameras with overlapping sones to cover almost the whole area around the UAV and react in real-time to obstacles nearby. 
 Unfortunately, they have no publications or implementation details, so it is only a conclusion from publicly available information.
 
@@ -36,9 +36,9 @@ Each of them has its pros and cons.
 3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the envieronment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
 Depth cameras are more expensive than simple cameras. Ultrasonic and infrared sensors have distance limits and other minor issues ( a.e. sonar can be influenced by noise from the MAVs). 
 
-In most articles, stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Lin2021, Xiao2019} are used.
+In most articles, a stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Lin2021, Xiao2019} is used.
 Deep learning approaches \cite{Back2020, FragaLamas2019, Park2020, Roghair2021} and Convolutional Neural Networks \cite{Yu2013, Ma2020} are also quite popular.
-The real-time multi-camera feedback control system is introduced in \cite{He2021}, but this solution does not imply one drone, only multi-drone systems.
+A real-time multi-camera feedback control system that considers several cameras placed on multiple drones is introduced in \cite{He2021}.
 
 Real-time simultaneous localization and mapping (SLAM) systems can also be used for obstacle avoidance \cite{Moreno2014}. 
 These problems are pretty closely related. 
@@ -48,42 +48,45 @@ So both problems are related to making a 3D map of an unknown environment, but f
 \begin{figure}[h]
     \begin{subfigure}[b]{0.31\textwidth}
       \includegraphics[width=\textwidth]{graphics/input_set.png}
-      \caption{The input for SfM}
+      \caption{Input images.}
       \label{fig:pc_input}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.65\textwidth}
       \includegraphics[width=\textwidth]{graphics/reconstructed.png}
-      \caption{The output of SfM}
+      \caption{Output of an SfM algorithm.}
       \label{fig:pc_output}
     \end{subfigure}
-    \caption{The SfM example}
+    \caption{Ilustration of Structure from Motion}
     \label{fig:pc_recons}
 \end{figure}
 
 Structure from Motion (SfM) is another algorithm that can implement a system for avoiding obstacles. 
-SfM is a method of depth map reconstruction from a continuous sequance of images as in the \autoref{fig:pc_input}, so using this approach, dense point cloud as in \autoref{fig:pc_output} can be computed, and obstacles can be detected \cite{Lee2008}. 
+SfM is a method of depth map reconstruction from a continuous sequance of images as in the \autoref{fig:pc_input}.
+Using this approach, a dense point cloud as in \autoref{fig:pc_output} can be computed and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
+\label{sec:problem_definition}
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.7\textwidth]{graphics/general_scheme.png}
-    \caption{General system scheme}
+    \caption{ A general scheme of the multi-camera obstacle detection problem.}
     \label{fig:intro_general}
 \end{figure}
 
 This thesis aims to design a visual obstacle avoidance system for MAVs, 3D model it, assemble a device and measure its efficiency. 
-A working solution assumes a MAV with limited size and lifting force that limits the number of sensors on it; onboard setup of two calibrated cameras with the known transformation between them.
-Both cameras' FOV have an overlapping zone big enough to detect close obstacles.
-Cameras' framerate guarantee system working in real-time (at least 30fps), and images from all cameras are synchronized in time.
-Computational power is enough to make a system real-time.
-MAV flies in an environment with some number of objects, such as an office or a room, to ensure that there is a sufficient number of features on images in a camera's overlapping sone for a feature detector, and it should calculate the distance to all surrounding objects with an allowable error.
+The proposed solution assumes an MAV with limited size and lifting force that limits the number of sensors on it. 
+The MAV is thus equipped with two calibrated cameras with a known transformation between them. 
+Fields of view of the cameras overlap enough to detect close obstacles.
+Framerate of the cameras is sufficient to operate in real-time (at least 30 frames per second (fps)), and the frames are synchronized in time.
+The MAV is equipped with an onboard computer with enough computational power to process the images at a rate sufficient for the obstacle avoidance.
+The flight envieronment is assumed to be well-lit and to contain objects with well-distinguishable visual features tat can be observed by the cameras.
 
-On a figure \autoref{fig:intro_general} there is a scheme of a proposed system: $T_{static}$ is a transformation between cameras obtained after stereopair calibration. 
-At each timestamp, new pair of images is received.
-Feature detector extracts interesting points from the image, and then all points in a \textit{red} zone are filtered and matched.
-It can be done because they are from an overlapping zone. 
-In such a way, some 3d points are obtained already on a timestamp $t_0$. 
-Then at a timestamp, $t_1$ new pair of images arrives - and the same process is repeated. 
-Obtained point cloud can be used further to fix the scale of blue/green point clouds obtained from SfM and see the distance to objects that are not inside the overlapping zone.
-It is also possible to use a red point cloud from $t_1$ as a starting point to apply the Iterative Closest Point algorithm to align red and blue points because red has common points.
+Figure \autoref{fig:intro_general} presents a scheme of the proposed system.
+In the figure, $T_{static}$ is the transformation between the cameras obtained with stereopair calibration. 
+At time $t_0$, a new pair of images is received.
+A feature detector extracts points of interest from the image.
+Points that lie in the part of the images corresponding to the overlapping field of view (the red point cloud in \autoref{fig:intro_general}) are then selected and correspondence matches between these points from the two images are found based on their features.
+A calibrated projection model of the cameras and the transformation $T_{static}$ are used to estimate 3D points from the matched point pairs.
+Then at time $t_1$, when a new pair of images is received, the same process is repeated. 
+The obtained point cloud is used to find the scale of the points obtained using the SfM algorithm from images captured at $t_0$ and $t_1$ (the blue and green point clouds on \autoref{fig:intro_general}).
