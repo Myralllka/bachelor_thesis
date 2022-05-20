@@ -141,22 +141,22 @@ where $x' = (\frac{x_c}{z_c})^2$, $\;y' = (\frac{y_c}{z_c})^2$, $\;r = x' + y'$.
 Considering \autoref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. 
 Firstly, the point is projected to an abstract projection plane (\autoref{eq:dist_2}), then distortion compensation is applied using the model described by equations \eqref{eq:dist_3} and \eqref{eq:dist_4} and finally, the point is transformed from the metric system of the abstract projection plane to the image coordinate system (\autoref{eq:dist_end}).
 
-\section{General multicamera calibration}
+\section{General multicamera pose calibration}
 \label{sec:stereocalib}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=.2\textwidth]{graphics/aptags.png}
-    \caption{The apriltags board used for the stereopair calibration}
+    \caption{The calibration pattern using AprilTags \cite{Wang2016} that was used for the stereopair calibration.}
     \label{fig:aptags}
 \end{figure}
 
-Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ for a camera pair, which also can be computed from a relative rotation matrix $\mat{R}_{21}$ and a relative translation vector $\vec{t}_{21}$ of a camera pair. 
+Stereo pair calibration is a process of estimating the essential matrix $\mat{E}$ (defined in \autoref{sec:epipolar_geometry}) for a camera pair, which also expresses the relative rotation matrix $\mat{R}_{21}$ and relative translation vector $\vec{t}_{21}$ of a camera pair. 
 
-There are multiple algorithms to do a stereo pair calibration.
-Usually, a calibration chessboard is used (\autoref{fig:chb}) for a standard stereo camera with parallel or converging optical rays.
-It can be detected and used only when the whole chessboard is seen in both images.
-It is a disadvantage for cameras with a small overlapping zone and diverging optical rays, only if a really big chessboard is used at a considerable distance.
+There are multiple algorithms implementing a stereo pair calibration.
+Usually, a calibration pattern is used as the one shown in \autoref{fig:chb} for a standard stereo camera with parallel or converging optical rays.
+Most akgorithms assume that the whole pattern is seen in both images.
+However, this is a disadvantage for cameras with a small overlapping zone and diverging optical rays.
 For this reason, it is better to use some other pattern, for example, a set of apriltags \cite{Malyuta2019} which can be detected separately. 
 
 \subsection{Least-square estimation of transformation}
@@ -166,82 +166,87 @@ Firstly it detects apriltag's from \textit{im1} and \textit{im2}, compute their 
 Then, estimate transformation parameters between two point sets, and find the correction transformation $\mat{T}_{correction}$.
 The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of the second camera.
 
-\subsection{PnP-based algorithm}
+\subsection{PnP-based estimation of transformation}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.4\textwidth]{graphics/p3p.png}
+    \caption[Visualization of the P3P problem.]{$\vec{C}$ is the camera center, vectors $\vec{v}_1$, $\vec{v}_2$ and $\vec{v}_3$ are unknown vectors with pointing to 3D points $\vec{X}_1$, $\vec{X}_2$ and $\vec{X}_3$ respectivly. The relative position of 3D points is known and expressed by vectors $\vec{d}_{12}$, $\vec{d}_{23}$ and $\vec{d}_{13}$. Scalars $z_1$, $z_2$ and $z_3$ are the absolute distances from each 3D point to the camera center in a world coordinate units (usually meters).}
+    \label{fig:p3p}
+\end{figure}
+
 \label{sec:pnp}
 Another, a more general approach is based on solving a Perspective-n-Point (PnP) problem.
-PnP is the problem of estimating a camera pose (translation and rotation) given a known set of 3D points and respective 2D projections from calibrated camera
+PnP is the problem of estimating a camera pose (translation and rotation) given a known set of 3D points and theit respective 2D projections to an image of a calibrated camera.
+Mathematically, the situation can be expressed as
 \begin{equation}
+    \label{eq:pnp_intro}
     \lambda_i \begin{bmatrix} \vec{m}_i \\ 1 \end{bmatrix} = \mat{K} \mat{R} (\vec{X}_i - \vec{C}), \;\; i = \{0..n\}.
 \end{equation}
 No initial pose estimation is needed for this algorithm, but it can accelerate the solver if there is one.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=.3\textwidth]{graphics/p3p.png}
-    \caption{The P3P algotrithm visualization}
-    \label{fig:p3p}
-\end{figure}
-
 The situation when $n=3$ is the minimal amount of points to solve the PnP problem, this method is called P3P.  
-Firstly, let us define $\vec{v}_i = \mat{K}^{-1}\begin{bmatrix}\vec{m}_i \\ 1 \end{bmatrix}$, $\vec{v}_i \in \mathbb{R}^3$ . Then
+Firstly, let us define a vector $\vec{v}_i \in \mathbb{R}^3$ corresponding to a projection of a point in the image $\vec{m}_i$ as $\vec{v}_i = \mat{K}^{-1}\begin{bmatrix}\vec{m}_i \\ 1 \end{bmatrix}$. From eq. \eqref{eq:pnp_intro}, the following relation can be obtained:
 \begin{equation}
     \label{eq:p3p_gen}
     \lambda_i \vec{v}_i = \mat{R} (\vec{X}_i - \vec{C}).
 \end{equation}
-If there is no rotation, the situation will look like on a figure \autoref{fig:p3p} where vectors $\vec{d}_i$ are known, so there is a system of three equations with three unknowns (vector $\vec{C}$).
-If there is a rotation, firstly it can be elliminated by defining $z_i$ As
+If there is no rotation, the situation will look like in \autoref{fig:p3p} where vectors $\vec{d}_i$ are known, so eq. \eqref{eq:p3p_gen} simplifies to a system of three equations with three unknowns (vector $\vec{C}$).
+If there is a non-zero rotation, it can be elliminated first.
+Let us define a helper variable $z_i$ as the distance of a point $\vec{X}_i$ from $\vec{C}_i$:
 \begin{equation}
     \label{eq:p3p_rot}
     |\lambda_i| \cdot ||\vec{v}_i|| = || \vec{X}_i - \vec{C} || = z_i.
 \end{equation}
-Considering only angles between $\vec{v}_i$ and apply the cosine law per triangle ($\vec{C}$, $\vec{X}_i$, $\vec{X}_j$), $i, j = 1, 2, 3, i \neq j$
+Considering only angles between $\vec{v}_i$ and applying the cosine law per $\triangle{\vec{C}, \vec{X}_i, \vec{X}_j}$, for $i, j \in \{1, 2, 3\}, i \neq j$, the relation
 \begin{equation}
-    ||\vec{d}_{ij}|| = z_i^2 + z_j^2 - 2z_iz_jc_{ij},
+    ||\vec{d}_{ij}|| = z_i^2 + z_j^2 - 2z_iz_jc_{ij}
 \end{equation}
-where $||\vec{d}_{ij}|| = || \vec{X}_j - \vec{X}_i ||$, $c_{ij} = \cos(\angle \vec{v}_i \vec{v}_j)$.
-After solving the system of three equations with three unknown $z_i$, there will be 4 sollutions including unreal, that should be verified on additional points \cite{Fischler1981}.
+may be obtained, where $||\vec{d}_{ij}|| = || \vec{X}_j - \vec{X}_i ||$, $c_{ij} = \cos(\angle \vec{v}_i \vec{v}_j)$.
+After solving the system of three equations with three unknown $z_i$, there will be up to 4 solutions.
+Complex solutions, and other should be either verified on additional points \cite{Fischler1981} or sorted by reprojection error (refer \autoref{sec:error_reprojection}).
 Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) from $\vec{X}_i$ and $z_i$; then $\lambda_i$ from \eqref{eq:p3p_rot} and $\mat{R}$ from \eqref{eq:p3p_gen}.
 % \subsection{}
 % It is also possible to calibrate with correctly matched correspondences only, but the precision can worsen.
 % Having two calibrated cameras, it is possible to compute essential matrix $\mat{E}$ \autoref{eq:E} from at least 5 corresponding points, and then decompose it to $\mat{R}_{21}$ and $\vec{t}_{21}$.
 
-\section{Features extraction, matching and filtering}
+\section{Feature extraction, matching and filtering}
 \label{sec:features}
-In a computer vision, \textit{features} are representations of unique pieces of information from the image scene, such as points, edges and objects.
+In a computer vision, \textit{features} typically refer to representations of unique pieces of information from the image scene, such as points, edges and objects.
 A feature detector is an algorithm for extracting features from an image.
-There are multiple of them, but in this solution, ORB \cite{Rublee2011} is used. 
-This algorithm claims to be of the same accuracy as the state-of-the-art SIFT detector but a few times faster \cite{Sharif2017}. 
+There are many such algorithms, but in this solution, the ORB features extractor is used. 
+The authors in \cite{Rublee2011} claim that ORB has the same accuracy as the state-of-the-art SIFT detector while being a few times faster, which is also supported by other research \cite{Sharif2017}. 
 
+Next step of the proposed method is mutually assosiating features in images from the two cameras, corresponding to the same physical objects in the environment. 
+This is done by a feature matcher, which compares descriptors of the features provided by the feature detection algorithm.
+Some feature extraction algorithms perform a brute-force comparison of all combinations of features, others use nearest neighbors approximations or even neural networks.
 
+A brute-force matcher is one of the simplest matchers.
+It takes one descriptor from one set, computes its similarity to all descriptors from the second set, and matches it with the most similar feature. 
+This process is repeated to maximize the total overall similarity between two matched features.
 
-The next important part is a feature matcher. 
-After keypoints with descriptors are detected on both images, the matcher should match them between each other, to create correspondences.
-It can be done by bruteforce comparison of descriptors, nearest neighbors approximation or even using neural networks.
-
-Brute-Force matcher is one of the most simple matchers.
-It takes one descriptor from one set, somehow computing the distances to all descriptors from the second set, matching them and repeating it to minimize the distance between two sets.
-
-\section{Features pose estimation}
-
-3D scene points' poses can be computed by having pairs of correspondent points taken by calibrated cameras.
+\section{Features position estimation}
+Positions of the observed 3D points in the scene can be computed by having pairs of correspondent points taken by calibrated cameras.
 This process is called triangulation.
+Correspondences for triangulation are received as a result of deatures detection, matching and filtering.
 
-\subsection{Shortest distance}
+\subsection{Shortest distance triangulation}
 \label{sec:shortest_distance}
-One method to make a triangulation is to find the shortest distance between two rays.
-According to epipolar geometry properties, \autoref{sec:epipolar_geometry}, vectors $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects at the 3D point $\vec{X}$.
-However, in the real world, lines can be at some distance from each other, so $\vec{X}$ is the point closest to both lines.
+One triangulation method is based on finding the shortest distance between two rays.
+According to the epipolar geometry properties described in \autoref{sec:epipolar_geometry} and visualized in \autoref{fig:epipolar_std}, vectors $\vec{d}_1$ and $\vec{d}_2$ intersects at the 3D point $\vec{X}$.
+However, in the real world, the rays can be at some distance from each other due to imperfect stereo pair calibration, so $\vec{X}$ is the point closest to both lines.
 
-It is possible to compute $\vec{d}_1$ and $\vec{d}_2$ in the common coordinate frame having cameras' poses and image features.
-Then define two lines $d_1$ and $d_2$ in a vector form:
+It is possible to compute $\vec{d}_1$ and $\vec{d}_2$ in a common coordinate frame from $\vec{m}_1$ and $\vec{m}_2$, since the relative pose of the cameras is known.
+Then, let us define two lines $d_1$ and $d_2$ in a vector form:
 \begin{equation}
+    \label{eq:shortest_d1}
     d_1: p_1 = \vec{C}_1 + t \vec{d}_1,
 \end{equation}
 \begin{equation}
+    \label{eq:shortest_d2}
     d_2: p_2 = \vec{C}_2 + s \vec{d}_2,
 \end{equation}
-where $\vec{d}_1$ and $\vec{d}_2$ are directional vectors, $\vec{C}_1$ and $\vec{C}_2$ are 3D points located on respective lines, $s$ and $t$ are free parameters that uniquely define points $p_1$ and $p_2$. 
-To minimize the distance between two lines, such $p_1$ and $p_2$ are needed that the line with directional vector $p_2 - p_1 = \vec{l}$ will be orthogonal to $d_1$ and $d_2$ which means
+where $\vec{d}_1$ and $\vec{d}_2$ are directional vectors, $\vec{C}_1$ and $\vec{C}_2$ are 3D points located on the respective lines (camera centers in this case), $s \in \mathbb{R}^{3}$ and $t \in \mathbb{R}^3$ are free parameters that uniquely define points $p_1$ and $p_2$. 
+Distance between the two lines is minimal at the point where the vector $\vec{l} = p_2 - p_1$ is orthogonal to $d_1$ and $d_2$, which can be expressed using a dot product as 
 \begin{equation}
     \label{eq:ldd1}
     \vec{l} \cdot \vec{d}_1 = 0,
@@ -250,14 +255,15 @@ To minimize the distance between two lines, such $p_1$ and $p_2$ are needed that
     \label{eq:ldd2}
     \vec{l} \cdot \vec{d}_2 = 0.
 \end{equation}
-It is a system of two equations with two $s$ and $t$ unknown.
-So after $s$ and $t$ are found, $\vec{X}$ can be compute as $\vec{X} = \frac{p_1 + p_2}{2}$.
+After substituting eqs. \eqref{eq:shortest_d1} and \eqref{eq:shortest_d2} to these equations, a system of two equations with two unknowns $s$ and $t$ is obtained.
+This system has a unique solution unless the rays are parallel.
+Using $s$ and $t$, the points $\vec{p}_1$ and $\vec{p}_2$ can be obtained and then $\vec{X}$ is calculated as $\vec{X} = \frac{p_1 + p_2}{2}$.
 
 \subsection{SVD Triangulation}
 \label{sec:svdtriang}
-Singular value decomposition (SVD) triangulation is another method that is more optimal and wide-used.
-It computes 3D points from camera matrices $\mat{P}_1$, $\mat{P}_2$ and 2D correspondences. 
-This method is described in \cite{hartley_zisserman_2004}.
+Triangulation using Singular Value Decomposition (SVD) is another method that is more robust and more widely used.
+It computes 3D points from 2D correspondences using the camera matrices $\mat{P}_1$, $\mat{P}_2$. 
+This method is proved and described in detail in \cite{hartley_zisserman_2004}, p.312. Here, a short summary is provided.
 
 The projection equation \eqref{eq:projection} can be rewritten as
 \begin{equation}
@@ -266,19 +272,30 @@ The projection equation \eqref{eq:projection} can be rewritten as
     \begin{bmatrix} \vec{X} \\ 1
     \end{bmatrix},
 \end{equation} 
-where $\mat{P}_i$ decomposes as in \eqref{eq:p_general}, and $\lambda_i \neq 0$, i = \{1, 2\}.
-After eliminating $\lambda_1$, $\lambda_2$, let $D$ be such matrix that
+where $\mat{P}_i$ decomposes as in eq. \eqref{eq:p_general}, and $\lambda_i \neq 0$, $i \in \{1, 2\}$.
+After eliminating $\lambda_1$, $\lambda_2$ we obtain the following set of equations:
 \begin{equation}
     \mat{D} \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix} = \vec{0}, \;\;\;\;\;
     \mat{D} = \begin{bmatrix}
-        u_1 (p_1^3)^\top - (p_1^1)^\top \\
-        v_1 (p_1^3)^\top - (p_1^2)^\top \\
-        u_2 (p_2^3)^\top - (p_2^1)^\top \\
-        v_2 (p_2^3)^\top - (p_2^2)^\top \\
-    \end{bmatrix}, \;\;\;\;\; \mat{D} \in \mathbb{R}^{4, 4}.
+        u_1 (\vec{p}_{1, 3})^\top - (\vec{p}_{1, 1})^\top \\
+        v_1 (\vec{p}_{1, 3})^\top - (\vec{p}_{1, 2})^\top \\
+        u_2 (\vec{p}_{2, 3})^\top - (\vec{p}_{2, 1})^\top \\
+        v_2 (\vec{p}_{2, 3})^\top - (\vec{p}_{2, 2})^\top \\
+    \end{bmatrix}, \;\;\;\;\; \mat{D} \in \mathbb{R}^{4 \times 4}.
 \end{equation}
 
-The solution is $u_4$, the last column of the $\mat{U}$ matrix from $\mathsf{SVD}(\mat{D}^\top \mat{D}) = \mat{U}, \mat{S}, \mat{V}^\top$.
+
+SVD decomposition of $\mat{D}^T\mat{D}$, which is a solution of the equation
+
+\begin{equation}
+    \mat{U}\mat{S}\mat{V}^\top = \mathsf{SVD}(\mat{D}^\top\mat{D}),
+\end{equation}
+
+where $\mat{U}$ and $\mat{V}$ are orthogonal matrices and $\mat{S}$ is a non-negative diagonal matrix.
+
+The solution of the triangulation would be the eigenvector corresponding to the smallest eigenvalue, the last columt of the matrix $\mat{U}$, where $\vec{u}_4 = (u_1', v_1', u_2', v_2')^\top$.
+
+% The solution is $u_4$, the last column of the $\mat{U}$ matrix from $\mathsf{SVD}(\mat{D}^\top \mat{D}) = \mat{U}, \mat{S}, \mat{V}^\top$.
 
 
 

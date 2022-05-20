@@ -172,7 +172,7 @@ Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\ma
 
 The world coordinate center is usually not located at point $\vec{C}$ (\autoref{fig:frames}). 
 It may be rotated using a rotation matrix $\mat{R}$ and translated on vector $\vec{t}$ where $\mat{R}$ is a $3x3$ matrix with $det(\mat{R}) = 1$ and $\mat{R}^{-1} = \mat{R}^\top$. 
-Therefor, in the general case the projection can be expressed as
+Therefore, in the general case the projection can be expressed as
 \begin{equation}
     \label{eq:PKRt}
     \mat{P} = \mat{K} \begin{bmatrix} \mat{R} & | & \vec{t} \end{bmatrix} = 
@@ -220,20 +220,20 @@ The notation is taken from \cite{hartley_zisserman_2004}, p. 581.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\textwidth]{graphics/epipolar.png}
-    \caption{A scheme of epipolar geometry}
+    \caption{A scheme of epipolar geometry.}
     \label{fig:epipolar_std}
 \end{figure}
 
 \autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $\vec{C}_1$ and $\vec{C}_2$ connected with a base vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
 Both of the cameras observe a 3D point $X$. 
-Projections of this point to $\pi_1$ and $\pi_2$ are $\vec{m}_1$ and $\vec{m}_2$ respectivly. 
+Projections of this point to $\pi_1$ and $\pi_2$ are $\vec{m}_1$ and $\vec{m}_2$, respectivly. 
 Points $\vec{C}_1, \vec{C}_2$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
 The lines $\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are \textit{epipolar lines}. 
-The epipolar line $l_1$ passes through an \textit{epipole} $\vec{e}_1$ and through point $\vec{m_1}$, where $\lambda [\vec{e}_1 | 1]^\top = \mat{P}_1 \vec{C}_2$
+The epipolar line $l_1$ passes through an \textit{epipole} $\vec{e}_1$ and through point $\vec{m_1}$, where $\lambda [\vec{e}_1 | 1]^\top = \mat{P}_1 \vec{C}_2$.
 Similarly, line $l_2$ passes through an \textit{epipole} $\vec{e}_2$ and through point $\vec{m_2}$, where $\lambda [\vec{e}_2 | 1]^\top = \mat{P}_2 \vec{C}_1$.
 
 \subsection{The epipolar constraint}
-Having a set of two cameras the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\mat{E} \in \mathbb{R}^{3x3},(\rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (\rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
+Having a set of two cameras, the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\mat{E} \in \mathbb{R}^{3x3},(\rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (\rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
 \begin{equation}
     \label{eq:E}
     \mat{E} = \mat{R}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \mat{R}_1^\top = [-\vec{t}_{21}]_{\times} \mat{R}_{21} = [\vec{b}]_{\times} \mat{R}_{21},
@@ -246,6 +246,7 @@ and matrix $\mat{F}$ as
     \mat{K}_2^{-T} \mat{E} \mat{K}_1^{-1},
 \end{equation}
 where 
+$\mat{R}_i$ and $\vec{t}_i$ are rotation and translation of the $i$-th camera in the worls coordinate frame,
 $\mat{R}_{21} = \mat{R}_2 \mat{R}_1^\top$ is a relative camera rotation and 
 $\vec{t}_{21} = -\mat{R}_2 \vec{b} = \vec{t}_2 - \mat{R}_{21}\vec{t}_1$ is a relative camera translation.
 
@@ -266,10 +267,10 @@ An algebraic expression of the important properties of matrix $F$ using notation
     \label{eq:epiconstr}
     \begin{bmatrix} \vec{m}_2 & | & 1 \end{bmatrix} \mat{F} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 0.
 \end{equation}
-Matrix $\mat{F}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (\eqref{eq:Fm2} and \eqref{eq:Fm1}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are right and left nullspaces basis vectors of $\mat{F}$ respectivly (\eqref{eq:fefe}).
-Epipolar constraint \eqref{eq:epiconstr} means that a point and its corespondent line are on the same plane (\eqref{fig:epipolar_std}, plane $\sigma$).
+Matrix $\mat{F}$ maps points from $\pi_1$ to epipolar lines on $\pi_2$ and vice versa (eqs. \eqref{eq:Fm2} and \eqref{eq:Fm1}); epipoles $\vec{e}_1$ and $\vec{e}_2$ are basis vectors of the right and left nullspaces of $\mat{F}$, respectivly (eq. \eqref{eq:fefe}).
+Epipolar constraint described by eq. \eqref{eq:epiconstr} means that a point and its correspondent line are on the same plane (see \autoref{fig:epipolar_std}).
 
-\section{Stereovision}
+\section{Stereo vision}
 
 \begin{figure}[ht]
     \centering
@@ -279,7 +280,7 @@ Epipolar constraint \eqref{eq:epiconstr} means that a point and its corespondent
 \end{figure}
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{graphics/stereo_example.jpg}
+    \includegraphics[width=0.3\textwidth]{graphics/stereo_example.jpg}
     \caption{An example of an industrial stereocamera Intel Realsense D455.}
     \label{fig:stereo_ex}
 \end{figure}
@@ -309,11 +310,12 @@ Epipolar constraint \eqref{eq:epiconstr} means that a point and its corespondent
 
 Every digital image has only 2D information about a scene projected onto the image plane as in the \autoref{fig:td_scene_3d}.
 Computer stereo vision is a process of extracting a depth image from a pair of images of the same scene. 
-The depth maps are then used in SLAM, obstacle avoidance or detailed environment reconstruction in robotics.
-In the \autoref{chapter:intro} the most common methods of a depth vision are described, and among them, there are computationally expensive Neural Networks approaches and expensive in terms of money Lidars.
-The stereo camera is a tradeoff between price and processing complexity.
+Such depth images are often used in SLAM, obstacle avoidance or detailed reconstruction of the environment in robotics.
+In \autoref{chapter:intro}, the most common methods of a stereo vision are described.
+Among them are the computationally expensive neural network-based monocular approaches and costly LiDAR sensors.
+A typical stereo camera is a tradeoff between price and processing complexity.
 
-Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in the \autoref{fig:sch_stereo}, and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
+Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in \autoref{fig:sch_stereo}, and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
 Sometimes, a fusion of multiple cameras and other sensors is used, such as in case of the Intel Realsense shown in \autoref{fig:stereo_ex} that has two IR cameras, a color sensor and an infra red projector to project some features onto the environment in there are insufficient features already present (for example when observing a white wall).
 % The intermediate result of a depth reconstruction is a disparity map computation.
 % Disparity map is such a matrix of dimensions $H \times W \times 1$, where $H$ and $W$ are the max height and width of the image pair, and the last channel is a distance of this point, 
@@ -351,27 +353,31 @@ Sometimes, a fusion of multiple cameras and other sensors is used, such as in ca
 
 \section{Reprojection error}
 \label{sec:error_reprojection}
-In ideal case, when calibration matrix has no error and stereopair position computed precisely, rays $\vec{d}_1$ and $\vec{d}_2$ \autoref{fig:epipolar_std} intersects in a point $\vec{X}$. 
-However, calibrations are done with some precision only, so reprojection error is used to measure this precision.
+In an ideal case, when the calibration matrix $\mat{K}$ has no error and the estimated transformation between the two cameras of the stereopair is accurate, rays $\vec{d}_1$ and $\vec{d}_2$ corresponding to the 3D projections of $\vec{m}_1$ and $\vec{m}_2$ (refer to \autoref{fig:epipolar_std}) intersect in the point $\vec{X}$. 
+However, calibration only estimates the parameters up to some precision because of noise, measurement errors, limited resolution of the cameras etc.
+The reprojection error is used to measure this precision.
 
-After the 3D pose of a point is computed, to measure its reprojection error, it should be projected back on an image, and a new distance should be computed.
+After the 3D position of a point is computed based on its projections to the two cameras, to measure its reprojection error, it is projected back to an image, and a distance of this reprojection from the original projection that was used to obtaine the 3D positiom estimate is computed.
 
 Consider a general projection matrix $\mat{P}_i$ as
 \begin{equation}
     \label{eq:p_general}
-    \mat{P}_i = \begin{bmatrix} (p_i^1)^\top \\ (p_i^2)^\top \\ (p_i^3)^\top \end{bmatrix},
+    \mat{P}_i = \begin{bmatrix} 
+        (\vec{p}_{i, 1})^\top \\ 
+        (\vec{p}_{i, 2})^\top \\ 
+        (\vec{p}_{i, 3})^\top \end{bmatrix}.
 \end{equation}
-the reprojection error is defined as 
+The reprojection error is defined as 
 \begin{equation}
     e^2(\underline{X}) = \sum_{c=1}^{2}{  
     \begin{bmatrix}
         \begin{pmatrix}
-            u_c - \frac{(p_c^1)^\top \underline{X}}{(p_c^3)^\top \underline{X}}
+            u_c - \frac{(\vec{p}_{c, 1})^\top \underline{X}}{(\vec{p}_{c, 3})^\top \underline{X}}
         \end{pmatrix}^2 + 
         \begin{pmatrix}
-            v_c - \frac{(p_c^2)^\top \underline{X}}{(p_c^3)^\top \underline{X}}
+            v_c - \frac{(\vec{p}_{c, 2})^\top \underline{X}}{(\vec{p}_{c, 3})^\top \underline{X}}
         \end{pmatrix}^2
     \end{bmatrix}
     },
 \end{equation}
-where $m_c = \begin{bmatrix} u_c \\ v_c \end{bmatrix}$, $\underline{X} = \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix}$.
+where $m_c = \begin{bmatrix} u_c \\ v_c \end{bmatrix}$, $\underline{X} = \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix}$ and c corresponds to the camera index.
