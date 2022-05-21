@@ -17,19 +17,19 @@ These features are then matched using the brute-force matcher.
 The 3D position of each of these features relative to the cameras is estimated using a calibrated projection model and known relative transformation between the cameras.
 Finally, the obtained 3D positions are the output of this algorithm. 
 
-Quality of the 3D point estimation depends on the calibration of the cameras' relative transformation, the calibration of their projection model, the key point extractor and the matcher.
-The obtained 3D points can be used to estimate the scale in an SfM algorithm that runs parallel to to the described method (refer to  \autoref{fig:intro_general}).
+The quality of the 3D point estimation depends on the cameras' relative transformation, the calibration of their projection model, the key point extractor and the matcher.
+The obtained 3D points can be used to estimate the scale in an SfM algorithm that runs parallel to the described method (refer to  \autoref{fig:intro_general}).
 The estimated distance to nearby objects can be used in a feedback loop inside the system to correct path planning, considering the obstacles found.
 
-This chapter describes the mathematical model of the problem and all algorithms used in the process: calibration of the projection model, calibration of the relative transformation between the cameras, feature extruction, feature matching and estimation of the 3D position of the matched features.
+This chapter describes the mathematical model of the problem and all algorithms used in the process: calibration of the projection model, calibration of the relative transformation between the cameras, feature extraction, feature matching and estimation of the 3D position of the matched features.
 
 \section{Description of the optical setup}
 
-The optical setup assumed by the proposed method shown in \autoref{fig:td90deg}.
+The optical setup assumed by the proposed method is shown in \autoref{fig:td90deg}.
 There are two cameras with optical centers at $C_1$ and $C_2$ with a known static translation $\vec{t}_{21}$ and rotation $\mat{R}_{21}$ between coordinate frames of the cameras.
 The rotation represented by $\mat{R}_{21}$ is assumed to be close to $90^\circ$ rotation in the epipolar plane (marked as $\sigma$ in \autoref{fig:epipolar_std}).
 As described in \autoref{sec:problem_definition}, parameters of the mathematical projection model of the two cameras are assumed to be known. 
-In practice, these are obtained using a calibration process, that is described in the next section.
+In practice, these are obtained using a calibration process described in the next section.
 Furthermore, it is assumed that the images coming from the cameras are synchronized and that the FOVs of both cameras have an intersecting zone.
 Let us denote images from the two cameras as $i_1$ and $i_2$, a point in the environment $\vec{X}$ and its images in the two cameras $\vec{m}_1$ in image $i_1$ and $\vec{m}_2$ in image $i_2$.
 
@@ -54,7 +54,7 @@ Let us denote images from the two cameras as $i_1$ and $i_2$, a point in the env
 Camera calibration is the process of empirically estimating the camera calibration matrix $\mat{K}$ (refer to \eqref{eq:kmat}) and distortion parameters of the camera's optical system for the pinhole camera model described in \autoref{sec:pinhole_camera_model}.
 Usually, this is done with some pattern with predefined parameters, like a chessboard or more advanced markers (ChArUco and ArUco \cite{aruco} etc).
 
-The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further estimating of distance (see \autoref{fig:chb}). 
+The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further distance estimating (see \autoref{fig:chb}). 
 
 In the real world, lenses have distortion (see \autoref{fig:chb1}).
 To compensate that distortion, a polynomial model is often used with coefficients $k_1, ... , k_6$ for radial distortion and $p_1, p_2$ for tangential distortion.
@@ -77,7 +77,7 @@ Then the equation \eqref{eq:proj_min} can be expanded to
     \lambda_i v_i = \vec{q}_2^\top \vec{X}_i + q_{24}, \;\;\;
     \lambda_i = \vec{q}_3^\top \vec{X}_i + q_{34}, \;\;\;
 \end{equation}
-where $\vec{m}_i = \begin{bmatrix} u_i \\ v_i \end{bmatrix}$, $ \lambda \in \mathbb{R}^{+}$, $i \in \{1, 2, ..., 6\}$.
+where $\vec{m}_i = \begin{bmatrix} u_i \\ v_i \end{bmatrix}$ is an image point, $ \lambda \in \mathbb{R}^{+}$, $i \in \{1, 2, ..., 6\}$.
 After elimination of $\lambda_i$, we obtain
 \begin{equation}
     (\vec{q}_3^\top \vec{X}_i + q_{34})u_i = \vec{q}_1^\top \vec{X}_i + q_{14},
@@ -139,7 +139,9 @@ where $x' = (\frac{x_c}{z_c})^2$, $\;y' = (\frac{y_c}{z_c})^2$, $\;r = x' + y'$.
 \end{equation}
 
 Considering \autoref{eq:kmat}, the image of a point $X$ seen through the calibrated camera with a projection matrix $\mat{P}$ is obtained using eqs. \eqref{eq:dist_start} to \eqref{eq:dist_end}. 
-Firstly, the point is projected to an abstract projection plane (\autoref{eq:dist_2}), then distortion compensation is applied using the model described by equations \eqref{eq:dist_3} and \eqref{eq:dist_4} and finally, the point is transformed from the metric system of the abstract projection plane to the image coordinate system (\autoref{eq:dist_end}).
+Firstly, the point is projected to an abstract projection plane (\autoref{eq:dist_2}). 
+After that, distortion compensation is applied using the model described by equations \eqref{eq:dist_3} and \eqref{eq:dist_4}. 
+Finally, the point is transformed from the metric system of the abstract projection plane to the image coordinate system (\autoref{eq:dist_end}).
 
 \section{General multicamera pose calibration}
 \label{sec:stereocalib}
@@ -155,7 +157,7 @@ Stereo pair calibration is a process of estimating the essential matrix $\mat{E}
 
 There are multiple algorithms implementing a stereo pair calibration.
 Usually, a calibration pattern is used as the one shown in \autoref{fig:chb} for a standard stereo camera with parallel or converging optical rays.
-Most akgorithms assume that the whole pattern is seen in both images.
+Most algorithms assume that the whole pattern is seen in both images.
 However, this is a disadvantage for cameras with a small overlapping zone and diverging optical rays.
 For this reason, it is better to use some other pattern, for example, a set of apriltags \cite{Malyuta2019} which can be detected separately. 
 
@@ -170,13 +172,13 @@ The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_
 \begin{figure}[h]
     \centering
     \includegraphics[width=.4\textwidth]{graphics/p3p.png}
-    \caption[Visualization of the P3P problem.]{$\vec{C}$ is the camera center, vectors $\vec{v}_1$, $\vec{v}_2$ and $\vec{v}_3$ are unknown vectors with pointing to 3D points $\vec{X}_1$, $\vec{X}_2$ and $\vec{X}_3$ respectivly. The relative position of 3D points is known and expressed by vectors $\vec{d}_{12}$, $\vec{d}_{23}$ and $\vec{d}_{13}$. Scalars $z_1$, $z_2$ and $z_3$ are the absolute distances from each 3D point to the camera center in a world coordinate units (usually meters).}
+    \caption[Visualization of the P3P problem.]{$\vec{C}$ is the camera center, vectors $\vec{v}_1$, $\vec{v}_2$ and $\vec{v}_3$ are unknown vectors with pointing to 3D points $\vec{X}_1$, $\vec{X}_2$ and $\vec{X}_3$ respectivly. The relative position of 3D points is known and expressed by vectors $\vec{d}_{12}$, $\vec{d}_{23}$ and $\vec{d}_{13}$. Scalars $z_1$, $z_2$ and $z_3$ are the absolute distances from each 3D point to the camera center in a world coordinate units (meters).}
     \label{fig:p3p}
 \end{figure}
 
 \label{sec:pnp}
 Another, a more general approach is based on solving a Perspective-n-Point (PnP) problem.
-PnP is the problem of estimating a camera pose (translation and rotation) given a known set of 3D points and theit respective 2D projections to an image of a calibrated camera.
+PnP is the problem of estimating a camera pose (translation and rotation) given a known set of 3D points and their respective 2D projections to an image of a calibrated camera.
 Mathematically, the situation can be expressed as
 \begin{equation}
     \label{eq:pnp_intro}
@@ -184,14 +186,14 @@ Mathematically, the situation can be expressed as
 \end{equation}
 No initial pose estimation is needed for this algorithm, but it can accelerate the solver if there is one.
 
-The situation when $n=3$ is the minimal amount of points to solve the PnP problem, this method is called P3P.  
+In the situation when $n=3$ is the minimal amount of points to solve the PnP problem, this method is called P3P.  
 Firstly, let us define a vector $\vec{v}_i \in \mathbb{R}^3$ corresponding to a projection of a point in the image $\vec{m}_i$ as $\vec{v}_i = \mat{K}^{-1}\begin{bmatrix}\vec{m}_i \\ 1 \end{bmatrix}$. From eq. \eqref{eq:pnp_intro}, the following relation can be obtained:
 \begin{equation}
     \label{eq:p3p_gen}
     \lambda_i \vec{v}_i = \mat{R} (\vec{X}_i - \vec{C}).
 \end{equation}
 If there is no rotation, the situation will look like in \autoref{fig:p3p} where vectors $\vec{d}_i$ are known, so eq. \eqref{eq:p3p_gen} simplifies to a system of three equations with three unknowns (vector $\vec{C}$).
-If there is a non-zero rotation, it can be elliminated first.
+If there is a non-zero rotation, it can be eliminated first.
 Let us define a helper variable $z_i$ as the distance of a point $\vec{X}_i$ from $\vec{C}_i$:
 \begin{equation}
     \label{eq:p3p_rot}
@@ -213,13 +215,13 @@ A feature detector is an algorithm for extracting features from an image.
 There are many such algorithms, but in this solution, the ORB features extractor is used. 
 The authors in \cite{Rublee2011} claim that ORB has the same accuracy as the state-of-the-art SIFT detector while being a few times faster, which is also supported by other research \cite{Sharif2017}. 
 
-Next step of the proposed method is mutually assosiating features in images from the two cameras, corresponding to the same physical objects in the environment. 
+The next step of the proposed method is mutually associating features in images from the two cameras, corresponding to the same physical objects in the environment. 
 This is done by a feature matcher, which compares descriptors of the features provided by the feature detection algorithm.
 Some feature extraction algorithms perform a brute-force comparison of all combinations of features, others use nearest neighbors approximations or even neural networks \cite{Sarlin2020}.
 
 A brute-force matcher is one of the simplest matchers.
 It takes one descriptor from one set, computes its similarity to all descriptors from the second set, and matches it with the most similar feature. 
-This process is repeated to maximize the total overall similarity between two matched features.
+This process is repeated to maximize the overall similarity between two matched features.
 
 Even after this process, there will be some outliers.
 Distance from features to the corresponding epipolar lines can be used to filter them. 
@@ -286,18 +288,21 @@ After eliminating $\lambda_1$, $\lambda_2$ we obtain the following set of equati
     \end{bmatrix}, \;\;\;\;\; \mat{D} \in \mathbb{R}^{4 \times 4}.
 \end{equation}
 
-
-SVD decomposition of $\mat{D}^T\mat{D}$, which is a solution of the equation
-
+The result of the triangulation would be the eigenvector corresponding to the smallest eigenvalue, which are obtained using SVD decomposition of $\mat{D}^T\mat{D}$, which is a solution of the equation
 \begin{equation}
-    \mat{U}\mat{S}\mat{V}^\top = \mathsf{SVD}(\mat{D}^\top\mat{D}),
+    \mat{U}\mat{S}\mat{V}^\top = \mat{D}^\top\mat{D},
 \end{equation}
-
 where $\mat{U}$ and $\mat{V}$ are orthogonal matrices and $\mat{S}$ is a non-negative diagonal matrix.
 
-The solution of the triangulation would be the eigenvector corresponding to the smallest eigenvalue, the last columt of the matrix $\mat{U}$, where $\vec{u}_4 = (u_1', v_1', u_2', v_2')^\top$.
-
-% The solution is $u_4$, the last column of the $\mat{U}$ matrix from $\mathsf{SVD}(\mat{D}^\top \mat{D}) = \mat{U}, \mat{S}, \mat{V}^\top$.
+The eigenvector corresponding to the smallest eigenvalue is the last columt of the matrix $\mat{U}$, where $\vec{u}_4 = (x', y', z', w')^\top$.
+The triangulated point is expressed as
+\begin{equation}
+    \vec{X} = \begin{bmatrix}
+        \frac{x'}{w'} \\
+        \frac{y'}{w'} \\
+        \frac{z'}{w'} \\
+    \end{bmatrix}.
+\end{equation}
 
 
 

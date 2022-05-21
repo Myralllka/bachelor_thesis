@@ -4,7 +4,7 @@
 
 Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. 
 Drones are already widely used in cinematography \cite{Mademlis2020}, advertising \cite{Ullah2021} and agriculture \cite{Kim2019}. 
-City emergency departments also use Unmanned arial vehicles (UAVs) - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out \cite{Pritzl2021}.
+City emergency departments also use Unmanned Arial Vehicles (UAVs) - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out \cite{Pritzl2021}.
 Another field where UAVs can be used in nearest future is transportation. 
 Fast parcel delivery \cite{She2021} and content transportastions \cite{Gupta2021,Aloqaily2022} are quite promissing fields of UAV application together with smart city comncept evolving \cite{Ortiz2019}.
 Nowadays, even collaborative transportation systems are something non-fictional - swarms have become more popular, and that allows their usage for the transportation of really massive objects \cite{Bacelar2020} that one drone can not lift. 
@@ -36,7 +36,7 @@ Unfortunately, they have no publications or implementation details, so it is onl
 \end{figure}
 
 Figure \autoref{fig:intro_general} presents a scheme of the proposed system.
-In the figure, $T_{static}$ is the transformation between the cameras obtained with stereopair calibration. 
+In the figure, $T_{static}$ is the transformation between the cameras obtained with stereo pair calibration. 
 At time $t_0$, a new pair of images is received.
 A feature detector extracts points of interest from the image.
 Points that lie in the part of the images corresponding to the overlapping field of view (the red point cloud in \autoref{fig:intro_general}) are then selected and correspondence matches between these points from the two images are found based on their features.
@@ -48,7 +48,7 @@ The obtained point cloud is used to find the scale of the points obtained using 
 Various MAVs use several obstacle avoidance sensors: stereo vision \cite{Ruf2018}, depth cameras (as Intel RealSense), monocular vision \cite{Mejias2010}, lidar (2d or 3d) \cite{Ramasamy2016}, sonar (ultrasonic), time of flight sensors, also combinations of them can be used. 
 
 Each of them has its pros and cons. 
-3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the environment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
+3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the environment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
 Depth cameras are more expensive than simple cameras. Ultrasonic and infrared sensors have distance limits and other minor issues ( a.e. sonar can be influenced by noise from the MAVs). 
 
 In most articles, a stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Lin2021} is used.
@@ -77,7 +77,7 @@ So both problems are related to making a 3D map of an unknown environment, but f
 \end{figure}
 
 Structure from Motion (SfM) is another algorithm that can implement a system for avoiding obstacles. 
-SfM is a method of depth map reconstruction from a continuous sequance of images as in the \autoref{fig:pc_input}.
+SfM is a method of depth map reconstruction from a continuous sequence of images as in the \autoref{fig:pc_input}.
 Using this approach, a dense point cloud as in \autoref{fig:pc_output} can be computed and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
@@ -85,12 +85,12 @@ Using this approach, a dense point cloud as in \autoref{fig:pc_output} can be co
 This thesis aims to design a visual obstacle avoidance system for MAVs, 3D model it, assemble a device and measure its efficiency. 
 The proposed solution assumes an MAV with limited size and lifting force that limits the number of sensors on it. 
 The MAV is thus equipped with two calibrated cameras with a known transformation between them. 
-Fields of view of the cameras overlap enough to detect close obstacles.
+The fields of view of the cameras overlap enough to detect close obstacles.
 Framerate of the cameras is sufficient to operate in real-time (at least 30 frames per second (fps)), and the frames are synchronized in time.
 The MAV is equipped with an onboard computer with enough computational power to process the images at a rate sufficient for the obstacle avoidance.
-The flight environment is assumed to be well-lit and to contain objects with well-distinguishable visual features that can be observed by the cameras.
+The flight environment is assumed to be well-lit and to contain objects with well-distinguishable visual features that the cameras can observe.
 These features should be more or less unique to simplify the distinguishing.
 The expected output is a reconstructed 3D environment around the drone in the form of a point cloud which represents the nearest objects.
-Depends on the estimated distance, these are the possible obstacles that should be avoided.
-Then it can be integrated with the MAV control system to provide it with obstacles, but the solution working rate on the MAV's hardware should be sufficient anough for agile manoeuvering and obstacle avoidance.
+Depending on the estimated distance, these are the possible obstacles that should be avoided.
+Then it can be integrated with the MAV control system to provide it with obstacles, but the solution working rate on the MAV's hardware should be sufficient enough for agile manoeuvering and obstacle avoidance.
 
