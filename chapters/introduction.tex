@@ -6,7 +6,7 @@ Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across variou
 Drones are already widely used in cinematography \cite{Mademlis2020}, advertising \cite{Ullah2021} and agriculture \cite{Kim2019}. 
 City emergency departments also use Unmanned arial vehicles (UAVs) - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out \cite{Pritzl2021}.
 Another field where UAVs can be used in nearest future is transportation. 
-Fast parcel delivery \cite{San2018} and content transportastions \cite{Gupta2021,Aloqaily2022} are quite promissing fields of UAV application together with smart city comncept evolving \cite{Ortiz2019}.
+Fast parcel delivery \cite{She2021} and content transportastions \cite{Gupta2021,Aloqaily2022} are quite promissing fields of UAV application together with smart city comncept evolving \cite{Ortiz2019}.
 Nowadays, even collaborative transportation systems are something non-fictional - swarms have become more popular, and that allows their usage for the transportation of really massive objects \cite{Bacelar2020} that one drone can not lift. 
 UAVs and MAVs are also widely used in the military industry.
 
@@ -28,10 +28,9 @@ The inspiration for this project was taken from DJI's obstacle avoidance technol
 It uses visual data from monocular cameras with overlapping sones to cover almost the whole area around the UAV and react in real-time to obstacles nearby. 
 Unfortunately, they have no publications or implementation details, so it is only a conclusion from publicly available information.
 
-\label{sec:problem_definition}
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.7\textwidth]{graphics/general_scheme.png}
+    \includegraphics[width=0.6\textwidth]{graphics/general_scheme.png}
     \caption{ A general scheme of the multi-camera obstacle detection problem.}
     \label{fig:intro_general}
 \end{figure}
@@ -47,13 +46,12 @@ The obtained point cloud is used to find the scale of the points obtained using 
 
 \section{Related Works}
 Various MAVs use several obstacle avoidance sensors: stereo vision \cite{Ruf2018}, depth cameras (as Intel RealSense), monocular vision \cite{Mejias2010}, lidar (2d or 3d) \cite{Ramasamy2016}, sonar (ultrasonic), time of flight sensors, also combinations of them can be used. 
-In \cite{Rambabu2015} the sensor fusion of ultrasonic and infrared sensors is presented.
 
 Each of them has its pros and cons. 
 3D lidars are more expensive than other sensors, but they can provide good accuracy, precision and 3d coverage of the environment; 2d lidars are successfully used for ground vehicles, but they are not so suitable for most tasks for MAVs because a car can be modelled as a 2 degrees of freedom (DoF) system, while MAVs always have 4DoF, some specialized even up to 6DoF. 
 Depth cameras are more expensive than simple cameras. Ultrasonic and infrared sensors have distance limits and other minor issues ( a.e. sonar can be influenced by noise from the MAVs). 
 
-In most articles, a stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Lin2021, Xiao2019} is used.
+In most articles, a stereo pair of two parallel cameras looking in the same direction (classical stereo pair) \cite{Lin2021} is used.
 Deep learning approaches \cite{Back2020, FragaLamas2019, Park2020, Roghair2021} and Convolutional Neural Networks \cite{Yu2013, Ma2020} are also quite popular.
 A real-time multi-camera feedback control system that considers several cameras placed on multiple drones is introduced in \cite{He2021}.
 
@@ -83,6 +81,7 @@ SfM is a method of depth map reconstruction from a continuous sequance of images
 Using this approach, a dense point cloud as in \autoref{fig:pc_output} can be computed and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
+\label{sec:problem_definition}
 This thesis aims to design a visual obstacle avoidance system for MAVs, 3D model it, assemble a device and measure its efficiency. 
 The proposed solution assumes an MAV with limited size and lifting force that limits the number of sensors on it. 
 The MAV is thus equipped with two calibrated cameras with a known transformation between them. 

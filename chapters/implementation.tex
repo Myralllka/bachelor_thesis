@@ -1,7 +1,8 @@
 \chapter{Implementation}
 \label{chapter:implementation}
 
-In this section there is a description of the implemented solution: hardware in the \autoref{sec:impl_hardware}, used software tools in the \autoref{sec:impl_software} and integration of all parts together in the \autoref{sec:impl_integration}. The code can be found on GitHub: stereo pair driver\footnote{\url{https://github.com/Myralllka/UAV_basler_stereopair_driver}} and the main module\footnote{\url{https://github.com/Myralllka/UAV_localisation_from_cameras}}.
+This chapter describes implementation of the solution.
+The used hardware is presented in \autoref{sec:impl_hardware}, the software tools and integration of all parts together in \autoref{sec:impl_software}. The code can be found on GitHub: stereo pair driver\footnote{\url{https://github.com/Myralllka/UAV_basler_stereopair_driver}} and the main module\footnote{\url{https://github.com/Myralllka/UAV_localisation_from_cameras}}.
 
 \section{Hardware}
 \label{sec:impl_hardware}
@@ -9,7 +10,7 @@ In this section there is a description of the implemented solution: hardware in 
   \begin{subfigure}[b]{0.49\textwidth}
     \centering
     \includegraphics[width=\textwidth]{graphics/CAD.jpg}
-    \caption{The CAD model of the prototype}
+    \caption{The CAD model of the prototype.}
     \label{fig:proto_scheme}
   \end{subfigure}
   \hfill
@@ -19,48 +20,50 @@ In this section there is a description of the implemented solution: hardware in 
     \caption{The printed prototype}
     \label{fig:proto_printed}
   \end{subfigure}
-  \label{The proposed sollution prototype}
+  \caption{The proposed sollution prototype.}
+  \label{fig:prototype}
 \end{figure}
 
-The camera holder CAD model was created in a Fusion360 software considering requirements of rotation $90^\circ$ and the distance close to the average MAV sizes, the screenshot from the modelling process is in \autoref{fig:proto_scheme}.
-The 3d-printed solution prototype with cameras mounted is in the \autoref{fig:proto_printed}
+CAD model of a camera mount was created in the Fusion360 software considering the requirements of a $90^\circ$ rotation between cameras and distance of the cameras close to the average MAV size.
+A picture of the design from the CAD software is in \autoref{fig:proto_scheme}.
+The 3D-printed prototype with the cameras mounted is in the \autoref{fig:proto_printed}
 
-Basler daA1600-60um cameras were chosen for this project because they have a global shutter to capture moving objects, good image quality and they are not so expensive.
-\begin{center}
-    \begin{tabular}{ l l }
-    \hline
-    name                   & property          \\ \hline
-    Lens mount type        & S-mount           \\
-    Data transfer protocol & USB 3.0           \\
-    Max. frame rate        & 60 fps            \\
-    Resolution (HxV)       & 1600 px x 1200 px \\
-    Resolution             & 2 MP              \\
-    Price                  & 289.00 EUR        \\ \hline
-    \end{tabular}
-\end{center}
+Basler daA1600-60um cameras were chosen for this project because they have a global shutter which is important when deployes onboard a fast-moving platform, good image quality and high framerate, making them suitable for the proposed method based on the assumptions defined in \autoref{sec:problem_definition}. 
+More details regurding camera parameters are in \autoref{tab:daA1600}.
 
-Cameras' lences have $120^\circ$ FOV, which gives enough overlapping zone to detect features in $\sigma$ (see \autoref{fig:sch_stereo}).
+\begin{table}
+    \caption{daA1600-60um specifications.}
+    \label{tab:daA1600}
+    \begin{center}
+      \begin{tabular}{ l l }
+      \hline
+      Parameter              & Value          \\ \hline
+      Lens mount type        & S-mount           \\
+      Data transfer protocol & USB 3.0           \\
+      Max. frame rate        & 60 fps            \\
+      Resolution (HxV)       & 1600 px x 1200 px \\
+      Resolution             & 2 MP              \\
+      Price                  & 289.00 EUR        \\ \hline
+      \end{tabular}
+    \end{center}
+\end{table}
 
-Intel NUC with 8 cores CPU is used as the onboard computer for MAV. 
-No external GPU is needed, so all algorithms should consider it.
+Lenses of the cameras were chosen so that the resulting horizontal FOV is approximately $120^\circ$, which provides a sufficient overlapping zone to detect features in $\Psi$ (see \autoref{fig:sch_stereo}).
+
+Intel NUC with 8 cores CPU is used as the onboard computer for the MAV. 
+No dedicated GPU is needed.
 
 \section{Software tools}
 \label{sec:impl_software}
 
-The proposed solution uses the Robotic operating system (ROS)\cite{Rospaper} as the middleware.
-ROS is the whole ecosystem with hundreds of already implemented algorithms and libraries to interact with robots between Its parts and sensors.
-It is an open-source tool, so the apriltag detector and camera driver used in this thesis are based on official modules from the ROS community.
+The proposed solution uses the Robot operating system (ROS) \cite{Rospaper} as a middleware.
+ROS is an open-source ecosystem with hundreds of already implemented algorithms and libraries to interact between different parts of a robot's system, such as sensor drivers, image processing algorithms, planners, controller etc.
+The AprilTag detector and a driver for Basler cameras used in this thesis are based on publicly available modules from the ROS community.
 
-The MRS UAV system \cite{Baca2021} is used as a drone control environment. It is based on ROS, but it is the unique framework for MAVs to implement and test path planning, control, computer vision, object tracking, and many more MAV-related problems.
+The MRS UAV system \cite{Baca2021} is used as a drone control environment. It is based on ROS, but it is a unique framework for MAVs to implement and test path planning, control, computer vision, object tracking, and many more MAV-related problems.
 
-OpenCV \cite{opencv} is an open-source library for computer vision.
-Eigen \cite{Eigen} is an efficient library for linear algebra.
-Some solution algorithm implementations were used in both of them.
-
-\section{Integration}
-\label{sec:impl_integration}
-
-Implementation steps are described in the same order as in a \autoref{chapter:methodology}: calibrations, features matching, extracting 3D poses of features, and error computation.
+The OpenCV\footnote{\url{https://opencv.org/}} open-source computer vision library and the Eigen\footnote{\url{http://eigen.tuxfamily.org}} open-source library for efficient linear algebra were used for the implementation.
+All of the software, presented in this thesis, was implemented in C++.
 
 \begin{figure}[h]
     \centering
@@ -69,32 +72,26 @@ Implementation steps are described in the same order as in a \autoref{chapter:me
     \label{fig:calib}
 \end{figure}
 
-There is a package\footnote{\url{http://wiki.ros.org/camera_calibration}} in ROS ecosystem, that was used for the camera calibration process described in \autoref{sec:meth_calib}. 
-It takes a chessboard parameter (square size and the number of squares) as input.
-Then in the interactive mode (see \autoref{fig:calib}), it collects images for calibration and, as a result, creates a file with the camera calibration matrix and distortion coefficients if the lens has it.
+Calibration of parameters od the camera projection and distortion models (described in \autoref{sec:meth_calib}) was performed using ROS camera calibration package\footnote{\url{http://wiki.ros.org/camera_calibration}}.
+For the calibration, a chessboard pattern is used and its physical parameters must be specifief to the calibration program.
+The calibration process itself is done interactively using a graphical user interface (shown in \autoref{fig:calib}).
+The interface displays progress of the process to the user and when a sufficient dataset obtained, the user can trigger the parameter optimization. 
+Results of the optimization are then saved to a file for later use.
 
-There are two implemented methods of stereo pair calibration described in \autoref{sec:stereocalib}.
-Both of them use an apriltag calibration pattern, shown in the \autoref{fig:aptags}.
+The two calibration methods described in \autoref{sec:stereocalib} were both implemented to use an AprilTag calibration pattern, shown in \autoref{fig:aptags}.
 The main reason why this pattern was chosen is that each tag can be detected individually, so there is no need to have all of them simultaneously in the overlapping zone.
 The first method is implemented using the "Least-square estimation of transformation between two point sets" \cite{Umeyama1991} implementation from Eigen.
-As the initial poses, measurements from the CAD model are used.
+measurements from the CAD model of the camera mount were used as the initial estimate of the cameras' relative pose.
 The second method is implemented using the OpenCV PnP solver.
-As far as a standard apriltag detector outputs only the 3D poses of detected tags, it was modified to publish external information needed for the PnP algorithm - 2D coordinates of apriltags' corners in each image.
+Because the publicly available implementation of the AprilTag detector outputs only 3D poses of detected tags, the detector was modified to output also 2D coordinates of corners of the detected markers, which is needed for the PnP algorithm and during the debug session for computing the reprojection error.
 
-After both cameras and stereo pair are calibrated, the following steps are features detection, matching and filtering (\autoref{sec:features}) for a synchronized pair of images. 
+After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching and filtering, described in \autoref{sec:features}, for a synchronized pair of images. 
 The synchronization is done on the stereo pair driver level.
 
-As described in \autoref{sec:features}, ORB detector and brute-force matcher from OpenCV were used for features detection and matching.
-Even after this process, there will be some outliers.
-Distance from features to the corresponding epipolar lines can be used to filter them. 
-This distance can be computed using the equation \autoref{eq:epiconstr}.
-Its result is $0$ only in an ideal case; otherwise, the equation result will be the distance from the reprojected point to its corresponding epipolar line.
+As described in \autoref{sec:features}, the ORB detector and a brute-force matcher implementation from OpenCV were used for feature detection and matching.
 
-The next step is to reconstruct the 3D scene from obtained feature points.
-There are two different methods implemented for that, described in \autoref{sec:svdtriang} and \autoref{sec:shortest_distance}.
-One of them is an algebraic solution of the shortest distance between two rays, so it completely depends on calibration quality.
-Another one is called "The Golden Standard Triangulation Method", which combines SVD triangulation with applied Sampson correction. 
+The next step is to reconstruct the 3D scene from the obtained feature pairs.
 The implementation from the OpenCV is used.
 
-As a result, obstacles in the cameras' overlapping zone are detected in a format of the point cloud and correspondent feature points on both images.
-Recalling the \autoref{fig:intro_general}, the proposed solution providing a pointcloud with obstacles in a red zone at each timestamp $t_i$. 
+% As a result, obstacles in the cameras' overlapping zone are detected in a format of the point cloud and correspondent feature points on both images.
+% Recalling the \autoref{fig:intro_general}, the proposed solution providing a pointcloud with obstacles in a red zone at each timestamp $t_i$. 

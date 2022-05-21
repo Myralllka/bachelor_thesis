@@ -77,7 +77,7 @@ Then the equation \eqref{eq:proj_min} can be expanded to
     \lambda_i v_i = \vec{q}_2^\top \vec{X}_i + q_{24}, \;\;\;
     \lambda_i = \vec{q}_3^\top \vec{X}_i + q_{34}, \;\;\;
 \end{equation}
-where $\vec{m}_i = \begin{bmatrix} u_i \\ v_i \end{bmatrix}$, $ \lambda \in \mathbb{R}^{+}$, $i = 1, 2, ..., 6$.
+where $\vec{m}_i = \begin{bmatrix} u_i \\ v_i \end{bmatrix}$, $ \lambda \in \mathbb{R}^{+}$, $i \in \{1, 2, ..., 6\}$.
 After elimination of $\lambda_i$, we obtain
 \begin{equation}
     (\vec{q}_3^\top \vec{X}_i + q_{34})u_i = \vec{q}_1^\top \vec{X}_i + q_{14},
@@ -105,7 +105,7 @@ so for $k=6$, $\mat{A} \in \mathbb{R}^{12 \times 12}$, $\vec{q} \in \mathbb{R}^{
 Let us denote a matrix $\mat{A}$ with the $i$-th row removed as $\mat{A}_i$. 
 The \textit{Jack-Knife estimation} iterates through $i = 1, \dots, 12$.
 In each iteration, if the right null-space of $\mat{A}_i$ is not empty, the matrix $\mat{P}_i$ can be decomposed to $\mat{K}_i$ $\mat{R}_i$ and $\vec{t}_i$.
-Minimisation of the reprojection error from \autoref{sec:error_reprojection} for $i = 1, \dots, 12$ then can be used to find the best estimate of $\mat{P}$.
+Minimisation of the reprojection error from \autoref{sec:error_reprojection} for $i \in \{1, \dots, 12\}$ then can be used to find the best estimate of $\mat{P}$.
 
 \subsection{Distortion correction.}
 After the matrix $\mat{P}$ is obtained, parameters of the distortion can be found as well.
@@ -161,7 +161,7 @@ For this reason, it is better to use some other pattern, for example, a set of a
 
 \subsection{Least-square estimation of transformation}
 \label{sec:lsq_umeyama}
-The first approach assumes that cameras' poses are pre-measured, and the only necessary step is to correct one camera pose with respect to another.
+The first approach assumes that an initial estimate of the relative pose of the cameras is obtained using a manual measurement, and that the only necessary step is to correct the pose of one camera with respect to the other.
 Firstly it detects apriltag's from \textit{im1} and \textit{im2}, compute their 3D poses.
 Then, estimate transformation parameters between two point sets, and find the correction transformation $\mat{T}_{correction}$.
 The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of the second camera.
@@ -205,29 +205,31 @@ may be obtained, where $||\vec{d}_{ij}|| = || \vec{X}_j - \vec{X}_i ||$, $c_{ij}
 After solving the system of three equations with three unknown $z_i$, there will be up to 4 solutions.
 Complex solutions, and other should be either verified on additional points \cite{Fischler1981} or sorted by reprojection error (refer \autoref{sec:error_reprojection}).
 Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) from $\vec{X}_i$ and $z_i$; then $\lambda_i$ from \eqref{eq:p3p_rot} and $\mat{R}$ from \eqref{eq:p3p_gen}.
-% \subsection{}
-% It is also possible to calibrate with correctly matched correspondences only, but the precision can worsen.
-% Having two calibrated cameras, it is possible to compute essential matrix $\mat{E}$ \autoref{eq:E} from at least 5 corresponding points, and then decompose it to $\mat{R}_{21}$ and $\vec{t}_{21}$.
 
 \section{Feature extraction, matching and filtering}
 \label{sec:features}
-In a computer vision, \textit{features} typically refer to representations of unique pieces of information from the image scene, such as points, edges and objects.
+In computer vision, \textit{features} typically refer to representations of unique pieces of information from the image scene, such as points, edges and objects.
 A feature detector is an algorithm for extracting features from an image.
 There are many such algorithms, but in this solution, the ORB features extractor is used. 
 The authors in \cite{Rublee2011} claim that ORB has the same accuracy as the state-of-the-art SIFT detector while being a few times faster, which is also supported by other research \cite{Sharif2017}. 
 
 Next step of the proposed method is mutually assosiating features in images from the two cameras, corresponding to the same physical objects in the environment. 
 This is done by a feature matcher, which compares descriptors of the features provided by the feature detection algorithm.
-Some feature extraction algorithms perform a brute-force comparison of all combinations of features, others use nearest neighbors approximations or even neural networks.
+Some feature extraction algorithms perform a brute-force comparison of all combinations of features, others use nearest neighbors approximations or even neural networks \cite{Sarlin2020}.
 
 A brute-force matcher is one of the simplest matchers.
 It takes one descriptor from one set, computes its similarity to all descriptors from the second set, and matches it with the most similar feature. 
 This process is repeated to maximize the total overall similarity between two matched features.
 
+Even after this process, there will be some outliers.
+Distance from features to the corresponding epipolar lines can be used to filter them. 
+This distance can be computed using the equation \autoref{eq:epiconstr}.
+Its result is $0$ only in an ideal case; otherwise, the equation result will be the distance from the reprojected point to its corresponding epipolar line.
+
 \section{Features position estimation}
 Positions of the observed 3D points in the scene can be computed by having pairs of correspondent points taken by calibrated cameras.
 This process is called triangulation.
-Correspondences for triangulation are received as a result of deatures detection, matching and filtering.
+Correspondences for triangulation are received as a result of features detection, matching and filtering.
 
 \subsection{Shortest distance triangulation}
 \label{sec:shortest_distance}
