@@ -149,7 +149,7 @@ Finally, the point is transformed from the metric system of the abstract project
 \begin{figure}[h]
     \centering
     \includegraphics[width=.2\textwidth]{graphics/aptags.png}
-    \caption{The calibration pattern using AprilTags \cite{Wang2016} that was used for the stereopair calibration.}
+    \caption{The calibration pattern using AprilTags that was used for the stereopair calibration.}
     \label{fig:aptags}
 \end{figure}
 
@@ -159,16 +159,35 @@ There are multiple algorithms implementing a stereo pair calibration.
 Usually, a calibration pattern is used as the one shown in \autoref{fig:chb} for a standard stereo camera with parallel or converging optical rays.
 Most algorithms assume that the whole pattern is seen in both images.
 However, this is a disadvantage for cameras with a small overlapping zone and diverging optical rays.
-For this reason, it is better to use some other pattern, for example, a set of apriltags \cite{Malyuta2019} which can be detected separately. 
+For this reason, it is better to use some other pattern, for example, a set of AprilTags \cite{Malyuta2019} which can be detected separately. 
 
 \subsection{Least-square estimation of transformation}
 \label{sec:lsq_umeyama}
 The first approach assumes that an initial estimate of the relative pose of the cameras is obtained using a manual measurement, and that the only necessary step is to correct the pose of one camera with respect to the other.
-Firstly it detects apriltag's from \textit{im1} and \textit{im2}, compute their 3D poses.
-Then, estimate transformation parameters between two point sets, and find the correction transformation $\mat{T}_{correction}$.
-The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$ and obtain a corrected pose of the second camera.
+If there is no initial pose provided, the first camera pose is considered as the world coordinate frame basis, and the relative transformation of the second camera is obtained. 
+Firstly, corresponding parts of the calibration patterns are detected in $i_1$ and $i_2$ and their 3D positions are computed.
+In the case of this thesis, the AprilTag markers \cite{Malyuta2019} were used, which provide also a unique identification of the markers and an estimate of their full relative pose.
+In this way, two sets of 3D poses are obtained, each corresponding to the detected markers in one image.
+Then, transformation parameters between two point sets are estimated, and the correction transformation $\mat{T}_{c}$ is computed, where
+\begin{equation}
+    \mat{T}_{c} = 
+    \begin{bmatrix}
+        \mat{R}_c & \vec{t}_c \\ 
+        0 & 1
+    \end{bmatrix}.
+\end{equation}
+
+The algorithm is based on the analysis of the covariance matrix $\sum_{ab} \in \mathbb{R}^{d \times d}$ of the input sets $a$ and $b$ where $d$ is corresponding to the point's dimension. 
+It estimates parameters $\mat{R}_c$ and $\vec{t}_c$ such that
+\begin{equation}
+    \frac{1}{n} \sum_{i=1}^{n}{|| b_i - (\mat{R}_c a_i + \vec{t}_c) ||}^2
+\end{equation}
+is minimized, where $n$ equals to size of $a$ and $b$.
+All details with proof are available in \cite{Umeyama1991}.
+A correct pose of the second camera then can be obtained by applying $\mat{T}_{c}$ to $\mat{R}_{21}$ and $\vec{t}_{21}$.
 
 \subsection{PnP-based estimation of transformation}
+\label{sec:pnp}
 \begin{figure}[h]
     \centering
     \includegraphics[width=.4\textwidth]{graphics/p3p.png}
@@ -176,7 +195,6 @@ The last step is to apply $\mat{T}_{correction}$ to $\mat{R}_{21}$ and $\vec{t}_
     \label{fig:p3p}
 \end{figure}
 
-\label{sec:pnp}
 Another, a more general approach is based on solving a Perspective-n-Point (PnP) problem.
 PnP is the problem of estimating a camera pose (translation and rotation) given a known set of 3D points and their respective 2D projections to an image of a calibrated camera.
 Mathematically, the situation can be expressed as
@@ -186,6 +204,7 @@ Mathematically, the situation can be expressed as
 \end{equation}
 No initial pose estimation is needed for this algorithm, but it can accelerate the solver if there is one.
 
+\subsubsection{P3P}
 In the situation when $n=3$ is the minimal amount of points to solve the PnP problem, this method is called P3P.  
 Firstly, let us define a vector $\vec{v}_i \in \mathbb{R}^3$ corresponding to a projection of a point in the image $\vec{m}_i$ as $\vec{v}_i = \mat{K}^{-1}\begin{bmatrix}\vec{m}_i \\ 1 \end{bmatrix}$. From eq. \eqref{eq:pnp_intro}, the following relation can be obtained:
 \begin{equation}
@@ -208,6 +227,17 @@ After solving the system of three equations with three unknown $z_i$, there will
 Complex solutions, and other should be either verified on additional points \cite{Fischler1981} or sorted by reprojection error (refer \autoref{sec:error_reprojection}).
 Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) from $\vec{X}_i$ and $z_i$; then $\lambda_i$ from \eqref{eq:p3p_rot} and $\mat{R}$ from \eqref{eq:p3p_gen}.
 
+\subsubsection{P3P + RANSAC}
+RANSAC stands for Random sample consensus. 
+It is an iterative method of estimating parameters of a model from set of observed data that contains both inliers and outliers.
+More general PnP task can be solved as a combination of P3P and RANSAC algorithms.
+
+At each iteration, 3 points out of $n$ are randomly sampled, $\mat{R}$ and $\vec{t}$ are compute.
+Than found transformation should be confirmed on all $n$ points - the reprojection error described in \autoref{sec:error_reprojection} should be compute.
+On every next iteration the same process repeats, and if the maximum number of iterations is reached or thechange in relative error is insufficient - $\mat{R}$ and $\vec{t}$ which provides the smallest error are considered as required.
+
+In practice, more sophisticated methods are employed, as \cite{Lepetit2008, Hesch2011}.
+
 \section{Feature extraction, matching and filtering}
 \label{sec:features}
 In computer vision, \textit{features} typically refer to representations of unique pieces of information from the image scene, such as points, edges and objects.
@@ -219,7 +249,7 @@ The next step of the proposed method is mutually associating features in images 
 This is done by a feature matcher, which compares descriptors of the features provided by the feature detection algorithm.
 Some feature extraction algorithms perform a brute-force comparison of all combinations of features, others use nearest neighbors approximations or even neural networks \cite{Sarlin2020}.
 
-A brute-force matcher is one of the simplest matchers.
+A brute-force matcher is one of the simplest matchers, and it is used in the proposed solution.
 It takes one descriptor from one set, computes its similarity to all descriptors from the second set, and matches it with the most similar feature. 
 This process is repeated to maximize the overall similarity between two matched features.
 
@@ -288,7 +318,7 @@ After eliminating $\lambda_1$, $\lambda_2$ we obtain the following set of equati
     \end{bmatrix}, \;\;\;\;\; \mat{D} \in \mathbb{R}^{4 \times 4}.
 \end{equation}
 
-The result of the triangulation would be the eigenvector corresponding to the smallest eigenvalue, which are obtained using SVD decomposition of $\mat{D}^T\mat{D}$, which is a solution of the equation
+The result of the triangulation would be the eigenvector corresponding to the smallest eigenvalue, which are obtained using $\mathsf{SVD}$ decomposition of $\mat{D}^T\mat{D}$, which is a solution of the equation
 \begin{equation}
     \mat{U}\mat{S}\mat{V}^\top = \mat{D}^\top\mat{D},
 \end{equation}
@@ -304,5 +334,5 @@ The triangulated point is expressed as
     \end{bmatrix}.
 \end{equation}
 
-
-
+In practice, the improved vesion of this algorithm called "The Golden Standard Triangulation Method" is more widely used.
+It combines SVD triangulation with applied Sampson correction (description is available in \cite{hartley_zisserman_2004}, p. 314). 

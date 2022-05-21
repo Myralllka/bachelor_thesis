@@ -37,7 +37,7 @@ More details regurding camera parameters are in \autoref{tab:daA1600}.
     \begin{center}
       \begin{tabular}{ l l }
       \hline
-      Parameter              & Value          \\ \hline
+      Parameter              & Value             \\ \hline
       Lens mount type        & S-mount           \\
       Data transfer protocol & USB 3.0           \\
       Max. frame rate        & 60 fps            \\
@@ -50,7 +50,8 @@ More details regurding camera parameters are in \autoref{tab:daA1600}.
 
 Lenses of the cameras were chosen so that the resulting horizontal FOV is approximately $120^\circ$, which provides a sufficient overlapping zone to detect features in $\Psi$ (see \autoref{fig:sch_stereo}).
 
-Intel NUC with 8 cores CPU is used as the onboard computer for the MAV. 
+The solution was developed and tested on the Lenovo ThinkPad X280 with Intel(R) Core i7-8550U CPU and 16Gb RAM.
+Intel NUC with Intel(R) Core i7-10710U CPU and 16Gb RAM is used as the onboard computer for the MAV.
 No dedicated GPU is needed.
 
 \section{Software tools}
@@ -68,7 +69,7 @@ All of the software presented in this thesis was implemented in C++.
 \begin{figure}[h]
     \centering
     \includegraphics[width=.6\textwidth]{graphics/calibration.png}
-    \caption{The calibration process}
+    \caption{The single camera calibration process.}
     \label{fig:calib}
 \end{figure}
 
@@ -78,20 +79,35 @@ The calibration process itself is done interactively using a graphical user inte
 The interface displays the progress of the process to the user, and when a sufficient dataset is obtained, the user can trigger the parameter optimization. 
 Results of the optimization are then saved to a file for later use.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.8\textwidth]{graphics/calib_process.png}
+    \caption[The stereocamera calibration process]{The stereo pair calibration. In the left side there are views from the right camera (top) and left camera (bottom). Both cameras observing the AprilTag's pattern. On the right side there is a visualization from the ROS Vizualisation tool (rviz) of initial pozes of both cameras, AprilTags and the corrected right camera pose.}
+    \label{fig:calib_stereo}
+\end{figure}
+
 The two calibration methods described in \autoref{sec:stereocalib} were both implemented to use an AprilTag calibration pattern, shown in \autoref{fig:aptags}.
 The main reason why this pattern was chosen is that each tag can be detected individually, so there is no need to have all of them simultaneously in the overlapping zone.
-The first method is implemented using the "Least-square estimation of transformation between two point sets" \cite{Umeyama1991} implementation from Eigen.
-measurements from the CAD model of the camera mount were used as the initial estimate of the cameras' relative pose.
-The second method is implemented using the OpenCV PnP solver.
+The first method, described in \autoref{sec:lsq_umeyama}, is implemented using the "Least-square estimation of transformation between two point sets" \cite{Umeyama1991} implementation from Eigen.
+Measurements from the CAD model of the camera mount were used as the initial estimate of the cameras' relative pose.
+The second method, described in \autoref{sec:pnp}, is implemented using the OpenCV PnP solver.
 Because the publicly available implementation of the AprilTag detector outputs only 3D poses of detected tags, the detector was modified to output also 2D coordinates of corners of the detected markers, which is needed for the PnP algorithm and during the debug session for computing the reprojection error.
+The calibration process is in the \autoref{fig:calib_stereo}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.5\textwidth]{graphics/corresp.png}
+    \caption{The result of features detection, matching and outliers filtering.}
+    \label{fig:corresp_life}
+\end{figure}
 
 After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching and filtering, described in \autoref{sec:features}, for a synchronized pair of images. 
+The example from a real experiment is in \autoref{fig:corresp_life}.
+
 The synchronization is done on the stereo pair driver level.
-
-As described in \autoref{sec:features}, the ORB detector and a brute-force matcher implementation from OpenCV were used for feature detection and matching.
-
+As described in \autoref{sec:features}, the ORB detector and a brute-force matcher implementation from the OpenCV were used for feature detection and matching.
 The next step is reconstructing the 3D scene from the obtained feature pairs.
-The implementation from the OpenCV is used.
+The method described in \autoref{sec:shortest_distance} is implemented from scretch, and the implementation of triangulation described in \autoref{sec:svdtriang} is taken from the OpenCV.
 
 % As a result, obstacles in the cameras' overlapping zone are detected in a format of the point cloud and correspondent feature points on both images.
 % Recalling the \autoref{fig:intro_general}, the proposed solution providing a pointcloud with obstacles in a red zone at each timestamp $t_i$. 
