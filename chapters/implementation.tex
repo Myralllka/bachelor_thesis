@@ -32,8 +32,6 @@ Basler daA1600-60um cameras were chosen for this project because they have a glo
 More details regurding camera parameters are in \autoref{tab:daA1600}.
 
 \begin{table}
-    \caption{daA1600-60um specifications.}
-    \label{tab:daA1600}
     \begin{center}
       \begin{tabular}{ l l }
       \hline
@@ -46,6 +44,8 @@ More details regurding camera parameters are in \autoref{tab:daA1600}.
       Price                  & 289.00 EUR        \\ \hline
       \end{tabular}
     \end{center}
+    \caption{daA1600-60um specifications.}
+    \label{tab:daA1600}
 \end{table}
 
 Lenses of the cameras were chosen so that the resulting horizontal FOV is approximately $120^\circ$, which provides a sufficient overlapping zone to detect features in $\Psi$ (see \autoref{fig:sch_stereo}).
@@ -95,10 +95,21 @@ Because the publicly available implementation of the AprilTag detector outputs o
 The calibration process is in the \autoref{fig:calib_stereo}.
 
 \begin{figure}[h]
+  \begin{subfigure}[h]{0.49\textwidth}
     \centering
-    \includegraphics[width=.5\textwidth]{graphics/corresp.png}
+    \includegraphics[width=0.92\textwidth]{graphics/corresp.png}
     \caption{The result of features detection, matching and outliers filtering.}
     \label{fig:corresp_life}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[h]{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{graphics/res_trangulation.png}
+    \caption{Triangulated points}
+    \label{fig:triang_life}
+  \end{subfigure}
+  \caption{}
+  \label{fig:res}
 \end{figure}
 
 After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching and filtering, described in \autoref{sec:features}, for a synchronized pair of images. 
@@ -108,6 +119,9 @@ The synchronization is done on the stereo pair driver level.
 As described in \autoref{sec:features}, the ORB detector and a brute-force matcher implementation from the OpenCV were used for feature detection and matching.
 The next step is reconstructing the 3D scene from the obtained feature pairs.
 The method described in \autoref{sec:shortest_distance} is implemented from scretch, and the implementation of triangulation described in \autoref{sec:svdtriang} is taken from the OpenCV.
+In the \autoref{fig:triang_life} in the left part there are triangulated points shown as colored spheres, and rays pointing from camera centers to feature points colored with the same color as corresponding feature.
+In the right side there are cameras' views.
+
 
 % As a result, obstacles in the cameras' overlapping zone are detected in a format of the point cloud and correspondent feature points on both images.
 % Recalling the \autoref{fig:intro_general}, the proposed solution providing a pointcloud with obstacles in a red zone at each timestamp $t_i$. 
