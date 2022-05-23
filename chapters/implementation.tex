@@ -20,16 +20,16 @@ The used hardware is presented in \autoref{sec:impl_hardware}, the software tool
     \caption{The printed prototype}
     \label{fig:proto_printed}
   \end{subfigure}
-  \caption{The proposed solution prototype.}
+  \caption{A prototype of the proposed solution.}
   \label{fig:prototype}
 \end{figure}
 
 CAD model of a camera mount was created in the Fusion360 software considering the requirements of a $90^\circ$ rotation between cameras and distance of the cameras close to the average MAV size.
 A picture of the design from the CAD software is in \autoref{fig:proto_scheme}.
-The 3D-printed prototype with the cameras mounted is in the \autoref{fig:proto_printed}
+The 3D-printed prototype with the cameras mounted is in \autoref{fig:proto_printed}
 
 Basler daA1600-60um cameras were chosen for this project because they have a global shutter which is important when deployed onboard a fast-moving platform, good image quality and high framerate, making them suitable for the proposed method based on the assumptions defined in \autoref{sec:problem_definition}. 
-More details regurding camera parameters are in \autoref{tab:daA1600}.
+More details regarding camera parameters are in \autoref{tab:daA1600}.
 
 \begin{table}
     \begin{center}
@@ -73,7 +73,7 @@ All of the software presented in this thesis was implemented in C++.
     \label{fig:calib}
 \end{figure}
 
-Calibration of parameters od the camera projection and distortion models (described in \autoref{sec:meth_calib}) was performed using ROS camera calibration package\footnote{\url{http://wiki.ros.org/camera_calibration}}.
+Calibration of parameters od the camera projection and distortion models (described in \autoref{sec:meth_calib}) was performed using the ROS Camera Calibration package\footnote{\url{http://wiki.ros.org/camera_calibration}}.
 A chessboard pattern is used for the calibration, and its physical parameters must be specified to the calibration program.
 The calibration process itself is done interactively using a graphical user interface (shown in \autoref{fig:calib}).
 The interface displays the progress of the process to the user, and when a sufficient dataset is obtained, the user can trigger the parameter optimization. 
@@ -82,7 +82,7 @@ Results of the optimization are then saved to a file for later use.
 \begin{figure}[ht]
     \centering
     \includegraphics[width=.8\textwidth]{graphics/calib_process.png}
-    \caption[The stereocamera calibration process]{The stereo pair calibration. In the left side there are views from the right camera (top) and left camera (bottom). Both cameras observing the AprilTag's pattern. On the right side there is a visualization from the ROS Vizualisation tool (rviz) of initial pozes of both cameras, AprilTags and the corrected right camera pose.}
+    \caption[The stereocamera calibration process]{The stereo pair calibration. In the left side there are views from the right camera (top) and left camera (bottom). Both cameras observing the AprilTag's pattern. On the right side there is a visualization from the ROS Vizualisation tool (rviz) of initial poses of both cameras, AprilTags and the corrected right camera pose.}
     \label{fig:calib_stereo}
 \end{figure}
 
@@ -95,30 +95,25 @@ Because the publicly available implementation of the AprilTag detector outputs o
 The calibration process is in the \autoref{fig:calib_stereo}.
 
 \begin{figure}[ht]
-  \begin{subfigure}[ht]{0.49\textwidth}
-    \centering
-    \includegraphics[width=0.92\textwidth]{graphics/corresp.png}
-    \caption{The result of features detection, matching and outliers filtering.}
-    \label{fig:corresp_life}
-  \end{subfigure}
-  \hfill
-  \begin{subfigure}[ht]{0.49\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{graphics/res_trangulation.png}
-    \caption{Triangulated points}
-    \label{fig:triang_life}
-  \end{subfigure}
-  \caption{}
-  \label{fig:res}
+  \centering
+  \includegraphics[width=0.92\textwidth]{graphics/corresp.png}
+  \caption[The result of features detection, matching and outliers filtering.]{In the image ...} :TODO
+  \label{fig:corresp_life}
+\end{figure}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.49\textwidth]{graphics/res_trangulation.png}
+  \caption{Triangulated points}
+  \label{fig:triang_life}
 \end{figure}
 
-After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching and filtering, described in \autoref{sec:features}, for a synchronized pair of images. 
-The example from a real experiment is in \autoref{fig:corresp_life}.
+After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching and filtering, described in \autoref{sec:features}.
+The example from a real-world experiment is in \autoref{fig:corresp_life}.
 
-The synchronization is done on the stereo pair driver level.
+The synchronization is done on a stereo pair driver level.
 As described in \autoref{sec:features}, the ORB detector and a brute-force matcher implementation from the OpenCV were used for feature detection and matching.
 The next step is reconstructing the 3D scene from the obtained feature pairs.
-The method described in \autoref{sec:shortest_distance} is implemented from scretch, and the implementation of triangulation described in \autoref{sec:svdtriang} is taken from the OpenCV.
+The method described in \autoref{sec:shortest_distance} is implemented from scratch, and the implementation of triangulation described in \autoref{sec:svdtriang} is taken from OpenCV.
 In the \autoref{fig:triang_life} in the left part there are triangulated points shown as colored spheres, and rays pointing from camera centers to feature points colored with the same color as corresponding feature.
 In the right side there are cameras' views.
 

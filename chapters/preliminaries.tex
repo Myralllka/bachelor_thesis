@@ -4,7 +4,7 @@
 \section{Homogenous coordinate systems}
 
 Homogenous coordinates are a tool to simplify certain geometrical operations by adding an extra dimension.
-For example, the general scaling, rotation and translation is expressed in non-homogenous coordinates as:
+For example, the general scaling, rotation and translation are expressed in non-homogenous coordinates as:
 % To transform a point $m=(u, v)^\top$ from cartesian coordinates to homogenous, simply append $1$ as the third coordinate: $m=(u, v, 1)^\top$.
 
 \begin{equation}
@@ -26,10 +26,15 @@ $\mat{S}$ is a scaling matrix,
 $\mat{R}$ is a rotation matrix and 
 $\vec{t}$ is a translation vector.
 
-The same operations can be expressed in a homogenous coordinate system using one matrix multiplication as
+The same operations can be expressed in a homogenous coordinate system using a single matrix multiplication as
 
 \begin{equation}
     \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 
+    \begin{bmatrix}
+        \mat{S} \mat{R} & \vec{t} \\
+        \vec{0}^\top & 1
+    \end{bmatrix}
+    \begin{bmatrix} \vec{m}_0 \\ 1 \end{bmatrix} = 
     \mat{S}_H \mat{R}_H \mat{T}_H
     \begin{bmatrix} \vec{m}_0 \\ 1 \end{bmatrix},
 \end{equation}
@@ -40,7 +45,7 @@ The same operations can be expressed in a homogenous coordinate system using one
 \end{equation}
 where $\mat{S}_H, \mat{R}_H$ and $\mat{T}_H$ are homogenous transformation matrices.
 
-So in the homogenous coordinate system, all 2D transformations can be combined and expressed as matrix multiplications.
+So in the homogenous coordinate system, these transformations can be combined and expressed as matrix multiplications.
 
 % \subsection{Vanishing point}
 % \begin{figure}[h]
@@ -74,7 +79,7 @@ So in the homogenous coordinate system, all 2D transformations can be combined a
 \section{Pinhole camera model}
 \label{sec:pinhole_camera_model}
 A pinhole camera, the canonical perspective camera model - is a model of a simple camera without any optics.
-The first example is the camera Obscura - a dark room with a small hole through which the image from outside is projected on the opposite wall. 
+The first example is the camera obscura - a dark room with a small hole through which the image from outside is projected on the opposite wall. 
 This model can be used to express camera geometry with a field of view angles less than $180^{\circ}$.
 
 \subsection{Camera coordinate system}
@@ -93,38 +98,38 @@ This model can be used to express camera geometry with a field of view angles le
 \end{figure}
 
 \begin{figure}[ht]
-    \begin{subfigure}[b]{0.49\textwidth}
-      \includegraphics[width=0.79\textwidth]{graphics/td_scene_xy.png}
-      \caption{The pinhole camera model, x-y plane.}
-      \label{fig:td_scene_xy}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.49\textwidth}
-      \includegraphics[width=\textwidth]{graphics/pixel.png}
-      \caption{A scheme of a pixel skew.}
-      \label{fig:Kframes}
-    \end{subfigure}
-    \caption{}
+  \centering
+  \includegraphics[width=0.49\textwidth]{graphics/td_scene_xy.png}
+  \caption{The pinhole camera model, x-y plane.}
+  \label{fig:td_scene_xy}
 \end{figure}
 
-In the physical implementation of the camera Obscura, the projective plane is on the opposite side from the projection center (or camera center $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.49\textwidth]{graphics/pixel.png}
+  \caption{A scheme of a pixel skew.}
+  \label{fig:Kframes}
+\end{figure}
+
+In the physical implementation of the camera obscura, the projective plane is on the opposite side from the projection center (or camera center $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. 
 However, in most computer vision literature, authors assume that it is on the same side as the object (see \autoref{fig:td_scene_3d}).
-In \autoref{fig:td_scene_3d} a camera with camera center $C$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e}_x, \vec{e}_y, \vec{e}_z)$ is observing human. 
+In \autoref{fig:td_scene_3d} a camera with camera center $\vec{C}$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e}_x, \vec{e}_y, \vec{e}_z)$ is observing a human. 
 Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has a projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located on a distance $f$ from the camera center (\autoref{fig:td_scene_yz}). 
 The optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image the point $ \vec{O} \cap \pi = \vec{o}$ is the center of the image, see \autoref{fig:td_scene_xy}.
 
 \subsection{Camera matrix}
-The camera calibration matrix is a matrix that includes the camera's \textit{intrinsic} parameters - focal length, pixel skew angle ($\theta$), as on \autoref{fig:Kframes}, pixel aspect ratio \textit{a} and principle point coordinates $\vec{o} = (u_0, v_0)$ \autoref{fig:td_scene_xy}.
+The camera calibration matrix is a matrix that includes the camera's \textit{intrinsic} parameters - focal length, pixel skew angle $\theta$ (illustrated in \autoref{fig:Kframes}) and principle point coordinates $\vec{o} = (u_0, v_0)$ (see \autoref{fig:td_scene_xy}).
+The camera calibration matrix can be expressed as
 \begin{equation}
     \mat{K} = \begin{bmatrix}
         f_x & -f_x \cot(\theta) & u_0 \\
         0 & f_y & v_0 \\
         0 & 0 & 1 \\
     \end{bmatrix},
-    \textrm{\;units: } [f_x]=\frac{px}{m},\; [f_y]=\frac{px}{m},\; [u_0]=px,\; [v_0]=px,
+    \textrm{\;units: } [f_x]=\frac{m}{px},\; [f_y]=\frac{m}{px},\; [u_0]=px,\; [v_0]=px,
 \end{equation}
 
-where $f_x = af$, $f_y = \frac{f}{\sin{\theta}}$, $f$ is a focal length used to convert world length ratios to pixels.
+where $f_x = f a_x$, $f_y = f a_y$ represents the focal length of a camera in terms of pixel dimensions, $a_x$ and $a_y$ are numbers of pixels per unit distance in image coordinates (for more details see \cite{hartley_zisserman_2004}, p.175) and $f$ is a focal length, $[f] = m$ .
 
 Most modern digital cameras have no skew and square pixels, so in most cases, the camera matrix can be simplified to:
 
@@ -146,8 +151,9 @@ Most modern digital cameras have no skew and square pixels, so in most cases, th
     \label{fig:frames}
 \end{figure}
 
-To translate a point from a world coordinate frame to an image coordinate frame, the Image projection matrix $\mat{P}$ is used. 
-The canonical projection matrix $\mat{P}_0$ assumes that the camera is in the world coordinate center and that the calibration matrix $\mat{K} = \mat{I}$
+To translate a point from a world coordinate frame to an image coordinate frame, the image projection matrix $\mat{P}$ is used. 
+The canonical projection matrix $\mat{P}_0$ assumes that the camera is in the world coordinate center and that the calibration matrix $\mat{K} = \mat{I}$.
+$\mat{P}_0$ is expressed as
 \begin{equation}
 \mat{P}_0 = \begin{bmatrix} \mat{I} & | & \vec{0} \end{bmatrix} = 
     \begin{bmatrix}
@@ -159,7 +165,7 @@ The canonical projection matrix $\mat{P}_0$ assumes that the camera is in the wo
 
 However, this case is impractical. 
 The canonical projection matrix is not used in practice because each real camera is different. 
-Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\mat{K}$ to transform canonical $\mat{P}_0$ to perspective $\mat{P}$:
+Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\mat{K}$ to transform the canonical $\mat{P}_0$ to the specific $\mat{P}$:
 
 \begin{equation}
 \mat{P} = \mat{K} \begin{bmatrix} \mat{I} & | & \vec{0} \end{bmatrix} = 
@@ -171,15 +177,14 @@ Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\ma
 \end{equation}
 
 The world coordinate center is usually not located at point $\vec{C}$ (\autoref{fig:frames}). 
-It may be rotated using a rotation matrix $\mat{R}$ and translated on vector $\vec{t}$ where $\mat{R}$ is a $3x3$ matrix with $det(\mat{R}) = 1$ and $\mat{R}^{-1} = \mat{R}^\top$. 
+It may be rotated using a rotation matrix $\mat{R}$ and translated by a vector $\vec{t}$ where $\mat{R}$ is a $3x3$ matrix with $\det(\mat{R}) = 1$ and $\mat{R}^{-1} = \mat{R}^\top$. 
 Therefore, in the general case the projection can be expressed as
 \begin{equation}
     \label{eq:PKRt}
     \mat{P} = \mat{K} \begin{bmatrix} \mat{R} & | & \vec{t} \end{bmatrix} = 
-    \mat{K} \begin{bmatrix} \mat{R} & | & - \mat{R} \mat{C} \end{bmatrix},
+    \mat{K} \begin{bmatrix} \mat{R} & | & - \mat{R} \vec{C} \end{bmatrix},
 \end{equation}
-
-where $\vec{C}$ is the camera's position in a world reference frame. 
+where $\vec{C}$ is the camera's position in the world reference frame. 
 
 Image point $\vec{m} = (u, v)^\top$ can be obtained from a 3D point $\vec{X}$ using the projection matrix $\mat{P}$ as
 
@@ -197,7 +202,7 @@ Image point $\vec{m} = (u, v)^\top$ can be obtained from a 3D point $\vec{X}$ us
     \vec{m} \\ 1 \end{bmatrix} = \mat{P} \begin{bmatrix} \vec{X} \\ 1
     \end{bmatrix},
 \end{equation}
-where $\lambda \neq 0$ is a free scaling parameter.
+where $\lambda > 0$ is a free scaling parameter.
 
 \subsection{Skew-symmetric 3x3 matrix}
 A skew-symmetric or antisymetric matrix of vector $\vec{b} = (b_1, b_2, b_3)^\top$ is defined as
@@ -225,7 +230,7 @@ The notation is taken from \cite{hartley_zisserman_2004}, p. 581.
 \end{figure}
 
 \autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $\vec{C}_1$ and $\vec{C}_2$ connected with a base vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
-Both of the cameras observe a 3D point $X$. 
+Both of the cameras observe a 3D point $\vec{X}$. 
 Projections of this point to $\pi_1$ and $\pi_2$ are $\vec{m}_1$ and $\vec{m}_2$, respectivly. 
 Points $\vec{C}_1, \vec{C}_2$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
 The lines $\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are \textit{epipolar lines}. 
@@ -275,25 +280,28 @@ Epipolar constraint described by eq. \eqref{eq:epiconstr} means that a point and
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{graphics/stereopair.png}
-    \caption{Illustration of a typical stereocamera setup.}
+    \caption[Illustration of a typical stereocamera setup.]{Illustration of a typical stereocamera setup. Two cameras with center' poses at $\vec{C}_1$ and $\vec{C}_2$ with projection planes $\pi_1$ and $\pi_2$.
+    The distance between camera centers is shown as a vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
+    Both cameras have parallel optical axes $\vec{O}_1$ and $\vec{O}_2$. 
+    Cameras' overlapping zone is marked as $\psi$.}
     \label{fig:sch_stereo}
 \end{figure}
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.3\textwidth]{graphics/stereo_example.jpg}
-    \caption{An example of an industrial stereocamera Intel Realsense D455.}
-    \label{fig:stereo_ex}
+    \caption[An example of an industrial stereocamera.]{An example of an industrial stereocamera Intel Realsense D455}
+    \label{fig:inteld455}
 \end{figure}
 
-Every digital image has only 2D information about a scene projected onto the image plane as in the \autoref{fig:td_scene_3d}.
+Every digital image has only 2D information about a scene projected onto the image plane as in \autoref{fig:td_scene_3d}.
 Computer stereo vision is a process of extracting a depth image from a pair of images of the same scene. 
 Such depth images are often used in SLAM, obstacle avoidance or detailed reconstruction of the environment in robotics.
 In \autoref{chapter:intro}, the most common methods of a stereo vision are described.
 Among them are the computationally expensive neural network-based monocular approaches and costly LiDAR sensors.
 A typical stereo camera is a tradeoff between price and processing complexity.
 
-Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in \autoref{fig:sch_stereo}, and an example of a stereo camera is shown in \autoref{fig:stereo_ex}). 
-Sometimes, a fusion of multiple cameras and other sensors is used, such as in the case of the Intel Realsense shown in \autoref{fig:stereo_ex} that has two IR cameras, a color sensor and an infra red projector to project some features onto the environment in there are insufficient features already present (for example when observing a white wall).
+Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in \autoref{fig:sch_stereo}.
+Sometimes, a fusion of multiple cameras and other sensors is used, such as in the case of the Intel Realsense shown in \autoref{fig:inteld455} that has two IR cameras, a color sensor and an infra red projector to project some features onto the environment in there are insufficient features already present (for example when observing a white wall).
 
 \section{Reprojection error}
 \label{sec:error_reprojection}
@@ -324,4 +332,4 @@ The reprojection error is defined as
     \end{bmatrix}
     },
 \end{equation}
-where $m_c = \begin{bmatrix} u_c \\ v_c \end{bmatrix}$, $\underline{X} = \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix}$ and c corresponds to the camera index.
+where $m_c = \begin{bmatrix} u_c \\ v_c \end{bmatrix}$, $\underline{X} = \begin{bmatrix} \vec{X} \\ 1 \end{bmatrix}$ and $c$ corresponds to the camera index.

@@ -2,30 +2,30 @@
 
 \label{chapter:intro}
 
-Micro unmanned aerial vehicles (MAVs) recently saw a rise in usage across various fields. 
+Micro unmanned aerial vehicles (MAVs, also called drones) recently saw a rise in usage across various fields. 
 Drones are already widely used in cinematography \cite{Mademlis2020}, advertising \cite{Ullah2021} and agriculture \cite{Kim2019}. 
 City emergency departments also use Unmanned Arial Vehicles (UAVs) - firefighters can use them to see and evaluate the situation from the sky, localize the source of fire and put it out \cite{Pritzl2021}.
-Another field where UAVs can be used in nearest future is transportation. 
-Fast parcel delivery \cite{She2021} and content transportastions \cite{Gupta2021,Aloqaily2022} are quite promissing fields of UAV application together with smart city comncept evolving \cite{Ortiz2019}.
-Nowadays, even collaborative transportation systems are something non-fictional - swarms have become more popular, and that allows their usage for the transportation of really massive objects \cite{Bacelar2020} that one drone can not lift. 
-UAVs and MAVs are also widely used in the military industry.
+Another field where MAVs can be used in nearest future is transportation. 
+Fast parcel delivery \cite{She2021} and content transportastions \cite{Gupta2021,Aloqaily2022} are quite promissing fields of UAV application together with smart city concepts evolving \cite{Ortiz2019}.
+Nowadays, even collaborative transportation systems are becoming realistic - multi-robot swarming algorithms are better developed, and that allows their usage for the transportation of large objects \cite{Bacelar2020} that one drone can not lift. 
+MAVs are also widely used in the military industry.
 
-As drones are used so widely, they should become safer. 
-Many commercially available drones are expensive and quite heavy, so accidents can be expensive and even cost somebody's life. 
-Even if a drone is on remote control, the FOV of a pilot can not be more significant than the FOV of his eyes (which is about $130^\circ$), but dangerous obstacles can appear from any side.
-In this sense, autonomous robots can see and avoid obstacles much better, but only if they have a well-designed system running onboard and enough sensors to cover the area around a drone.
+As drones are used so widely, there is a large demand for an increas in drone-related safety. 
+Many commercially available drones are expensive and quite heavy, so accidents can be costly and dangerous to property and human health. 
+Even if a drone is on remote control, when the pilot flies on a long distance, obstacles can be hard to spot and avoid.
+Same about flying in a forest or in cities (in situations when it is legal, for example - emergency departments and movie makers can do it), obstacles can not be observed.
+In such situations, the best for the pilot would be to use first person view glasses, which provides the field of view (FOV) not bigger than FOV of human's eyes (which is about $130^\circ$), but dangerous obstacles can appear from any side.
+In this sence, autonomous robots can see and avoid obstacles much better, but only if they have a well-designed system running onboard and enough sensors to cover the area around a drone.
 
-Here is where safety systems become essential: if the only obstacles in the sky are birds, which usually are afraid of noise from UAVs, in a closed environment, in a forest or a city, there can be much more hindrances: trees, humans, other UAV's, falling or flying objects, furniture etc.
-UAVs can have many sensors pointing in all directions to make themselves safe, and usually, they are not used in some closed environments due to their size.
-For MAV, its size and weight can be obstructive, but they usually are used in a closed environment - they are small.
-So it is always a tradeoff - the bigger UAV is, the more there may be sensors on it, and the bigger it should be to use it. 
+Automatic obstacle avoidance systems become especially important in closed environments with many obstacles, such as a forest, a city, or indoor environments.
+To ensure a full coverage of the surroundings of the MAV for the collision avoidance system, it can be equipped with multiple sensors pointing in all directions.
 
-Considering everything above, a compact obstacle avoidance system is a perspective field for research. 
-Even though the idea is old, neither DJI, MRS, nor other research groups have a well-developed visual obstacle avoidance system. 
+Considering this context above, a compact obstacle avoidance system is a perspective field for research. 
+Even though the idea is not new, neither DJI, MRS, nor other research groups have a well-developed visual obstacle avoidance system. 
 The best, for now, can be the Skydio system\footnote{\href{https://www.skydio.com/skydio-autonomy}{Skydio autonomy: https://www.skydio.com/skydio-autonomy }}, but their approach is for a forward-moving drone.
 
 The inspiration for this project was taken from DJI's obstacle avoidance technology introduced with the release of the DJI Mavic 3 drone\footnote{\href{https://www.dji.com/cz/mavic-3}{DJI Mavic 3: https://www.dji.com/cz/mavic-3}}. 
-It uses visual data from monocular cameras with overlapping sones to cover almost the whole area around the UAV and react in real-time to obstacles nearby. 
+It uses visual data from monocular cameras with overlapping fields of view to cover almost the whole area around the UAV and react in real-time to obstacles nearby. 
 Unfortunately, they have no publications or implementation details, so it is only a conclusion from publicly available information.
 
 \begin{figure}[t]
@@ -35,14 +35,14 @@ Unfortunately, they have no publications or implementation details, so it is onl
     \label{fig:intro_general}
 \end{figure}
 
-Figure \autoref{fig:intro_general} presents a scheme of the proposed system.
-In the figure, $T_{static}$ is the transformation between the cameras obtained with stereo pair calibration. 
-At time $t_0$, a new pair of images is received.
+\autoref{fig:intro_general} presents a scheme of the proposed system.
+In the figure, $T_{static}$ is the transformation between two cameras onboard the MAV obtained with stereo pair calibration. 
+At time $t_0$, a new pair of images is captured by the cameras.
 A feature detector extracts points of interest from the image.
-Points that lie in the part of the images corresponding to the overlapping field of view (the red point cloud in \autoref{fig:intro_general}) are then selected and correspondence matches between these points from the two images are found based on their features.
+Points that lie in the part of the images corresponding to a section of the cameras' field of view that overlaps (the red point cloud in \autoref{fig:intro_general}) are then selected and correspondence matches between these points from the two images are found based on their features.
 A calibrated projection model of the cameras and the transformation $T_{static}$ are used to estimate 3D points from the matched point pairs.
 Then at time $t_1$, when a new pair of images is received, the same process is repeated. 
-The obtained point cloud is used to find the scale of the points obtained using the SfM algorithm from images captured at $t_0$ and $t_1$ (the blue and green point clouds on \autoref{fig:intro_general}).
+In parallel, an incremental Structure from Motion (SfM) algorithm processes sequences of images from each camera separately to estimate 3D points, corresponding to nearby objects in the environment. However, monocular SfM algorithms can generally only estimate the environment up to an unknown scaling factor \cite{SfM}. To address this problem, the red point cloud is used to find the scale of the points obtained using the SfM algorithm from images captured at $t_0$ and $t_1$ (the blue and green point clouds in \autoref{fig:intro_general}).
 
 \section{Related Works}
 Various MAVs use several obstacle avoidance sensors: stereo vision \cite{Ruf2018}, depth cameras (as Intel RealSense), monocular vision \cite{Mejias2010}, lidar (2d or 3d) \cite{Ramasamy2016}, sonar (ultrasonic), time of flight sensors, also combinations of them can be used. 
@@ -57,8 +57,8 @@ A real-time multi-camera feedback control system that considers several cameras 
 
 Real-time simultaneous localization and mapping (SLAM) systems can also be used for obstacle avoidance \cite{Moreno2014}. 
 These problems are pretty closely related. 
-SLAM keeps track of the robot's position while constructing and updating a map of an unknown environment; obstacle avoidance is a problem of detecting and avoiding the nearest obstacles in an unknown environment to keep drones safe.
-So both problems are related to making a 3D map of an unknown environment, but for obstacle avoidance, the precision of distance measurements to the nearest objects is much more critical.
+SLAM keeps track of the robot's position while constructing and updating a map of an unknown environment, while obstacle avoidance is a problem of detecting and avoiding the nearest obstacles in an unknown environment to keep the robot safe from harmful collisions.
+Both problems are related to making a 3D map of an unknown environment, but for obstacle avoidance, the precision of distance measurements to the nearest objects is much more critical.
 
 \begin{figure}[h]
     \begin{subfigure}[h]{0.31\textwidth}
@@ -72,25 +72,25 @@ So both problems are related to making a 3D map of an unknown environment, but f
       \caption{Output of an SfM algorithm.}
       \label{fig:pc_output}
     \end{subfigure}
-    \caption{Ilustration of Structure from Motion, source - \url{https://github.com/Myralllka/CTU_3d_computer_vision/}}
+    \caption[Ilustration of Structure from Motion.]{Ilustration of Structure from Motion, source - \url{https://github.com/Myralllka/CTU_3d_computer_vision/}}
     \label{fig:pc_recons}
 \end{figure}
 
-Structure from Motion (SfM) is another algorithm that can implement a system for avoiding obstacles. 
+Structure from Motion (SfM) is another family of algorithms that may be used to implement a system for avoiding obstacles. 
 SfM is a method of depth map reconstruction from a continuous sequence of images as in the \autoref{fig:pc_input}.
 Using this approach, a dense point cloud as in \autoref{fig:pc_output} can be computed and obstacles can be detected \cite{Lee2008}. 
 
 \section{Problem definition}
 \label{sec:problem_definition}
-This thesis aims to design a visual obstacle avoidance system for MAVs, 3D model it, assemble a device and measure its efficiency. 
-The proposed solution assumes an MAV with limited size and lifting force that limits the number of sensors on it. 
+This thesis aims to design a visual obstacle avoidance system for MAVs, create a physical device implementing the system and measure its performance. 
+The proposed solution assumes an MAV with a limited size and lifting force that constraints the number, weight and size of its onboard sensory equipment. 
 The MAV is thus equipped with two calibrated cameras with a known transformation between them. 
 The fields of view of the cameras overlap enough to detect close obstacles.
 Framerate of the cameras is sufficient to operate in real-time (at least 30 frames per second (fps)), and the frames are synchronized in time.
-The MAV is equipped with an onboard computer with enough computational power to process the images at a rate sufficient for the obstacle avoidance.
+The MAV is also equipped with an onboard computer with enough computational power to process the images at a rate sufficient for the obstacle avoidance.
 The flight environment is assumed to be well-lit and to contain objects with well-distinguishable visual features that the cameras can observe.
-These features should be more or less unique to simplify the distinguishing.
-The expected output is a reconstructed 3D environment around the drone in the form of a point cloud which represents the nearest objects.
+These features should be unique so that the same feature can be unambiguously matched in images from the two cameras.
+The expected output is a reconstruction of the 3D environment around the drone in the form of a set of points representing the nearest objects.
 Depending on the estimated distance, these are the possible obstacles that should be avoided.
-Then it can be integrated with the MAV control system to provide it with obstacles, but the solution working rate on the MAV's hardware should be sufficient enough for agile manoeuvering and obstacle avoidance.
+The system can be integrated with the MAV control system to provide it with obstacles, so the solution working rate on the MAV's hardware should be sufficient enough for agile manoeuvering and obstacle avoidance.
 
