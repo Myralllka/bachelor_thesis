@@ -99,7 +99,7 @@ This model can be used to express camera geometry with a field of view angles le
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.49\textwidth]{graphics/td_scene_xy.png}
+  \includegraphics[width=0.4\textwidth]{graphics/td_scene_xy.png}
   \caption{The pinhole camera model, x-y plane.}
   \label{fig:td_scene_xy}
 \end{figure}
@@ -107,7 +107,7 @@ This model can be used to express camera geometry with a field of view angles le
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.49\textwidth]{graphics/pixel.png}
-  \caption{A scheme of a pixel skew.}
+  \caption[A scheme of a pixel skew.]{A scheme of a pixel. $\vec{e}_u$ and $\vec{e}_v$ are the image basis vectors, where $\lVert \vec{e}_u \rVert = \frac{w_s}{w_{im}}$, $\lVert \vec{e}_v \rVert = \frac{h_s}{h_{im}}$, $w_s$ and $h_s$ are physical width and height of a camera sensor, $w_{im}$ and $h_{im}$ are the image width and height in pixels. In case if the pixel is skewed, then the skew angle is $\theta$.}
   \label{fig:Kframes}
 \end{figure}
 
@@ -129,7 +129,8 @@ The camera calibration matrix can be expressed as
     \textrm{\;units: } [f_x]=\frac{m}{px},\; [f_y]=\frac{m}{px},\; [u_0]=px,\; [v_0]=px,
 \end{equation}
 
-where $f_x = f a_x$, $f_y = f a_y$ represents the focal length of a camera in terms of pixel dimensions, $a_x$ and $a_y$ are numbers of pixels per unit distance in image coordinates (for more details see \cite{hartley_zisserman_2004}, p.175) and $f$ is a focal length, $[f] = m$ .
+where $f_x = \frac{f}{\lVert \vec{e}_u \rVert} $ and $f_y = \frac{f}{\lVert \vec{e}_v \rVert \sin{\theta}}$ represents the focal length of a camera in the horizontal and vertical image units.
+$e_u$ and $e_v$ are the image basis vectors (refer \autoref{fig:Kframes}) and $f$ is a focal length, $[f] = m$ .
 
 Most modern digital cameras have no skew and square pixels, so in most cases, the camera matrix can be simplified to:
 
@@ -300,7 +301,7 @@ In \autoref{chapter:intro}, the most common methods of a stereo vision are descr
 Among them are the computationally expensive neural network-based monocular approaches and costly LiDAR sensors.
 A typical stereo camera is a tradeoff between price and processing complexity.
 
-Usually, a stereo camera has a pair of cameras located at a distance $||\vec{b}||$ pointing in the same direction, similarly to the human eye (a scheme is in \autoref{fig:sch_stereo}.
+Usually, a stereo camera has a pair of cameras located at a distance $\lVert \vec{b} \rVert$ pointing in the same direction, similarly to the human eye (a scheme is in \autoref{fig:sch_stereo}).
 Sometimes, a fusion of multiple cameras and other sensors is used, such as in the case of the Intel Realsense shown in \autoref{fig:inteld455} that has two IR cameras, a color sensor and an infra red projector to project some features onto the environment in there are insufficient features already present (for example when observing a white wall).
 
 \section{Reprojection error}

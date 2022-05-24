@@ -177,10 +177,10 @@ Then, transformation parameters between the two point sets are estimated, and th
     \end{bmatrix}.
 \end{equation}
 
-The algorithm is based on the analysis of the covariance matrix $\sum_{ab} \in \mathbb{R}^{d \times d}$ of the input sets $a$ and $b$ where $d$ is corresponding to the point's dimension. 
+The algorithm is based on the analysis of the covariance matrix $\sum_{ab} \in \mathbb{R}^{3 \times 3}$ of the input sets $a$ and $b$ where $d$ is corresponding to the point's dimension. 
 It estimates parameters $\mat{R}_c$ and $\vec{t}_c$ such that
 \begin{equation}
-    \frac{1}{n} \sum_{i=1}^{n}{|| b_i - (\mat{R}_c a_i + \vec{t}_c) ||}^2
+    \frac{1}{n} \sum_{i=1}^{n}{\lVert b_i - (\mat{R}_c a_i + \vec{t}_c) \rVert}^2
 \end{equation}
 is minimized, where $n$ equals to size of $a$ and $b$.
 All details with derivation are available in \cite{Umeyama1991}.
@@ -217,13 +217,13 @@ If there is a non-zero rotation, it can be eliminated first.
 Let us define a helper variable $z_i$ as the distance of a point $\vec{X}_i$ from $\vec{C}_i$:
 \begin{equation}
     \label{eq:p3p_rot}
-    |\lambda_i| \cdot ||\vec{v}_i|| = || \vec{X}_i - \vec{C} || = z_i.
+    |\lambda_i| \cdot \lVert \vec{v}_i \rVert = \lVert \vec{X}_i - \vec{C} \rVert = z_i.
 \end{equation}
 Considering only angles between $\vec{v}_i$ and applying the cosine law per $\triangle{\vec{C}, \vec{X}_i, \vec{X}_j}$, for $i, j \in \{1, 2, 3\}, i \neq j$, the relation
 \begin{equation}
-    ||\vec{d}_{ij}|| = z_i^2 + z_j^2 - 2z_iz_jc_{ij}
+    \lVert \vec{d}_{ij} \rVert = z_i^2 + z_j^2 - 2z_iz_jc_{ij}
 \end{equation}
-may be obtained, where $||\vec{d}_{ij}|| = || \vec{X}_j - \vec{X}_i ||$, $c_{ij} = \cos(\angle \vec{v}_i \vec{v}_j)$.
+may be obtained, where $\lVert \vec{d}_{ij} \rVert = \lVert \vec{X}_j - \vec{X}_i \rVert$, $c_{ij} = \cos(\angle \vec{v}_i \vec{v}_j)$.
 After solving the system of three equations with three unknown $z_i$, there will be up to 4 solutions.
 Each solution should be either verified on additional points \cite{Fischler1981} or sorted by reprojection error (refer \autoref{sec:error_reprojection}).
 Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) from $\vec{X}_i$ and $z_i$; then $\lambda_i$ from eq. \eqref{eq:p3p_rot} and $\mat{R}$ from eq. \eqref{eq:p3p_gen}.
@@ -320,14 +320,14 @@ After eliminating $\lambda_1$, $\lambda_2$ we obtain the following set of equati
 \end{equation}
 
 The result of the triangulation is the eigenvector corresponding to the smallest eigenvalue.
-The eigenvectors and eigenvalues are obtained using $\mathsf{SVD}$ decomposition of $\mat{D}^T\mat{D}$, which is a solution of an equation
+The eigenvectors and eigenvalues are obtained using $\mathsf{SVD}$ decomposition of $\mat{D}^\top\mat{D}$, which is a solution of an equation
 \begin{equation}
     \mat{U}\mat{S}\mat{V}^\top = \mat{D}^\top\mat{D},
 \end{equation}
 where $\mat{U}$ and $\mat{V}$ are orthogonal matrices and $\mat{S}$ is a non-negative diagonal matrix.
 
-The eigenvector corresponding to the smallest eigenvalue is the last columt of the matrix $\mat{U}$, where $\vec{u}_4 = (x', y', z', w')^\top$.
-The triangulated point is expressed as
+Let the eigenvector corresponding to the smallest eigenvalue $\vec{h} = (x', y', z', w')^\top$.
+The triangulated point then can be expressed as
 \begin{equation}
     \vec{X} = \begin{bmatrix}
         \frac{x'}{w'} \\
