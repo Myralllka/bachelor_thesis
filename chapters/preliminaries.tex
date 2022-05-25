@@ -26,7 +26,7 @@ $\mat{S}$ is a scaling matrix,
 $\mat{R}$ is a rotation matrix and 
 $\vec{t}$ is a translation vector.
 
-The same operations can be expressed in a homogenous coordinate system using a single matrix multiplication as
+The same operations can be expressed in a homogenous coordinate system using only matrix multiplication as
 
 \begin{equation}
     \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix} = 
@@ -46,35 +46,6 @@ The same operations can be expressed in a homogenous coordinate system using a s
 where $\mat{S}_H, \mat{R}_H$ and $\mat{T}_H$ are homogenous transformation matrices.
 
 So in the homogenous coordinate system, these transformations can be combined and expressed as matrix multiplications.
-
-% \subsection{Vanishing point}
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.75\textwidth]{graphics/parallel_intersection.png}
-%     \caption{Parallel lines intersection}
-%     \label{fig:intersection_parallel}
-% \end{figure}
-
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=.5\textwidth]{graphics/homogenous.png}
-%     \caption{Scheme of homogenous coordinates}
-%     \label{fig:homogenous}
-% \end{figure}
-
-% In Euclidian geometry, parallel lines are the lines that have no intersection point. 
-% In projective geometry, parallel lines intersect at a point $x$ at infinity. 
-
-% In the image \autoref{fig:intersection_parallel} let $l_r$ be a line defined by$Pr_1$ and $Pr_2$, and $l_l$ be a line defined by $Pl_1$ and $Pl_2$. 
-% In the 3D world, lines $\vec{l}_l \parallel \vec{l}_r$, but after projection on the image plane $\pi$, lines are interesting at a point $P_\infty$.
-% In a general cases, such a point can be computed as a cross product of two parallel lines. 
-
-% Both line and point in a homogenous coordinates are expressed as vectors of three numbers: a homogenous point $\vec{m} = (x, y, z)^\top$ is $\vec{m} = (\frac{x}{z}, \frac{y}{z})^\top$, and a line $\vec{l} = (a, b, c)^\top$, where $a, b, c$ are parameters of a line equation $ax + by + c = 0$. 
-% In general case, point at infinity is called an \textit{ideal point} and it is not seen on the image, its coordinates can be expressed as $\vec{m}_{\infty} = (u, v, 0)^\top, \{u, v\} \neq 0$.
-% Same about line - such line is called \textit{ideal line} and its coordinates are $\vec{l} = (0, 0, c)^\top, c \neq 0$. In algebraic representation, both ideal point and line are at the plane $\pi_0$ (\autoref{fig:homogenous}, green lines).
-
-% A vanishing point is an image of the point at infinity.
-% All world (4D) parallel lines share the same image vanishing point. On a \autoref{fig:intersection_parallel} a $P_{\infty}$ is an image of two parallel lines' intersection point (which is a point at infinity), so it is also a vanishing point.
 
 \section{Pinhole camera model}
 \label{sec:pinhole_camera_model}
@@ -100,7 +71,7 @@ This model can be used to express camera geometry with a field of view angles le
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.4\textwidth]{graphics/td_scene_xy.png}
-  \caption{The pinhole camera model, x-y plane.}
+  \caption[The pinhole camera model, x-y plane.]{The pinhole camera model, x-y plane.}
   \label{fig:td_scene_xy}
 \end{figure}
 
@@ -222,6 +193,7 @@ This matrix has several useful properties, but the most important in this thesis
 The notation is taken from \cite{hartley_zisserman_2004}, p. 581.
 
 \section{Epipolar geometry}
+
 \label{sec:epipolar_geometry}
 \begin{figure}[ht]
     \centering
