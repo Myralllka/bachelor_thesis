@@ -100,7 +100,7 @@ After elimination of $\lambda_i$, we obtain
 \end{equation}
 so for $k=6$, $\mat{A} \in \mathbb{R}^{12 \times 12}$, $\vec{q} \in \mathbb{R}^{12}$. If $\mat{A}$ has rank 12, there is no non-trivial null space for $\mat{A}$.
 
-\autoref{eq:Aqmat} can be solved by the so-called \textit{Jack-Knife estimation}. 
+Equation \eqref{eq:Aqmat} can be solved by the so-called \textit{Jack-Knife estimation}. 
 Let us denote a matrix $\mat{A}$ with the $i$-th row removed as $\mat{A}_i$. 
 The \textit{Jack-Knife estimation} iterates through $i \in {1, \dots, 12}$.
 In each iteration, if the right null-space of $\mat{A}_i$ is not empty, the matrix $\mat{P}_i$ can be decomposed to $\mat{K}_i$ $\mat{R}_i$ and $\vec{t}_i$.
