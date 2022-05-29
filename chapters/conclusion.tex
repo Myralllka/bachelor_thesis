@@ -6,12 +6,11 @@ Its main advantage is the reduced number of cameras to cover a bigger area and t
 It needs only a CPU to work; no GPU is needed.
 The proposed solution consists of a working prototype and two ROS packages: the stereo pair driver and the package for obstacle avoidance.
 All algorithms described in this thesis in \autoref{chapter:evaluation} are available as program's parameters while launching the module.
-For the driver, it is a calibration method (PnP or least square); for the obstacle avoidance, it is a triangulation method (SvD, which is recommended, or shortest distance, used for debugging).
+For the driver, it is a calibration method (PnP or least square); for the obstacle avoidance, it is a triangulation method (SVD, which is recommended, or shortest distance, used for debugging).
 The obstacle avoidance package also has scripts to check the stereo pair calibration quality using epipolar error (used for data filtering after keypoints detections, described in \autoref{sec:features}) for debugging, data collection and collected data analysis.
 
 The proposed solution was evaluated in a laboratory experiment, described in \autoref{chapter:evaluation}. 
 The experiment demonstrates that the working distance for the proposed setup is up to $7.5$m, while recommended distance is up to $3.5$m. 
-
 The working frequency is not enough to fly at high speed, so it is one of desired directions for development.
 The possible way to solve this issue is to change the image synchronisation part of a stereo camera driver to remove image copying from it.
 
