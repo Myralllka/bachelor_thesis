@@ -78,14 +78,14 @@ This model can be used to express camera geometry with a field of view angles le
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.49\textwidth]{graphics/pixel.png}
-  \caption[A scheme of a pixel skew.]{A scheme of a pixel. $\vec{e}_u$ and $\vec{e}_v$ are the image basis vectors, where $\lVert \vec{e}_u \rVert = \frac{w_s}{w_{im}}$, $\lVert \vec{e}_v \rVert = \frac{h_s}{h_{im}}$, $w_s$ and $h_s$ are physical width and height of a camera sensor, $w_{im}$ and $h_{im}$ are the image width and height in pixels. In case if the pixel is skewed, then the skew angle is $\theta$.}
+  \caption[A scheme of a skewed pixel.]{A scheme of a skewed pixel. $\vec{e}_u$ and $\vec{e}_v$ are the image basis vectors, where $\lVert \vec{e}_u \rVert = \frac{w_s}{w_{im}}$, $\lVert \vec{e}_v \rVert = \frac{h_s}{h_{im}}$, $w_s$ and $h_s$ are physical width and height of a camera sensor, $w_{im}$ and $h_{im}$ are the image width and height in pixels. $\vec{e}_v'$ is an edge of the skewed pixel and $\theta$ is the skew angle.}
   \label{fig:Kframes}
 \end{figure}
 
 In the physical implementation of the camera obscura, the projective plane is on the opposite side from the projection center (or camera center $\vec{C}$ in the pinhole camera model), and the image is reversed and mirrored. 
 However, in most computer vision literature, authors assume that it is on the same side as the object (see \autoref{fig:td_scene_3d}).
 In \autoref{fig:td_scene_3d} a camera with camera center $\vec{C}$ in a coordinate system with origin at $\vec{C}$ and basis vectors $(\vec{e}_x, \vec{e}_y, \vec{e}_z)$ is observing a human. 
-Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has a projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located on a distance $f$ from the camera center (\autoref{fig:td_scene_yz}). 
+Each point $\vec{X} = (x, y, z)^\top$ in a world coordinate system has a projection $\vec{m} = (u, v)^\top$ on a plane $\pi$ which is located at distance $f$ from the camera center (refer to \autoref{fig:td_scene_yz}). 
 The optical axis $\vec{O}$ is a ray perpendicular to plane $\pi$, and on the image the point $ \vec{O} \cap \pi = \vec{o}$ is the center of the image, see \autoref{fig:td_scene_xy}.
 
 \subsection{Camera matrix}
@@ -101,7 +101,7 @@ The camera calibration matrix can be expressed as
 \end{equation}
 
 where $f_x = \frac{f}{\lVert \vec{e}_u \rVert} $ and $f_y = \frac{f}{\lVert \vec{e}_v \rVert \sin{\theta}}$ represents the focal length of a camera in the horizontal and vertical image units.
-$e_u$ and $e_v$ are the image basis vectors (refer \autoref{fig:Kframes}) and $f$ is a focal length, $[f] = m$ .
+$\vec{e}_u$ and $\vec{e}_v$ are the image basis vectors (refer to \autoref{fig:Kframes}) and $f$ is a focal length, $[f] = m$ .
 
 Most modern digital cameras have no skew and square pixels, so in most cases, the camera matrix can be simplified to:
 
@@ -148,7 +148,7 @@ Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\ma
     \end{bmatrix}.
 \end{equation}
 
-The world coordinate center is usually not located at point $\vec{C}$ (\autoref{fig:frames}). 
+The world coordinate center is usually not located at point $\vec{C}$ as ilustrated in \autoref{fig:frames}. 
 It may be rotated using a rotation matrix $\mat{R}$ and translated by a vector $\vec{t}$ where $\mat{R}$ is a $3x3$ matrix with $\det(\mat{R}) = 1$ and $\mat{R}^{-1} = \mat{R}^\top$. 
 Therefore, in the general case the projection can be expressed as
 \begin{equation}
@@ -202,16 +202,16 @@ The notation is taken from \cite{hartley_zisserman_2004}, p. 581.
     \label{fig:epipolar_std}
 \end{figure}
 
-\autoref{fig:epipolar_std} shows a scheme of two cameras with different camera centers $\vec{C}_1$ and $\vec{C}_2$ connected with a base vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
-Both of the cameras observe a 3D point $\vec{X}$. 
-Projections of this point to $\pi_1$ and $\pi_2$ are $\vec{m}_1$ and $\vec{m}_2$, respectivly. 
-Points $\vec{C}_1, \vec{C}_2$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
+\autoref{fig:epipolar_std} shows a scheme of two cameras with different optical centers $\vec{C}_1$ and $\vec{C}_2$ connected with a base vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
+Both of the cameras observe the same 3D point $\vec{X}$. 
+Projections of this point to $\pi_1$ and $\pi_2$ are $\vec{m}_1$ and $\vec{m}_2$, respectively. 
+Points $\vec{C}_1$, $\vec{C}_2$ and $\vec{X}$ form an \textit{epipolar plane} $\sigma$.
 The lines $\sigma \cap \pi_1 = l_1$ and $\sigma \cap \pi_2 = l_2$ are \textit{epipolar lines}. 
 The epipolar line $l_1$ passes through an \textit{epipole} $\vec{e}_1$ and through point $\vec{m_1}$, where $\lambda [\vec{e}_1 | 1]^\top = \mat{P}_1 \vec{C}_2$.
 Similarly, line $l_2$ passes through an \textit{epipole} $\vec{e}_2$ and through point $\vec{m_2}$, where $\lambda [\vec{e}_2 | 1]^\top = \mat{P}_2 \vec{C}_1$.
 
 \subsection{The epipolar constraint}
-Having a set of two cameras, the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\mat{E} \in \mathbb{R}^{3x3},(\rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}, (\rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
+Having a set of two cameras, the relationship between them and the constraints on them can be expressed by two matrices: the \textit{essential matrix} $\mat{E} \in \mathbb{R}^{3x3}$, $(\rank(\mat{E}) = 2)$, and the \textit{fundamental matrix} $\mat{F} \in \mathbb{R}^{3x3}$, $(\rank(\mat{F}) = 2)$. Matrix $\mat{E}$ is obtained as
 \begin{equation}
     \label{eq:E}
     \mat{E} = \mat{R}_2 [\vec{C}_2 - \vec{C}_1]_{\times} \mat{R}_1^\top = [-\vec{t}_{21}]_{\times} \mat{R}_{21} = [\vec{b}]_{\times} \mat{R}_{21},
@@ -228,14 +228,14 @@ $\mat{R}_i$ and $\vec{t}_i$ are rotation and translation of the $i$-th camera in
 $\mat{R}_{21} = \mat{R}_2 \mat{R}_1^\top$ is a relative camera rotation and 
 $\vec{t}_{21} = -\mat{R}_2 \vec{b} = \vec{t}_2 - \mat{R}_{21}\vec{t}_1$ is a relative camera translation.
 
-An algebraic expression of the important properties of matrix $F$ using notation from \autoref{sec:epipolar_geometry} are:
+An algebraic expression of the important properties of matrix $\mat{F}$ using notation from \autoref{sec:epipolar_geometry} are:
 \begin{equation}
     \label{eq:Fm2}
-    \lambda l_1 = \mat{F}^\top \begin{bmatrix} \vec{m}_2 \\ 1 \end{bmatrix},
+    l_1 = \mat{F}^\top \begin{bmatrix} \vec{m}_2 \\ 1 \end{bmatrix},
 \end{equation}
 \begin{equation}
     \label{eq:Fm1}
-    \lambda l_2 = \mat{F} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix},
+    l_2 = \mat{F} \begin{bmatrix} \vec{m}_1 \\ 1 \end{bmatrix},
 \end{equation}
 \begin{equation}
     \label{eq:fefe}
@@ -253,24 +253,24 @@ Epipolar constraint described by eq. \eqref{eq:epiconstr} means that a point and
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.8\textwidth]{graphics/stereopair.png}
-    \caption[Illustration of a typical stereocamera setup.]{Illustration of a typical stereocamera setup. Two cameras with center' poses at $\vec{C}_1$ and $\vec{C}_2$ with projection planes $\pi_1$ and $\pi_2$.
-    The distance between camera centers is shown as a vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
+    \caption[Illustration of a typical stereocamera setup.]{Illustration of a typical stereocamera setup. Two cameras have optical centers at $\vec{C}_1$ and $\vec{C}_2$ and projection planes $\pi_1$ and $\pi_2$.
+    The base vector between the camera centers is shown as a vector $\vec{b} = \vec{C}_2 - \vec{C}_1$. 
     Both cameras have parallel optical axes $\vec{O}_1$ and $\vec{O}_2$. 
-    Cameras' overlapping zone is marked as $\Psi$.}
+    The common area visible by both cameras is marked as $\Psi$.}
     \label{fig:sch_stereo}
 \end{figure}
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.3\textwidth]{graphics/stereo_example.jpg}
-    \caption[An example of an industrial stereocamera.]{An example of an industrial stereocamera Intel Realsense D455}
+    \caption[An example of an industrial stereocamera.]{An example of an industrial stereocamera Intel Realsense D455.}
     \label{fig:inteld455}
 \end{figure}
 
-Every digital image has only 2D information about a scene projected onto the image plane as in \autoref{fig:td_scene_3d}.
+A typical digital image represents 2D information about a scene projected onto the image plane as in \autoref{fig:td_scene_3d}.
 Computer stereo vision is a process of extracting a depth image from a pair of images of the same scene. 
 Such depth images are often used in SLAM, obstacle avoidance or detailed reconstruction of the environment in robotics.
-In \autoref{chapter:intro}, the most common methods of a stereo vision are described.
-Among them are the computationally expensive neural network-based monocular approaches and costly LiDAR sensors.
+In \autoref{chapter:intro}, the most common methods of stereo vision are described.
+Among the scene depth estimation approaches there are the computationally expensive neural network-based monocular approaches and costly LiDAR sensors.
 A typical stereo camera is a tradeoff between price and processing complexity.
 
 Usually, a stereo camera has a pair of cameras located at a distance $\lVert \vec{b} \rVert$ pointing in the same direction, similarly to the human eye (a scheme is in \autoref{fig:sch_stereo}).
@@ -282,8 +282,7 @@ In an ideal case, when the calibration matrix $\mat{K}$ has no error and the est
 However, calibration only estimates the parameters up to some precision because of noise, measurement errors, limited resolution of the cameras etc.
 The reprojection error is used to measure this precision.
 
-After the 3D position of a point is computed based on its projections to the two cameras, to measure its reprojection error, it is projected back to an image, and a distance of this reprojection from the original projection that was used to obtaine the 3D positiom estimate is computed.
-
+After the 3D position of a point is computed based on its projections to the two cameras, to measure its reprojection error, it is projected back to an image, and a distance of this reprojection from the original projection that was used to obtain the 3D positiom estimate is computed.
 Consider a general projection matrix $\mat{P}_i$ as
 \begin{equation}
     \label{eq:p_general}

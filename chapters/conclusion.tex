@@ -3,27 +3,25 @@
 
 A multi-camera vision-based obstacle avoidance system for MAVs was presented in this thesis. 
 Its main advantage is the reduced number of cameras to cover a bigger area and the usage of multiple monocular cameras, which can provide data for another algorithm running onboard the MAV.
-It needs only a CPU to work; no GPU is needed.
-The proposed solution consists of a working prototype and two ROS packages: the stereo pair driver and the package for obstacle avoidance.
-All algorithms described in this thesis in \autoref{chapter:evaluation} are available as program's parameters while launching the module.
-For the driver, it is a calibration method (PnP or least square); for the obstacle avoidance, it is a triangulation method (SVD, which is recommended, or shortest distance, used for debugging).
-The obstacle avoidance package also has scripts to check the stereo pair calibration quality using epipolar error (used for data filtering after keypoints detections, described in \autoref{sec:features}) for debugging, data collection and collected data analysis.
+It needs only a CPU to process data at a fast rate; no GPU is required.
+The proposed solution consists of a working prototype and two ROS packages: the stereo pair driver and the package for obstacle detection.
+The obstacle detection package also has scripts to check the stereo pair calibration quality using epipolar error (used for data filtering after keypoints detections, described in \autoref{sec:features}) for debugging, data collection and collected data analysis.
 
 The proposed solution was evaluated in a laboratory experiment, described in \autoref{chapter:evaluation}. 
-The experiment demonstrates that the working distance for the proposed setup is up to $7.5$m, while recommended distance is up to $3.5$m. 
-The working frequency is not enough to fly at high speed, so it is one of desired directions for development.
-The possible way to solve this issue is to change the image synchronisation part of a stereo camera driver to remove image copying from it.
+The experiment demonstrates that the working distance for the proposed setup is up to $8$m, while recommended distance is up to $3.5$m. 
+The working frequency is not high enough to fly at high speed, so it is one of desired directions for development.
+The possible way to solve this issue is to change the image synchronisation part of a stereo camera driver to remove inefficiencies due to image copying.
 
-The future steps in this project's development are to integrate the proposed solution with the MAV control system and test it in a real-life experiment and extend the number of cameras to four.
+The future steps in this project's development are to integrate the proposed solution with the MRS MAV control system and test it in a real-life experiment and extend the number of cameras to four to cover the whole area around the MAV.
 
-To increase the number of detected key points (refer \autoref{fig:intro_general}, red point cloud), a bigger overlapping zone is needed.
-It can be achieved by increasing the cameras' lenses angle.
-In the ideal case, instead of the pinhole camera model used in this approach (refer \autoref{sec:pinhole_camera_model}), the fish-eye camera model and $180^\circ$ lenses can be used.
-It will make the $90^\circ$ overlapping zone instead of $30^\circ$, so the $360^\circ$ MAV's horizontal FOV would be covered with only four cameras.
+To increase the number of detected key points (refer to \autoref{fig:intro_general}, red point cloud), a bigger overlapping field of view is needed.
+This can be achieved by selecting more appropriate lenses for the cameras to obtain a larger field of view.
+Instead of the pinhole camera model used in this approach (refer \autoref{sec:pinhole_camera_model}), the fish-eye camera model and $180^\circ$ lenses can be used in that case \cite{fish-eye}.
+A $90^\circ$ overlapping field of view could be achieved using this approach instead of $30^\circ$, so the $360^\circ$ MAV's horizontal FOV would be covered with only four cameras.
 
 Another possible approach is to combine the proposed method with SfM.
-Images from cameras can be used separately to make 3D points from SfM, but using the output from the current solution, SfM results from different cameras can be combined, and the scale estimation can be simplified and improved.
+Images from the cameras can be used separately to make 3D points using SfM, but using the output from the current solution, SfM results from different cameras can be combined, and the scale estimation can be simplified and improved.
 
 This thesis aimed to design a visual multi-camera lightweight obstacle avoidance system for MAVs. 
-This assignment was satisfied, and the developed prototype has shown good precision, as was demonstrated in experiments.
-The method has a potantial for future research and improvements and combination with other algorithms, onboard deployment and real world experiments.
+This assignment was satisfied, and the developed prototype has shown good performance, as was demonstrated in real-world experiments.
+The method has a potential for future research and improvements and combination with other algorithms, onboard deployment and real world experiments.
