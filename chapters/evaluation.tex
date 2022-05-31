@@ -51,9 +51,11 @@ The same pattern with visible key points in a featureless environment was used \
 \begin{figure}[ht]
   \begin{subfigure}[ht]{0.49\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{graphics/experiment_1_chart_planedist.png}
-    \caption[Distance to the estimated plane]{Distance $d$ from the stereo camera to $\Omega$.
-    Blue line represents the expected distance, and red line represents $d'$, computed as mean of $n$ estimated distances.}
+    \includegraphics[width=\textwidth]{graphics/experiment_1_general.png}
+    \caption[The first experiment results.]{The first experiment results. Red line represents the theoretical error for the given setup. Green lines represents the median for each $n$ measurements at a distance $d$ from the stereo camera to $\Omega$.
+    Box is drown from the first quartile to the third quartile.
+    The whiskers go from each quartile to maximum and minimum.
+    Black points represents outliers.}
     \label{fig:exp_1_chart_dists}
   \end{subfigure}
   \hfill
@@ -78,7 +80,7 @@ The same pattern with visible key points in a featureless environment was used \
   \caption[The second experiment results.]{The second experiment results. Red line represents the theoretical error for the given setup.
   Green lines represents the median for each $n$ measurements at a distance $d$. Box is drown from the first quartile to the third quartile.
   The whiskers go from each quartile to the minimum and maximum.
-  Points represents outliers.}
+  Black points represents outliers.}
   \label{fig:exp_2_general}
 \end{figure}
 
@@ -104,14 +106,18 @@ To compute the theoretical error for the current prototype, the following data w
 
 \subsection{Distance to an estimated plane}
 \label{sec:exp1}
-For each set of 3D points corresponding to a specific distance $d$, the plane is estimated using RANSAC to filter outliers (an implementation from PCL was used).
-The absolute difference between the distance from the camera to the computed plane and the distance from the camera to the wall plane is taken as the error.
+For each set of 3D points corresponding to a specific distance $d$, the plane $\Omega'$ is estimated using RANSAC to filter outliers (an implementation from PCL was used).
+The error is defined as
+\begin{equation}
+    e_i = \frac{1}{k}\sum_{j=0}^{k}{|d - d'_i|},
+\end{equation}
+where $d'_i$ is a distance to $\Omega'$ for each measurement.
 
-The distance $d$ for this experiment was from $1$m to $5$m with a step of $0.5$m.
+The absolute error $e_i$ for distance of $d$ for this experiment was from $1$m to $5$m with a step of $0.5$m.
 The result of this experiment is shown in \autoref{fig:exp_1_chart_dists}.
-According to the figure, the distance deviates significantly after $3.5$m.
+According to the figure, the distance deviates significantly after $3.5$m, and the error grows much faster than estimated.
 In \autoref{fig:exp_1_topview} the topview of the experiment is shown for $d=4$m.
-It can be seen that the plane can not be estimated correctly at this distance because of a small error for each triangulated point.
+It can be seen that the plane can not be estimated correctly at this distance using RANSAC anymore, because of a small error for each triangulated point.
 
 \subsection{Distance to a predefined plane}
 \label{sec:exp2}
@@ -134,6 +140,8 @@ One of the possible problems here could be that the theoretical error does not i
 The second one is that there is an error in camera calibration and fixed focal length (cameras were calibrated on a small distance up to $3$m), so detected patterns on a bigger distances are blurred and less detectable. 
 
 \section{Rate testing}
+To ensure that obstacles can be detected, not only triangulation quality is important, but also the rate at which the MAV can receive the data from the obstacle avoidance module and the delay of the data.
+The data rate, maximal and minimal delays for 5min are shown in \autoref{tab:eval_freq}.
 \begin{table}[ht]
     \begin{center}
       \begin{tabular}{ll}
@@ -147,9 +155,6 @@ The second one is that there is an error in camera calibration and fixed focal l
     \caption{Measured data delay and rate of the proposed system.}
     \label{tab:eval_freq}
 \end{table}
-
-To ensure that obstacles can be detected, not only triangulation quality is important, but also the rate at which the MAV can receive the data from the obstacle avoidance module and the delay of the data.
-The data rate, maximal and minimal delays for 5min are shown in \autoref{tab:eval_freq}.
  
 \section{Experiments summary}
 The quality of the distance estimation to obstacles was demonstrated in the two experiments.
