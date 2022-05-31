@@ -2,14 +2,14 @@
 \label{chapter:evaluation}
 
 \section{Calibration quality}
-For computing the camera calibration error, another tool from the same ROS Camera Calibration package is used.
+Another tool from the same ROS Camera Calibration package is used to compute the camera calibration error.
 It continuously outputs a reprojection $\mathsf{RMS}$ (Root Mean Squared), which is defined as
 \begin{equation}
     \mathsf{RMS}(x) = \sqrt{\frac{\sum_{i=1}^{N}{(x_i - \hat{x}_i)^2}}{N}}
 \end{equation}
 where $x$ is one measured data sample from the experiment, $\hat{x}$ is a ground-truth data, and $N$ is a sample size.
 After launching this tool, we were moving a pattern in front of each camera to collect some data and analyse it.
-The reprojection error varies depending on the pose of the chessboard, but in general is quite stable, see \autoref{tab:camcalib_eval}.
+The reprojection error varies depending on the pose of the chessboard but, in general, is quite stable, see \autoref{tab:camcalib_eval}.
 
 \begin{table}[ht]
     \begin{center}
@@ -84,7 +84,7 @@ The same pattern with visible key points in a featureless environment was used \
   \label{fig:exp_2_general}
 \end{figure}
 
-The reprojection error is not a good metric to evaluate the triangulation performance because, with the distance increasing, the frature points are closer together, and the reprojection error decreases (see \autoref{fig:exp_1_repro}).
+The reprojection error is not a good metric to evaluate the triangulation performance because, with the distance increasing, the feature points are closer together, and the reprojection error decreases (see \autoref{fig:exp_1_repro}).
 To measure the quality of distance estimation, a different approach was chosen.
 A pattern with multiple features was attached to a white wall in a corridor within a featureless environment.
 The camera prototype on a tripod was located at a fixed distance from the wall and was set up so that its $y-z$ plane was parallel to the wall as in \autoref{fig:exp_process}.
@@ -93,8 +93,8 @@ Based on this, we assume that the ground-truth position of all observed 3D point
 Let us define the wall plane as $\Omega$, the distance from the origin of the stereo pair's common frame to the wall as $d$, an estimated plane as $\Omega'$ and an estimated distance to the plane as $d'$.
 The number of timestamps for each experiment is $n$, and $i$ is a timestamp index, $i \in \{1 \dots n\}$.
 
-The ground-truth distance was measured with the measuring tape, and the tripod was placed on a distance $d$ from the wall. 
-Then $n$ measurements were made, and obtained data were collected and saved to post-process them separately, analysy and obtain plots.
+The ground-truth distance was measured with the measuring tape, and the tripod was placed at a distance $d$ from the wall. 
+Then $n$ measurements were made, and obtained data were collected and saved to post-process them separately, analyse and obtain plots.
 
 The main goal of experiments is to measure the precision of triangulation and compare it with the theoretical error, introduced in \cite{cv_theoretical_error} as a function of the distance based on the geometrical and optical parameters of the setup.
 The theoretical error is defined as
@@ -117,12 +117,12 @@ The absolute error $e_i$ for distance of $d$ for this experiment was from $1$m t
 The result of this experiment is shown in \autoref{fig:exp_1_chart_dists}.
 According to the figure, the distance deviates significantly after $3.5$m, and the error grows much faster than estimated.
 In \autoref{fig:exp_1_topview} the topview of the experiment is shown for $d=4$m.
-It can be seen that the plane can not be estimated correctly at this distance using RANSAC anymore, because of a small error for each triangulated point.
+It can be seen that the plane can not be estimated correctly at this distance using RANSAC anymore because of a small error for each triangulated point.
 
 \subsection{Distance to a predefined plane}
 \label{sec:exp2}
 With increasing the distance $d$, feature points become less distinguishable due to the limited resolution of the camera.
-In \autoref{fig:exp_process}, the estimated plane $\Omega$ is inaccurate from a certain distance because of high noise in the $X$ direction of the points and low spread of the points in the $Y-Z$ direction (see \autoref{fig:exp_1_topview}), but still the points are close to the actual plane $\Omega$.
+In \autoref{fig:exp_process}, the estimated plane $\Omega$ is inaccurate from a certain distance because of high noise in the $X$ direction of the points and low spread of the points in the $Y-Z$ direction (see \autoref{fig:exp_1_topview}), but still, the points are close to the actual plane $\Omega$.
 That is why the second experiment was constructed.
 
 The experiment was done using the same setup as described in \autoref{sec:eval_setup}. 
@@ -134,10 +134,11 @@ where $k$ is the number of keypoints detected at a timestamp $t_i$, and $p'_j$ i
 
 % In \autoref{fig:exp_2_general} the red line represents the theoretical error for the proposed setup.
 
-The ground-truth distance $d$ for the current experiment was from $1$m to $8$m as the maximum distance at which key points can be detected (empirically found) with the step of $0.5$m.
-The result of the second experiment is shown in \autoref{fig:exp_2_general}, where the received data follows the theoretical up to $4.0$ meters with a small deviation, and after that, it is also follows the pattern but with the bigger variance.
-One of the possible problems here could be that the theoretical error does not include the error from the feature detector and matcher.
-The second one is that there is an error in camera calibration and fixed focal length (cameras were calibrated on a small distance up to $3$m), so detected patterns on a bigger distances are blurred and less detectable. 
+The ground-truth distance $d$ for the current experiment was from $1$m to $8$m as the maximum distance at which key points can be detected (empirically found) with a $0.5$m step.
+The result of the second experiment is shown in \autoref{fig:exp_2_general}, where the received data follows the theoretical up to $4.0$ meters with a small deviation. 
+After that, it also follows the pattern but with a bigger variance.
+One possible problem here is that the theoretical error does not include the error from the feature detector and matcher.
+The second one is that there is an error in camera calibration and fixed focal length (cameras were calibrated on a small distance up to $3$m), so detected patterns on bigger distances are blurred and less detectable. 
 
 \section{Rate testing}
 To ensure that obstacles can be detected, not only triangulation quality is important, but also the rate at which the MAV can receive the data from the obstacle avoidance module and the delay of the data.
