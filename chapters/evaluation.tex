@@ -9,7 +9,7 @@ It outputs a reprojection $\mathsf{RMS}$ (Root Mean Squared) error for each fram
 \end{equation}
 where $x$ stands for detected poses of chessboard's corners in the frame, $\hat{x}$ is a ground-truth pose of chessboard corners in 3D coordinate system and $N$ stands for the number of such corners.
 The pattern was moved in front of each camera to obtain RMS error for different positions and orientations.
-The mean and variance of 200 frames were taken to analyse the quality of the computed camera parameters. 
+The mean and variance of 200 frames were taken to analyze the quality of the computed camera parameters. 
 The reprojection error varies depending on the pose of the chessboard but, in general, is relatively stable, see \autoref{tab:camcalib_eval}.
 
 \begin{table}[ht]
@@ -106,14 +106,15 @@ The process of the experiment is shown in \autoref{fig:exp_process}.
     \label{fig:exp_2_general}
 \end{figure}
 
-The reprojection error is not a good metric to evaluate the triangulation performance because with the increasing distance of objects in the environment, the corresponding feature points are closer together in the image (see \autoref{fig:exp_1_disparity}), and the reprojection error decreases (see \autoref{fig:exp_1_repro}).
+The reprojection error is not a good metric to evaluate the triangulation performance.
+The disparity variance decreases with increasing the distance (see \autoref{fig:exp_1_disparity}), which means that feature points are closer together in the image, and the reprojection error decreases (see \autoref{fig:exp_1_repro}).
 Another approach was chosen to measure the quality of distance estimation.
 A pattern with multiple features was attached to a white wall in a corridor within a featureless environment.
 The camera prototype on a tripod was placed at different distances from the wall and was set up so that its $Y-Z$ plane was parallel to the wall as in \autoref{fig:exp_process}.
 Based on this, we assume that the ground-truth position of all observed 3D points lies on a plane whose orientation and distance from the coordinate frame's origin are known.
-Then, several measurements were made, and the obtained data were collected and saved to post-process separately, analyse and obtain plots.
+Then, several measurements were made, and the obtained data were collected and saved to post-process separately, analyze and obtain plots.
 
-Let us define the wall plane as $\Omega$, the distance from the origin of the stereo pair's common frame to the wall as $d$, an estimated plane as $\Omega'$ and an estimated distance to the plane as $d'$.
+Let us define the wall plane as $\Omega$, the distance from the origin of the stereo pair's common frame to the wall as $d$, an estimated plane as $\Omega'$, and an estimated distance to the plane as $d'$.
 The main goal of the experiments was to measure the precision of triangulation and compare it with the theoretical error, introduced in \cite{cv_theoretical_error} as a function of the distance based on the geometrical and optical parameters of the setup.
 The theoretical error is defined as
 \begin{equation}
@@ -149,11 +150,9 @@ The difference is that $\Omega'$ is not estimated using the least squares RANSAC
 \begin{equation}    
     e' = \frac{1}{k} \sum_{j=0}^{k}{|p'_j|},
 \end{equation}
-where $k$ is the number of measurements and $|p'_j|$ is the absolute distance from point $\vec{p}'_j$ to $\Omega$.
+where $k$ is the total number of detected points at each $d$ and $|p'_j|$ is the absolute distance from point $\vec{p}'_j$ to $\Omega$.
 
-% In \autoref{fig:exp_2_general} the red line represents the theoretical error for the proposed setup.
-
-The ground-truth distance $d$ for the current experiment was from \SI{8}{\meter} to \SI{8}{\meter} as the maximum distance at which key points can be detected (empirically found) with a \SI{0.5}{\meter} step.
+The ground-truth distance $d$ for the current experiment was from \SI{1}{\meter} to \SI{8}{\meter} as the maximum distance at which key points can be detected (empirically found) with a \SI{0.5}{\meter} step.
 The result of the second experiment is shown in \autoref{fig:exp_2_general}, where the measured error corresponds to the theoretical error up to $d=$ \SI{4}{\meter} with a slight deviation. 
 After \SI{4}{\meter}, the difference between the theoretical and measured error grows larger with a larger variance.
 One possible cause of this difference is an error in camera calibration and fixed focal length, so detected patterns on longer distances are blurred and less accurate. 
@@ -179,6 +178,6 @@ The data rate, maximal and minimal delays averaged over $5\,$min are shown in \a
 The quality of the distance estimation to obstacles was demonstrated in the two experiments.
 The first experiment, described in \autoref{sec:exp1}, shows that the precision of the proposed method is relatively high for distances up to \SI{3}{\meter}, and the second experiment, described in \autoref{sec:exp2} provided further insight into the statistics of the error over longer distances. 
 The estimated distance error on \SI{3}{\meter} is less than \qty{3}{\percent}.
-The maximum distance at which 3D points could be reliably estimated is \SI{8}{\meter} with an error of up to \SI{1}{\meter}.
+The maximum distance at which 3D points could be reliably estimated is \SI{8}{\meter} with an error of up to \SI{1.5}{\meter}.
 On longer distances, feature points can not be reliably detected anymore.
 The proposed solution works with an average frequency of \SI{10}{\hertz}.

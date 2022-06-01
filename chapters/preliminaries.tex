@@ -3,7 +3,7 @@
 \label{chapter:preliminaries}
 \section{Homogenous coordinate systems}
 
-Homogenous coordinates are a tool to simplify certain geometrical operations by adding an extra dimension.
+A homogenous coordinates system is a mathematical tool to simplify certain geometrical operations by adding an extra dimension.
 For example, the general scaling, rotation and translation are expressed in non-homogenous coordinates as:
 
 \begin{equation}
@@ -122,7 +122,7 @@ Most modern digital cameras have no skew and square pixels, so in most cases, th
     \label{fig:frames}
 \end{figure}
 
-To translate a point from a world coordinate frame to an image coordinate frame, the image projection matrix $\mat{P}$ is used. 
+The image projection matrix $\mat{P}$ is used to translate a point from a world coordinate frame to an image coordinate frame.
 The canonical projection matrix $\mat{P}_0$ assumes that the camera is in the world coordinate center and that the calibration matrix $\mat{K} = \mat{I}$.
 $\mat{P}_0$ is expressed as
 \begin{equation}
@@ -147,7 +147,7 @@ Instead, the image projection matrix $\mat{P}$ is used with a camera matrix $\ma
     \end{bmatrix}.
 \end{equation}
 
-The world coordinate center is usually not located at point $\vec{C}$ as ilustrated in \autoref{fig:frames}. 
+The world coordinate center is usually not located at point $\vec{C}$ as illustrated in \autoref{fig:frames}. 
 It may be rotated using a rotation matrix $\mat{R}$ and translated by a vector $\vec{t}$ where $\mat{R}$ is a $3x3$ matrix with $\det(\mat{R}) = 1$ and $\mat{R}^{-1} = \mat{R}^\top$. 
 Therefore, in the general case the projection can be expressed as
 \begin{equation}
@@ -267,21 +267,21 @@ Epipolar constraint described by eq. \eqref{eq:epiconstr} means that a point and
 
 A typical digital image represents 2D information about a scene projected onto the image plane as in \autoref{fig:td_scene_3d}.
 Computer stereo vision is a process of extracting a depth image from a pair of images of the same scene. 
-Such depth images are often used in SLAM, obstacle avoidance or detailed reconstruction of the environment in robotics.
+Such depth images are often used in SLAM, obstacle avoidance, or detailed reconstruction of the environment in robotics.
 In \autoref{chapter:intro}, the most common methods of stereo vision are described.
-Among the scene depth estimation approaches there are the computationally expensive neural network-based monocular approaches and costly LiDAR sensors.
+Among the scene depth estimation approaches, there are the computationally expensive neural network-based monocular approaches and costly LiDAR sensors.
 A typical stereo camera is a tradeoff between price and processing complexity.
 
 Usually, a stereo camera has a pair of cameras located at a distance $\lVert \vec{b} \rVert$ pointing in the same direction, similarly to the human eye (a scheme is in \autoref{fig:sch_stereo}).
-Sometimes, a fusion of multiple cameras and other sensors is used, such as in the case of the Intel Realsense shown in \autoref{fig:inteld455} that has two IR cameras, a color sensor and an infra red projector to project some features onto the environment in there are insufficient features already present (for example when observing a white wall).
+Sometimes, a fusion of multiple cameras and other sensors is used, such as in the case of the Intel Realsense shown in \autoref{fig:inteld455} that has two IR cameras, a color sensor, and an infrared projector to project some features onto the environment in there are insufficient features already present (for example when observing a white wall).
 
 \section{Reprojection error}
 \label{sec:error_reprojection}
 In an ideal case, when the calibration matrix $\mat{K}$ has no error and the estimated transformation between the two cameras of the stereopair is accurate, rays $\vec{d}_1$ and $\vec{d}_2$ corresponding to the 3D projections of $\vec{m}_1$ and $\vec{m}_2$ (refer to \autoref{fig:epipolar_std}) intersect in the point $\vec{X}$. 
-However, calibration only estimates the parameters up to some precision because of noise, measurement errors, limited resolution of the cameras etc.
+However, calibration only estimates the parameters up to some precision because of noise, measurement errors, the limited resolution of the cameras etc.
 The reprojection error is used to measure this precision.
 
-After the 3D position of a point is computed based on its projections to the two cameras, to measure its reprojection error, it is projected back to an image, and a distance of this reprojection from the original projection that was used to obtain the 3D positiom estimate is computed.
+After the 3D position of a point is computed based on its projections to the two cameras, to measure its reprojection error, it is projected back to an image, and a distance of this reprojection from the original projection was used to obtain the 3D position estimate is computed.
 Consider a general projection matrix $\mat{P}_i$ as
 \begin{equation}
     \label{eq:p_general}

@@ -5,7 +5,8 @@
 \begin{figure}[h]
     \centering
     \includegraphics[width=.8\textwidth]{graphics/td90deg.png}
-    \caption[The proposed approach model.]{Ilustration of the proposed approach. $\vec{C}_1$, $\vec{C}_2$ are optical centers of two cameras with projection plaes $\pi_1$ and $\pi_2$, $\vec{O}_1$ , $\vec{O}_2$ are the corresponding optical axes. The 3D point $\vec{X}$ is in the cameras' overlapping field of view, $\vec{m}_1$ and $\vec{m}_2$ are its projections on corresponding image planes.}
+    \caption[The proposed approach model.]{Ilustration of the proposed approach. $\vec{C}_1$, $\vec{C}_2$ are optical centers of two cameras with projection planes $\pi_1$ and $\pi_2$. 
+    $\vec{O}_1$ and $\vec{O}_2$ are the corresponding optical axes. The 3D point $\vec{X}$ is in the cameras' overlapping field of view, $\vec{m}_1$ and $\vec{m}_2$ are its projections on corresponding image planes.}
     \label{fig:td90deg}
 \end{figure}
 
@@ -17,17 +18,17 @@ These features are then matched using the brute-force matcher, described in \aut
 The 3D position of each of these features relative to the cameras is estimated using a calibrated projection model and known relative transformation between the cameras.
 Finally, the obtained 3D positions are the output of this algorithm. 
 
-The quality of the 3D point estimation depends on the cameras' relative transformation, the calibration of their projection model, the keypoint (feature) extractor and the matcher.
+The quality of the 3D point estimation depends on the cameras' relative transformation, the calibration of their projection model, the keypoint (feature) extractor, and the matcher.
 The obtained 3D points can be used to estimate the scale in an SfM algorithm that runs parallel to the described method (refer to  \autoref{fig:intro_general}).
 The estimated distance to nearby objects can be used in a feedback loop inside the MAV's control system to correct path planning, considering the obstacles found.
 
-This chapter describes the mathematical model of the problem and all algorithms used in the process: calibration of the projection model, calibration of the relative transformation between the cameras, feature extraction, feature matching and estimation of the 3D position of the matched features.
+This chapter describes the mathematical model of the problem and all algorithms used in the process: calibration of the projection model, calibration of the relative transformation between the cameras, feature extraction, feature matching, and estimation of the 3D position of the matched features.
 
 \section{Description of the optical setup}
 
 The optical setup assumed by the proposed method is shown in \autoref{fig:td90deg}.
-There are two cameras with optical centers at $C_1$ and $C_2$ with a known static translation $\vec{t}_{21}$ and rotation $\mat{R}_{21}$ between coordinate frames of the cameras.
-The rotation represented by $\mat{R}_{21}$ is assumed to be close to a $90^\circ$ rotation in the epipolar plane (marked as $\sigma$ in \autoref{fig:epipolar_std}).
+There are two cameras with optical centers at $\vec{C}_1$ and $\vec{C}_2$ with a known static translation $\vec{t}_{21}$ and rotation $\mat{R}_{21}$ between coordinate frames of the cameras.
+The rotation represented by $\mat{R}_{21}$ is assumed to be close to a \ang{90} rotation in the epipolar plane (marked as $\sigma$ in \autoref{fig:epipolar_std}).
 As described in \autoref{sec:problem_definition}, parameters of the mathematical projection model of the two cameras are assumed to be known. 
 In practice, these are obtained using a calibration process described in the next section.
 Furthermore, it is assumed that the images coming from the cameras are synchronized and that the FOVs of both cameras have an intersecting zone.
@@ -51,10 +52,10 @@ Let us denote images from the two cameras as $I_1$ and $I_2$, a point in the env
     \label{fig:chb}
 \end{figure}
 
-Camera calibration is the process of empirically estimating the camera calibration matrix $\mat{K}$ (refer to \eqref{eq:kmat}) and distortion parameters of the camera's optical system for the pinhole camera model described in \autoref{sec:pinhole_camera_model}.
+Camera calibration is the process of empirically estimating the camera calibration matrix $\mat{K}$ (refer to eq. \eqref{eq:kmat}) and distortion parameters of the camera's optical system for the pinhole camera model described in \autoref{sec:pinhole_camera_model}.
 Usually, this is done with some pattern with predefined parameters like a chessboard or more advanced markers (ChArUco and ArUco \cite{aruco} etc).
 
-The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information and further distance estimation (see \autoref{fig:chb}). 
+The camera calibration is necessary for geometrical image correction, distortion elimination, obtaining metric information, and further distance estimation (see \autoref{fig:chb}). 
 
 In the real world, lenses have distortion (see \autoref{fig:chb1}).
 To compensate that distortion, a polynomial model is often used with coefficients $k_1, ... , k_6$ for radial distortion and $p_1, p_2$ for tangential distortion.
@@ -89,10 +90,10 @@ After elimination of $\lambda_i$, we obtain
 \begin{equation}
     \label{eq:Aqmat}
     \mat{A} \vec{q} = \begin{bmatrix}
-        \vec{X}_1^\top & 1 & \vec{0}^\top & 0 & -u_1 \vec{X}_1^\top & -u1 \\
+        \vec{X}_1^\top & 1 & \vec{0}^\top & 0 & -u_1 \vec{X}_1^\top & -u_1 \\
         \vec{0}^\top & 0 & \vec{X}_1^\top & 1 & -v_1 \vec{X}_1^\top & -v_1 \\ 
         \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-        \vec{X}_k^\top & 1 & \vec{0}^\top & 0 & -u_k \vec{X}_k^\top & -uk \\
+        \vec{X}_k^\top & 1 & \vec{0}^\top & 0 & -u_k \vec{X}_k^\top & -u_k \\
         \vec{0}^\top & 0 & \vec{X}_k^\top & 1 & -v_k \vec{X}_k^\top & -v_k \\ 
     \end{bmatrix} \begin{bmatrix}
         \vec{q}_1 \\ q_{14} \\ \vec{q}_2 \\ q_{24} \\ \vec{q}_3 \\ q_{34}
@@ -163,10 +164,11 @@ The pattern used in this work is shown in \autoref{fig:aptags}.
 
 \subsection{Least-square estimation of transformation}
 \label{sec:lsq_umeyama}
-The first approach assumes that an initial estimate of the relative pose of the cameras is obtained using a manual measurement, and that the only necessary step is to correct the pose of one camera with respect to the other.
-If there is no initial pose provided, the first camera pose is considered as the world coordinate frame, and the relative transformation of the second camera is obtained. 
-Firstly, corresponding parts of the calibration patterns are detected in $I_1$ and $I_2$ and their 3D positions are computed.
-In the case of this thesis, the AprilTag markers \cite{Malyuta2019} were used, which provide also a unique identification of the markers and an estimate of their full relative pose.
+The first approach assumes that an initial estimate of the relative pose of the cameras is obtained using a manual measurement. 
+The only necessary step is to correct the pose of one camera with respect to the other.
+If there is no initial pose provided, the first camera pose is considered the world coordinate frame, and the relative transformation of the second camera is obtained. 
+Firstly, corresponding parts of the calibration patterns are detected in $I_1$ and $I_2$, and their 3D positions are computed.
+The AprilTag markers \cite{Malyuta2019} were used in this thesis, which also provides a unique identification of the markers and an estimate of their full relative pose.
 In this way, two sets of 3D poses are obtained, each corresponding to the detected markers in one image.
 Then, transformation parameters between the two point sets are estimated, and the correction transformation $\mat{T}_{c}$ is computed, where
 \begin{equation}
@@ -177,7 +179,7 @@ Then, transformation parameters between the two point sets are estimated, and th
     \end{bmatrix}.
 \end{equation}
 
-The algorithm is based on the analysis of the covariance matrix $\sum_{ab} \in \mathbb{R}^{3 \times 3}$ of the input sets $a$ and $b$ where $d$ is corresponding to the point's dimension. 
+The algorithm is based on the analysis of the covariance matrix $\sum_{ab} \in \mathbb{R}^{3 \times 3}$ of the input sets $a$ and $b$.
 It estimates parameters $\mat{R}_c$ and $\vec{t}_c$ such that
 \begin{equation}
     \frac{1}{n} \sum_{i=1}^{n}{\lVert b_i - (\mat{R}_c a_i + \vec{t}_c) \rVert}^2
@@ -195,12 +197,12 @@ A correct pose of the second camera then can be obtained by applying $\mat{T}_{c
     \label{fig:p3p}
 \end{figure}
 
-Another, more general approach is based on solving a Perspective-n-Point (PnP) problem.
+Another, the more general approach is based on solving a Perspective-n-Point (PnP) problem.
 PnP is the problem of estimating a camera pose (translation and rotation) given a known set of $n$ 3D points and their respective 2D projections to an image of a calibrated camera.
 Mathematically, the situation can be expressed as
 \begin{equation}
     \label{eq:pnp_intro}
-    \lambda_i \begin{bmatrix} \vec{m}_i \\ 1 \end{bmatrix} = \mat{K} \mat{R} (\vec{X}_i - \vec{C}), \;\; i = \{0..n\}.
+    \lambda_i \begin{bmatrix} \vec{m}_i \\ 1 \end{bmatrix} = \mat{K} \mat{R} (\vec{X}_i - \vec{C}), \;\; i \in \{0..n\}.
 \end{equation}
 No initial pose estimation is needed for this algorithm, but it can accelerate the solver if there is one.
 
@@ -219,7 +221,7 @@ Let us define a helper variable $z_i$ as the distance of a point $\vec{X}_i$ fro
     \label{eq:p3p_rot}
     |\lambda_i| \cdot \lVert \vec{v}_i \rVert = \lVert \vec{X}_i - \vec{C} \rVert = z_i.
 \end{equation}
-Considering only angles between $\vec{v}_i$ and applying the cosine law per $\triangle{\vec{C}, \vec{X}_i, \vec{X}_j}$, for $i, j \in \{1, 2, 3\}, i \neq j$, the relation
+Considering only angles between $\vec{v}_i$ and applying the cosine law per $\triangle{\vec{C} \vec{X}_i \vec{X}_j}$, for $i, j \in \{1, 2, 3\}, i \neq j$, the relation
 \begin{equation}
     \lVert \vec{d}_{ij} \rVert = z_i^2 + z_j^2 - 2z_iz_jc_{ij}
 \end{equation}
@@ -230,25 +232,26 @@ Having this, $\vec{C}$ can be found by trilateration (3 sphere intersection) fro
 
 \subsubsection{P3P + RANSAC}
 RANSAC stands for Random sample consensus. 
-It is an iterative method of estimating parameters of a model from set of observed data that contains both inliers and outliers.
+It is an iterative method of estimating the parameters of a model from a set of observed data that contains both inliers and outliers.
 The more general PnP task can be solved as a combination of P3P and RANSAC algorithms.
 
-At each iteration, 3 points out of $n$ are randomly sampled and $\mat{R}$ and $\vec{t}$ are computed.
-Than, the obtained transformation is confirmed on all $n$ points using the reprojection error described in \autoref{sec:error_reprojection}.
-In the next iteration the same process is repeated, and if the maximum number of iterations is reached or the change in relative error is insufficient, $\mat{R}$ and $\vec{t}$ which provided the smallest error are considered to be the result.
+At each iteration, 3 points out of $n$ are randomly sampled, and $\mat{R}$ and $\vec{t}$ are computed.
+Then, the obtained transformation is confirmed on all $n$ points using the reprojection error described in \autoref{sec:error_reprojection}.
+In the next iteration, the same process is repeated. 
+If the maximum number of iterations is reached or the change in relative error is insufficient, $\mat{R}$ and $\vec{t}$, which provided the smallest error, are considered to be the result.
 
 In practice, more sophisticated methods are employed, as in \cite{Lepetit2008, Hesch2011}.
 
 \section{Feature extraction, matching and filtering}
 \label{sec:features}
-In computer vision, \textit{features} typically refer to representations of unique pieces of information from the image scene, such as points, edges and objects.
+In computer vision, \textit{features} typically refer to representations of unique pieces of information from the image scene, such as points, edges, and objects.
 A feature detector is an algorithm for extracting features from an image.
-There are many such algorithms, but in this thesis, the ORB feature extractor is used. 
+There are many such algorithms, but the ORB feature extractor is used in this thesis. 
 The authors in \cite{Rublee2011} claim that ORB has comparable accuracy as the state-of-the-art SIFT detector while being a few times faster, which is also supported by other research \cite{Sharif2017}. 
 
 The next step of the proposed method is mutually associating features in images from the two cameras, corresponding to the same physical objects in the environment. 
 This is done by a feature matcher, which compares descriptors of the features provided by the feature detection algorithm.
-Some feature extraction algorithms perform a brute-force comparison of all combinations of features, others use nearest neighbors approximations or even neural networks \cite{Sarlin2020}.
+Some feature matching algorithms perform a brute-force comparison of all combinations of features, others use nearest neighbors approximations or even neural networks \cite{Sarlin2020}.
 
 A brute-force matcher is one of the simplest matchers, and it is used in the proposed solution.
 It takes one descriptor from one set, computes its similarity to all descriptors from the second set, and matches it with the most similar feature. 
@@ -262,7 +265,7 @@ If the distance of the matched feature from the corresponding epipolar line in t
 \section{Feature position estimation}
 Positions of the observed 3D points in the scene can be computed from pairs of correspondent points taken by calibrated cameras with a known relative pose.
 This process is called triangulation.
-Correspondences for triangulation are received as a result of the feature detection, matching and filtering.
+Correspondences for triangulation are received as a result of feature detection, matching, and filtering.
 
 \subsection{Shortest distance triangulation}
 \label{sec:shortest_distance}
@@ -296,7 +299,7 @@ Using $s$ and $t$, the points $\vec{p}_1$ and $\vec{p}_2$ can be obtained and th
 
 \subsection{SVD triangulation}
 \label{sec:svdtriang}
-Triangulation using Singular Value Decomposition (SVD) is another method that is more precise and more widely used.
+Triangulation using Singular Value Decomposition (SVD) is another method that is more precise and widely used.
 It computes 3D points from 2D correspondences using the camera matrices $\mat{P}_1$, $\mat{P}_2$. 
 This method is derived and described in detail in \cite{hartley_zisserman_2004}, p.312. Here, a short summary is provided.
 
@@ -326,7 +329,7 @@ The eigenvectors and eigenvalues are obtained using $\mathsf{SVD}$ decomposition
 \end{equation}
 where $\mat{U}$ and $\mat{V}$ are orthogonal matrices and $\mat{S}$ is a non-negative diagonal matrix.
 
-Let the eigenvector corresponding to the smallest eigenvalue $\vec{h} = (x', y', z', w')^\top$.
+Let the eigenvector corresponding to the smallest eigenvalue as $\vec{h} = (x', y', z', w')^\top$.
 The triangulated point then can be expressed as
 \begin{equation}
     \vec{X} = \begin{bmatrix}
@@ -336,5 +339,5 @@ The triangulated point then can be expressed as
     \end{bmatrix}.
 \end{equation}
 
-In practice, the improved vesion of this algorithm called "The Golden Standard Triangulation Method" is more widely used.
+The improved version of this algorithm called "The Golden Standard Triangulation Method" is more widely used in practice.
 It combines SVD triangulation with Sampson correction (description is available in \cite{hartley_zisserman_2004}, p. 314). 

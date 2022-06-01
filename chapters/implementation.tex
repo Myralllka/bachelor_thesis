@@ -24,11 +24,11 @@ The used hardware is presented in \autoref{sec:impl_hardware}, the software tool
   \label{fig:prototype}
 \end{figure}
 
-CAD model of a camera mount was created in the Fusion360 software considering the requirements of a \ang{90} rotation between cameras and distance of the cameras close to the average MAV size.
+A CAD model of a camera mount was created in the Fusion360 software considering the requirements of a \ang{90} rotation between cameras and distance of the cameras close to the average MAV size.
 A picture of the design from the CAD software is in \autoref{fig:proto_scheme}.
 The 3D-printed prototype with the cameras mounted is in \autoref{fig:proto_printed}
 
-Basler daA1600-60um cameras were chosen for this project because they have a global shutter which is important when deployed onboard a fast-moving platform, good image quality and high framerate, making them suitable for the proposed method based on the assumptions defined in \autoref{sec:problem_definition}. 
+Basler daA1600-60um cameras were chosen for this project because they have a global shutter which is important when deployed onboard a fast-moving platform, good image quality, and high framerate, making them suitable for the proposed method based on the assumptions defined in \autoref{sec:problem_definition}. 
 More details regarding camera parameters are in \autoref{tab:daA1600}.
 
 \begin{table}
@@ -74,7 +74,7 @@ All of the software presented in this thesis was implemented in C++.
     \label{fig:calib}
 \end{figure}
 
-Calibration of parameters od the camera projection and distortion models (described in \autoref{sec:meth_calib}) was performed using the ROS Camera Calibration package\footnote{\url{http://wiki.ros.org/camera_calibration}}.
+Calibration of parameters of the camera projection and distortion models (described in \autoref{sec:meth_calib}) was performed using the ROS Camera Calibration package\footnote{\url{http://wiki.ros.org/camera_calibration}}.
 A chessboard pattern is used for the calibration, and its physical parameters must be specified to the calibration program.
 The calibration process itself is done interactively using a graphical user interface (shown in \autoref{fig:calib}).
 The interface displays the progress of the process to the user, and when a sufficient dataset is obtained, the user can trigger the parameter optimization. 
@@ -83,21 +83,21 @@ Results of the optimization are then saved to a file for later use.
 The two calibration methods described in \autoref{sec:stereocalib} were both implemented to use an AprilTag calibration pattern, shown in \autoref{fig:aptags}.
 The main reason why this pattern was chosen is that each tag can be detected individually, so there is no need to have all of them simultaneously in the overlapping zone.
 The first method, described in \autoref{sec:lsq_umeyama}, is implemented using the "Least-square estimation of transformation between two point sets" \cite{Umeyama1991} implementation from Eigen.
-Measurements from the CAD model of the camera mount were used as the initial estimate of the cameras' relative pose.
+Measurements from the CAD model of the camera mount were used as the initial estimate of the cameras' relative poses.
 The second method, described in \autoref{sec:pnp}, is implemented using the OpenCV PnP solver.
 Because the publicly available implementation of the AprilTag detector outputs only 3D poses of detected tags, the detector was modified to output also 2D coordinates of corners of the detected markers, which is needed for the PnP algorithm and during the debug session for computing the reprojection error.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=1\textwidth]{graphics/corresp.png}
-  \caption[The result of features detection, matching and outliers filtering.]{The result of feature detection, matching and outliers filtering. In the image there are cropped segments of images from the left camera (left half) and right camera (right half). Detected and filtered features are marked as colored circles, and matched correspondence pairs are connected with lines of the same color as its points.}
+  \caption[The result of features detection, matching, and outliers filtering.]{The result of feature detection, matching, and outliers filtering. There are cropped segments of images from the left camera (left half) and right camera (right half). Detected and filtered features are marked as colored circles, and matched correspondence pairs are connected with lines of the same color as their points.}
   \label{fig:corresp_life}
 \end{figure}
 
-After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching and filtering, described in \autoref{sec:features}.
+After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching, and filtering, described in \autoref{sec:features}.
 The example from a real-world experiment is in \autoref{fig:corresp_life}.
 
 The synchronization is done on a stereo pair driver level.
-As described in \autoref{sec:features}, the ORB detector and a brute-force matcher implementation from the OpenCV were used for feature detection and matching.
+As described in \autoref{sec:features}, the ORB features detector and a brute-force matcher implementations from the OpenCV were used for feature detection and matching.
 The next step is reconstructing the 3D scene from the obtained feature pairs.
 The method described in \autoref{sec:shortest_distance} is implemented from scratch, and the implementation of triangulation described in \autoref{sec:svdtriang} is taken from OpenCV.
