@@ -24,7 +24,7 @@ The used hardware is presented in \autoref{sec:impl_hardware}, the software tool
   \label{fig:prototype}
 \end{figure}
 
-CAD model of a camera mount was created in the Fusion360 software considering the requirements of a $90^\circ$ rotation between cameras and distance of the cameras close to the average MAV size.
+CAD model of a camera mount was created in the Fusion360 software considering the requirements of a \ang{90} rotation between cameras and distance of the cameras close to the average MAV size.
 A picture of the design from the CAD software is in \autoref{fig:proto_scheme}.
 The 3D-printed prototype with the cameras mounted is in \autoref{fig:proto_printed}
 
@@ -38,7 +38,7 @@ More details regarding camera parameters are in \autoref{tab:daA1600}.
       Parameter              & Value             \\ \hline
       Lens mount type        & S-mount           \\
       Data transfer protocol & USB 3.0           \\
-      Max. frame rate        & 60 fps            \\
+      Max. frame rate        & \SI{60}{fps}            \\
       Resolution (HxV)       & 1600 px x 1200 px \\
       Resolution             & 2 MP              \\
       Price                  & 289.00 EUR        \\ \hline
@@ -48,7 +48,7 @@ More details regarding camera parameters are in \autoref{tab:daA1600}.
     \label{tab:daA1600}
 \end{table}
 
-Lenses of the cameras were chosen so that the resulting horizontal FOV is approximately $120^\circ$, which provides a sufficient overlapping zone to detect features in $\Psi$ (see \autoref{fig:sch_stereo}).
+Lenses of the cameras were chosen so that the resulting horizontal FOV is approximately \ang{120}, which provides a sufficient overlapping zone to detect features in $\Psi$ (see \autoref{fig:sch_stereo}).
 
 The solution was developed and tested on the Lenovo ThinkPad X280 with Intel(R) Core i7-8550U CPU and 16Gb RAM.
 Intel NUC with Intel(R) Core i7-10710U CPU and 16Gb RAM is used as the onboard computer for the MAV.
@@ -80,20 +80,12 @@ The calibration process itself is done interactively using a graphical user inte
 The interface displays the progress of the process to the user, and when a sufficient dataset is obtained, the user can trigger the parameter optimization. 
 Results of the optimization are then saved to a file for later use.
 
-% \begin{figure}[ht]
-%     \centering
-%     \includegraphics[width=.8\textwidth]{graphics/calib_process.png}
-%     \caption[The stereocamera calibration process]{The stereo pair calibration. In the left side there are views from the right camera (top) and left camera (bottom). Both cameras observing the AprilTag's pattern. On the right side there is a visualization from the ROS Vizualisation tool (rviz) of initial poses of both cameras, AprilTags and the corrected right camera pose.}
-%     \label{fig:calib_stereo}
-% \end{figure}
-
 The two calibration methods described in \autoref{sec:stereocalib} were both implemented to use an AprilTag calibration pattern, shown in \autoref{fig:aptags}.
 The main reason why this pattern was chosen is that each tag can be detected individually, so there is no need to have all of them simultaneously in the overlapping zone.
 The first method, described in \autoref{sec:lsq_umeyama}, is implemented using the "Least-square estimation of transformation between two point sets" \cite{Umeyama1991} implementation from Eigen.
 Measurements from the CAD model of the camera mount were used as the initial estimate of the cameras' relative pose.
 The second method, described in \autoref{sec:pnp}, is implemented using the OpenCV PnP solver.
 Because the publicly available implementation of the AprilTag detector outputs only 3D poses of detected tags, the detector was modified to output also 2D coordinates of corners of the detected markers, which is needed for the PnP algorithm and during the debug session for computing the reprojection error.
-% The calibration process is in the \autoref{fig:calib_stereo}.
 
 \begin{figure}[ht]
   \centering
@@ -101,12 +93,6 @@ Because the publicly available implementation of the AprilTag detector outputs o
   \caption[The result of features detection, matching and outliers filtering.]{The result of feature detection, matching and outliers filtering. In the image there are cropped segments of images from the left camera (left half) and right camera (right half). Detected and filtered features are marked as colored circles, and matched correspondence pairs are connected with lines of the same color as its points.}
   \label{fig:corresp_life}
 \end{figure}
-% \begin{figure}[ht]
-  % \centering
-  % \includegraphics[width=0.49\textwidth]{graphics/res_trangulation.png}
-  % \caption{Triangulated points}
-  % \label{fig:triang_life}
-% \end{figure}
 
 After both cameras and the stereo pair are calibrated, the following steps are feature detection, matching and filtering, described in \autoref{sec:features}.
 The example from a real-world experiment is in \autoref{fig:corresp_life}.
@@ -115,9 +101,3 @@ The synchronization is done on a stereo pair driver level.
 As described in \autoref{sec:features}, the ORB detector and a brute-force matcher implementation from the OpenCV were used for feature detection and matching.
 The next step is reconstructing the 3D scene from the obtained feature pairs.
 The method described in \autoref{sec:shortest_distance} is implemented from scratch, and the implementation of triangulation described in \autoref{sec:svdtriang} is taken from OpenCV.
-% In the \autoref{fig:triang_life} in the left part, there are triangulated points shown as colored spheres, and rays pointing from camera centers to feature points colored with the same color as corresponding feature.
-% In the right side there are cameras' views.
-
-
-% As a result, obstacles in the cameras' overlapping zone are detected in a format of the point cloud and correspondent feature points on both images.
-% Recalling the \autoref{fig:intro_general}, the proposed solution providing a pointcloud with obstacles in a red zone at each timestamp $t_i$. 
